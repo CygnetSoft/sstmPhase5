@@ -1,0 +1,1167 @@
+﻿@{
+    ViewBag.Title = "Create Student MCQ's";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.AntiForgeryToken()
+<style>
+    .select2-selection__rendered {
+        line-height: inherit !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: inherit !important;
+    }
+
+    .select2-selection__arrow {
+        height: 35px !important;
+    }
+
+    ol:nth-of-type(1) {
+        list-style-type: "Enter Choice";
+    }
+
+    hr.double_border_style {
+        border-top: 4px double black;
+    }
+
+        hr.double_border_style:after {
+            content: '';
+            display: inline-block;
+            position: relative;
+            top: -15px;
+            left: 40px;
+            padding: 0 10px;
+            background: #f0f0f0;
+            color: #8c8b8b;
+            font-size: 18px;
+        }
+
+    .is-invalid + .select2-container--default .select2-selection--single {
+        border: 1px solid #f44336;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 2rem center;
+        background-size: calc(3 em + 0.375 rem ) calc(3em + 0.375 rem );
+    }
+</style>
+
+<link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card card-outline card-success">
+            <div class="card-header">
+                <h6 class="font-weight-bolder">Multiple Choice Question Sheet</h6>
+            </div>
+            <div class="card-body">
+                <div class="container-fluid mb-3">
+                    <div class="form-row form-group">
+                        <div class="col-md-12">
+                            <label class="col-form-label-sm">Choose Course</label>
+                            <select class="form-control select2" data-width="100%" id="courseList" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                            <div class="invalid-feedback col-form-label-sm">Course is Required.</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label class="col-form-label-sm">Choose IPR</label>
+                            <select class="form-control select2" id="chapterList" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')">
+                                <option value="0">Select</option>
+                                @for (int i = 0; i < 15; i++)
+                                {
+                                    var chapter = i + 1;
+                                    <option value="@chapter">IPR @chapter</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback col-form-label-sm">IPR is Required.</div>
+                        </div>
+                    </div>
+                    <hr class="double_border_style" />
+                    <div class="form-row">
+                        <div class="col-2">
+                            <input placeholder="No.of Questions" id="questionCount" class="form-control" maxlength="3" oninput="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g, ''); if (this.value.length > 2) { toastr.info('Not allowed to enter more than 2 digits.'); this.value = '' };calQTotal()" />
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-warning" id="addQuestions" data-check="" name="question_count"><i class="fa fa-plus-circle"></i>&nbsp;Add</button>
+                            <button class="btn btn-warning" id="updateQuestions" data-check="" name="question_count" hidden><i class="fa fa-plus-circle"></i>&nbsp;Add</button>
+                        </div>
+                        <div class="col-2 form-inline">
+                            <input placeholder="Each Question Mark" id="perQusMark" class="form-control input-sm" maxlength="3" oninput="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g, ''); calQTotal(this.value)" />
+                        </div>
+                        <span class="col-form-label-sm">/</span>
+                        <div class="col-2">
+                            <input placeholder="0" id="totalMark" disabled class="form-control" maxlength="3" oninput="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g, '');" />
+                        </div>
+                        <div class="ml-auto">
+                            <button class="btn btn-danger" id="clearQuestions">Clear Question</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="container-fluid ml-3">
+                        <ul class="num list-group mcq-list"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="text-center">
+                    <button class="btn btn-success" id="saveQuestions" type="button"><i class="fa fa-save"></i>&nbsp;Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="@Url.Content("~/Scripts/sstm_js_enc/_sstm_enc.js")"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+    window.onbeforeunload = function () {
+        return false;
+    };
+    $(window).on('keydown', function (e) {
+        if (e.which == 116 || (e.keyCode === 116 && e.ctrlKey)) { // New action for F5
+            e.preventDefault();
+            $.loadFuntion();
+            return false;
+        }
+    });
+    $.loadFuntion = function () {
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'Save your Question paper and refresh or close tab.',
+            type: 'red',
+            typeAnimated: true,
+            animation: 'news',
+            closeAnimation: 'news',
+            buttons: {
+                tryAgain: {
+                    text: 'Refresh',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        window.location.reload();
+                    }
+                },
+                close: function () {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Records are safe.'
+                    })
+                }
+            }
+        });
+    }
+
+    var calQTotal = function () {
+        var q_cnt = $('#questionCount').val();
+        var p_qs = $('#perQusMark').val();
+        if (isNaN(q_cnt) || isNaN(p_qs)) { q_cnt = 0 };
+        $('#totalMark').val(q_cnt * p_qs);
+    }
+    $(document).ready(function () {
+        questionsList(1, 'new');
+        $.ajax({
+            url: "@Url.Action("GetAllCourse", "Intro",null)",
+            method: "Get",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            success: ((data) => {
+                let k = JSON.parse(data.Result);
+                $('#courseList').empty().append($('<option/>').val(0).html('Select'))
+                $.map(k, function (v, i) {
+                    $('#courseList').append($('<option></option>').val(v.CourseId).html(v.CourseName));
+                });
+                $('#courseList,#chapterList').select2();
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+    });
+    $('#questionCount').on('input', function () {
+        if ($(this).val() !== '') { $(this).removeClass('is-invalid'); }
+    });
+    $('#addQuestions').click(function () {
+        let count = $('#questionCount').val();
+        var isreq = required_validation();
+        if (isreq && count > 0) {
+            questionsList(count, 'new');
+            toastr.success("New Question Added.");
+        }
+        else {
+            toastr.info("Should Enter more than 1 questions.");
+            $('#questionCount').removeAttr('disabled').val('');
+        }
+        $(this).data('check', 'add');
+    });
+    $('#updateQuestions').click(function () {
+        let count = $('#questionCount').val();
+        var isreq = required_validation();
+        if (isreq && count > 0) {
+            questionsList(count, 'update');
+            toastr.success("New Question Added.");
+        }
+        else {
+            toastr.info("Should Enter more than 1 questions.");
+            $('#questionCount').removeAttr('disabled').val('');
+        }
+        $(this).data('check', 'update');
+        var perQusMark = parseFloat($('#perQusMark').val())
+        $('#totalMark').val($('.mcq-qs-list').length * perQusMark);
+
+    });
+    function required_validation() {
+        let count = $('#questionCount').val();
+        let course = $('#courseList').val();
+        let chapter = $('#chapterList').val();
+        if (count == '') { $('#questionCount').addClass('is-invalid'); return false; }
+        else { $('#questionCount').removeClass('is-invalid'); }
+        if (course == 0) { $('#courseList').addClass('is-invalid'); return false; }
+        else { $('#courseList').removeClass('is-invalid'); }
+        if (chapter == 0) { $('#chapterList').addClass('is-invalid'); return false; }
+        else { $('#chapterList').removeClass('is-invalid') }
+        //$('#questionCount').attr('disabled', 'disabled');
+        $(this).attr('disabled', 'disabled');
+        return true;
+    }
+    $('#courseList').change(function () {
+        $('#chapterList').val(0).select2();
+        $('#questionCount').val('');
+        questionsList(1, 'new');
+    });
+    $('#chapterList').change(function () {
+        let courseId = $('#courseList').val();
+        let chapterId = $('#chapterList').val();
+        if (courseId != 0 && chapterId != 0) {
+            getExistingQus();
+        }
+    });
+
+    function getExistingQus() {
+        let courseId = $('#courseList').val();
+        let chapterId = $('#chapterList').val();
+
+        if (courseId != 0 && chapterId != 0) {
+            $.ajax({
+                url: "@Url.Action("GetStudentMcqBasedOnCourse", "IntroStudent")?courseId=" + courseId + '&chapterId=' + chapterId + '&batchId=' + null,
+                method: "Get",
+                dataType: "json",
+                beforeSend: (() => { $(".loadingDiv").show(); }),
+                success: ((data) => {
+                    if (data.AnswerSheet.length > 0) {
+                        $('#addQuestions').attr('hidden', true).data('check', '');
+                        $('#updateQuestions').removeAttr('hidden').attr('data-check', 'update');
+                        $('.mcq-list').empty();
+                        $('#questionCount').val(data.AnswerSheet.length);
+                        $(data.AnswerSheet).map((i, v) => {
+                            //debugger;
+                            var index = i;
+                            $('#perQusMark').val(v.PerQuestionMark);
+                            $('#totalMark').val(v.PerQuestionMark * data.AnswerSheet.length);
+                            var mcq_Id = "mcqmain" + index;
+                            var choice_a_id = "choice-a" + index;
+                            var choice_b_id = "choice-b" + index;
+                            var choice_c_id = "choice-c" + index;
+                            var choice_d_id = "choice-d" + index;
+                            var mcq_choice = "mcq_choice" + index;
+                            var $id = "mcq" + index;
+
+                            //var a_option;
+                            //var b_option;
+                            //var c_option;
+                            //var d_option;
+                            //if (v.Correct_Choice.toLowerCase() == "a".toLowerCase()) {
+                            //    a_option = 'checked="checked"';
+                            //} else if (v.Correct_Choice.toLowerCase() == "b".toLowerCase()) {
+                            //    b_option = 'checked="checked"';
+
+                            //} else if (v.Correct_Choice.toLowerCase() == "c".toLowerCase()) {
+                            //    c_option = 'checked="checked"';
+                            //} else if (v.Correct_Choice.toLowerCase() == "d".toLowerCase()) {
+                            //    d_option = 'checked="checked"';
+                            //}
+                            var source_name = v.IsQp ? v.Qp_Doc_Name.split('/').pop().split('#')[0].split('?')[0] : '';
+                            var source_path = v.IsQp ? v.Qp_Doc_Name : '';
+                            var questions = v.Question != null ? v.Question : '';
+
+                            //choice - A Section
+                            var choice_a_url_path = v.Is_Url_Choice_A ? v.Choice_A_Url : '';
+                            var choice_a_url_name = v.Is_Url_Choice_A ? v.Choice_A_Url.split('/').pop().split('#')[0].split('?')[0] : 'Choose File';
+
+                            //choice - B Section
+                            var choice_b_url_path = v.Is_Url_Choice_B ? v.Choice_B_Url : '';
+                            var choice_b_url_name = v.Is_Url_Choice_B ? v.Choice_B_Url.split('/').pop().split('#')[0].split('?')[0] : 'Choose File';
+
+                            //choice - C Section
+                            var choice_c_url_path = v.Is_Url_Choice_C ? v.Choice_C_Url : '';
+                            var choice_c_url_name = v.Is_Url_Choice_C ? v.Choice_C_Url.split('/').pop().split('#')[0].split('?')[0] : 'Choose File';
+
+                            //choice - D Section
+                            var choice_d_url_path = v.Is_Url_Choice_D ? v.Choice_D_Url : '';
+                            var choice_d_url_name = v.Is_Url_Choice_D ? v.Choice_D_Url.split('/').pop().split('#')[0].split('?')[0] : 'Choose File';
+                            //debugger
+                            v.Choice_A = v.Choice_A != null ? v.Choice_A : '';
+                            v.Choice_B = v.Choice_B != null ? v.Choice_B : '';
+                            v.Choice_C = v.Choice_C != null ? v.Choice_C : '';
+                            v.Choice_D = v.Choice_D != null ? v.Choice_D : '';
+
+                            var content = '<input hidden id="studentQpId_' + index + '" value="0" />' +
+                                        '<li class="mb-2 mcq-qs-list" id=' + mcq_Id + '>' +
+                                        '<div class="form-check">' + //main question is question or image
+                                        '  <input class="form-check-input option-input checkbox' + index + '" data-index="' + index + '" onclick="isUploadSection(this)" type="checkbox" name="mcq_checkbox' + index + '" id="choice_a_id_' + index + '" value="a">' +
+                                        '  <label class="col-form-label-sm" for="choice_a_id_' + index + '">Is Uploaded Question</label>' +
+                                        '</div>' +
+                                        '<div class="form-row">' +
+                                        '  <div class="col-md-12">' + //main question image upload section
+                                        '   <div class="input-group form-group upload_section" id="upload_section_' + index + '" hidden>' +
+                                        '     <div class="custom-file" id="lock_upload">' +
+                                        '       <input type="file" data-type="question" data-index="' + index + '" class="custom-file-input file_upload_qus_' + index + '" id="file_input_qus_' + index + '" accept="image/*">' +
+                                        '       <label class="custom-file-label file_label_qus_' + index + '" for="file_input_qus_' + index + '">' + source_name + '</label>' +
+                                        '     </div>' +
+                                        '     <div class="input-group-append">' +
+                                        '       <button class="btn btn-success" data-type="question"  data-index="' + index + '" id="doc_upload_qus_' + index + '" onclick="file_upload(' + "'#file_input_qus_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+                                        '       <button class="btn btn-danger" data-type="question"  data-index="' + index + '" id="doc_remove_qus_' + index + '" onclick="delete_single_file(' + "'#file_input_qus_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+                                        '     </div>' +
+                                        '   </div>' +
+                                        '  </div>' +
+                                        '</div>' + // main question image preview
+                                        '<div class="form-row img_pre_qus" id="img_pre_qus_' + index + '" hidden>' +
+                                        '   <div class="col-md-12"> ' +
+                                        '       <img style="max-width:30vw!important;max-height:50vh!important" src ="' + source_path + '" data-file-name="' + source_name + '" id="preview_question_' + index + '" class="preview_question" />' +
+                                        '   </div>' +
+                                        '</div>' +
+                                        '<div class="mcq_manual_section" id="mcq_manual_section_' + index + '">' +
+                                        '   <textarea type="text" placeholder="Enter Question" oninput="checkTxt(this)" class="form-control txtboader mcq" id="mcq' + index + '">'+questions+'</textarea>' +
+                                        '</div>' +
+                                        '<ul class="mt-1" style="list-style-type:none!important">' +
+                                        '<div class="form-check">' + //choice - a
+                                        '  <input class="form-check-input option-input checkbox_choice_a_file_' + index + '" data-choice="a" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_a_file_' + index + '" value="a">' +
+                                        '  <label class="col-form-label-sm" for="checkbox_choice_a_file_' + index + '">Is Uploaded Choice A</label>' +
+                                        '</div>' +
+                                        '<div class="form-row" id="upload_section_choice_a_' + index + '" hidden>' +
+                                        '  <div class="col-md-11">' +
+                                        '   <div class="input-group form-group"><span>a.&nbsp;</span>' + //upload choice a.
+                                        '     <div class="custom-file" id="lock_upload">' +
+                                        '      <input type="file" data-choice="a" data-type="choice" data-index="' + index + '" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_a_' + index + '" accept="image/*">' +
+                                        '      <label class="custom-file-label file_input_label_a_' + index + '" for="file_upload_choice_a_' + index + '">' + choice_a_url_name +'</label>' +
+                                        '     </div>' +
+                                        '     <div class="input-group-append">' +
+                                        '       <button class="btn btn-success" data-index="' + index + '" data-choice="a" data-type="choice" id="doc_upload_choice_a_"' + index + '" onclick="file_upload(' + "'#file_upload_choice_a_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+                                        '       <button class="btn btn-danger" data-index="' + index + '" data-choice="a" data-type="choice" id="doc_remove_choice_a_"' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_a_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+                                        '     </div>' +
+                                        '   </div>' +
+                                        '  </div>' +
+                                        '</div>' + //choice -a image upload preivew
+                                        '<div class="form-row img_pre_choice_a" id="img_pre_choice_a_' + index + '" hidden>' +
+                                        '   <div class="col-md-12"> ' +
+                                        '       <img style="max-width:30vw!important;max-height:50vh!important" src ="' + choice_a_url_path + '" data-file-name="'+choice_a_url_name+'" id="preview_choice_a_' + index + '" class="preview_question" />' +
+                                        '   </div>' +
+                                        '</div>' + //choice -a text
+                                        '<li id="txt_choice_a_' + index + '">' +
+                                        '   <div class="row">' +
+                                        '       <span>a.&nbsp;</span>' +
+                                        '       <div class="col-md-11">' +
+                                        '           <input type="text" placeholder="Enter Choice A" class="form-control txtboader" id="choice_a_' + index + '" value ="'+v.Choice_A+'" />' +
+                                        '       <div>' +
+                                        '   <div>' +
+                                        '</li>' +
+                                        '<div class="form-check">' + //choice - b
+                                        '   <input class="form-check-input option-input checkbox_choice_b_file_' + index + '" data-choice="b" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_b_file_' + index + '" value="a">' +
+                                        '   <label class="col-form-label-sm" for="checkbox_choice_b_file_' + index + '">Is Uploaded Choice B</label>' +
+                                        '</div>' +
+                                        '<div class="form-row" id="upload_section_choice_b_' + index + '" hidden>' +
+                                        '   <div class="col-md-11">' +
+                                        '       <div class="input-group form-group"><span>b.&nbsp;</span>' +//upload choice b.
+                                        '           <div class="custom-file" id="lock_upload">' +
+                                        '               <input type="file" data-choice="b" data-type="choice" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_b_' + index + '" accept="image/*">' +
+                                        '               <label class="custom-file-label file_input_label_b_' + index + '" for="file_upload_choice_b_' + index + '">' + choice_b_url_name + '</label>' +
+                                        '           </div>' +
+                                        '           <div class="input-group-append">' +
+                                        '               <button class="btn btn-success" data-index="' + index + '" data-choice="b" data-type="choice" id="doc_upload_choice_b_' + index + '" onclick="file_upload(' + "'#file_upload_choice_b_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+                                        '               <button class="btn btn-danger" data-index="' + index + '" data-choice="b" data-type="choice" id="doc_remove_choice_b_' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_b_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+                                        '           </div>' +
+                                        '       </div>' +
+                                        '   </div>' +
+                                        '</div>' +  //choice -b image upload preivew
+                                        '<div class="form-row img_pre_choice_b" id="img_pre_choice_b_' + index + '" hidden>' +
+                                        '   <div class="col-md-12"> ' +
+                                        '       <img style="max-width:30vw!important;max-height:50vh!important" src ="' + choice_b_url_path + '" data-file-name="' + choice_b_url_name + '" id="preview_choice_b_' + index + '" class="preview_question" />' +
+                                        '   </div>' +
+                                        '</div>' +  //choice -b text
+                                        '<li id="txt_choice_b_' + index + '">' +
+                                        '   <div class="row">' +
+                                        '       <span>b.&nbsp;</span>' +
+                                        '       <div class="col-md-11">' +
+                                        '           <input type="text" placeholder="Enter Choice B" class="form-control txtboader" id="choice_b_' + index + '" value ="' + v.Choice_B + '"/>' +
+                                        '       <div>' +
+                                        '   <div>' +
+                                        '</li>' +
+                                        '<div class="form-check">' + //choice - c
+                                        '   <input class="form-check-input option-input checkbox_choice_c_file_' + index + '"  data-choice="c" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_c_file_' + index + '">' +
+                                        '   <label class="col-form-label-sm" for="checkbox_choice_c_file_' + index + '">Is Uploaded Choice C</label>' +
+                                        '</div>' +
+                                        '<div class="form-row" id="upload_section_choice_c_' + index + '" hidden>' +
+                                        '   <div class="col-md-11">' +
+                                        '       <div class="input-group form-group"><span>c.&nbsp;</span>' + //upload choice c.
+                                        '           <div class="custom-file" id="lock_upload">' +
+                                        '               <input type="file" data-choice="c" data-type="choice" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_c_' + index + '" accept="image/*">' +
+                                        '               <label class="custom-file-label file_input_label_c_' + index + '" for="file_upload_choice_c_' + index + '">' + choice_c_url_name + '</label>' +
+                                        '           </div>' +
+                                        '           <div class="input-group-append">' +
+                                        '               <button class="btn btn-success" data-index="' + index + '" data-choice="c" data-type="choice" id="doc_upload_choice_c_' + index + '" onclick="file_upload(' + "'#file_upload_choice_c_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+                                        '               <button class="btn btn-danger" data-index="' + index + '" data-choice="c" data-type="choice" id="doc_remove_choice_c_' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_c_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+                                        '           </div>' +
+                                        '       </div>' +
+                                        '   </div>' +
+                                        '</div>' +  //choice -c image upload preivew
+                                        '<div class="form-row img_pre_choice_c" id="img_pre_choice_c_' + index + '" hidden>' +
+                                        '   <div class="col-md-12"> ' +
+                                        '       <img style="max-width:30vw!important;max-height:50vh!important" src ="' + choice_c_url_path + '" data-file-name="' + choice_c_url_name + '" id="preview_choice_c_' + index + '" class="preview_question" />' +
+                                        '   </div>' +
+                                        '</div>' +  //choice -c text
+                                        '<li id="txt_choice_c_' + index + '">' +
+                                        '   <div class="row">' +
+                                        '       <span>c.&nbsp;</span>' +
+                                        '       <div class="col-md-11">' +
+                                        '           <input type="text" placeholder="Enter Choice C" class="form-control txtboader" id="choice_c_' + index + '" value ="' + v.Choice_C + '" />' +
+                                        '       <div>' +
+                                        '   <div>' +
+                                        '</li>' +
+                                        '<div class="form-check">' + //choice - d
+                                        '   <input class="form-check-input option-input checkbox_choice_d_file_' + index + '" data-choice="d" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_d_file_' + index + '">' +
+                                        '   <label class="col-form-label-sm" for="checkbox_choice_d_file_' + index + '">Is Uploaded Choice D</label>' +
+                                        '</div>' +
+                                        '<div class="form-row" id="upload_section_choice_d_' + index + '" hidden>' +
+                                        '   <div class="col-md-11">' +
+                                        '       <div class="input-group form-group"><span>d.&nbsp;</span>' + //upload choice d.
+                                        '           <div class="custom-file" id="lock_upload">' +
+                                        '               <input type="file" data-choice="d" data-type="choice" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_d_' + index + '" accept="image/*">' +
+                                        '               <label class="custom-file-label file_input_label_d_' + index + '" for="file_upload_choice_d_' + index + '">' + choice_d_url_name + '</label>' +
+                                        '           </div>' +
+                                        '           <div class="input-group-append">' +
+                                        '               <button class="btn btn-success" data-index="' + index + '" data-choice="d" data-type="choice" id="doc_upload_choice_d_' + index + '" onclick="file_upload(' + "'#file_upload_choice_d_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+                                        '               <button class="btn btn-danger" data-index="' + index + '" data-choice="d" data-type="choice" id="doc_remove_choice_d_' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_d_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+                                        '           </div>' +
+                                        '       </div>' +
+                                        '   </div>' +
+                                        '</div>' +  //choice -d image upload preivew
+                                        '<div class="form-row img_pre_choice_d" id="img_pre_choice_d_' + index + '" hidden>' +
+                                        '   <div class="col-md-12"> ' +
+                                        '       <img style="max-width:30vw!important;max-height:50vh!important" src ="' + choice_d_url_path + '" data-file-name="' + choice_d_url_name + '" id="preview_choice_d_' + index + '" class="preview_question" />' +
+                                        '   </div>' +
+                                        '</div>' +  //choice -d text
+                                        '<li id="txt_choice_d_' + index + '">' +
+                                        '   <div class="row">' +
+                                        '       <span>d.&nbsp;</span>' +
+                                        '       <div class="col-md-11">' +
+                                        '   <input type="text" placeholder="Enter Choice D" class="form-control txtboader" id="choice_d_' + index + '" value ="' + v.Choice_D + '" />' +
+                                        '</li>' +
+                                        '<li class="mt-2 form-inline" style="list-style-type:none">' +
+                                        '   <label class="col-form-label-sm">Correct Choice : &nbsp;&nbsp;</label>' +
+                                        '<div class="form-check">' +
+                                        '   <label class="col-form-label-sm" for="correct_ch_a' + index + '">A.&nbsp;&nbsp;</label>' +
+                                        '   <input class="form-radio-input option-input correct_ch_a__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_a__' + index + '" value="a">' +
+                                        '</div>' +
+                                        '<div class="form-check">' +
+                                        '   <label class="col-form-label-sm" for="correct_ch_b' + index + '">B.&nbsp;&nbsp;</label>' +
+                                        '   <input class="form-check-input option-input correct_ch_b__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_b__' + index + '" value="b">' +
+                                        '</div>' +
+                                        '<div class="form-check">' +
+                                        '   <label class="col-form-label-sm" for="correct_ch_c' + index + '">C.&nbsp;&nbsp;</label>' +
+                                        '   <input class="form-check-input option-input correct_ch_c__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_c__' + index + '" value="c">' +
+                                        '</div>' +
+                                        '<div class="form-check">' +
+                                        '   <label class="col-form-label-sm" for="correct_ch_d' + index + '">D.&nbsp;&nbsp;</label>' +
+                                        '   <input class="form-check-input option-input correct_ch_d__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_d__' + index + '" value="d">' +
+                                        '</div>' +
+                                        '<div class="ml-auto">' +
+                                        "   <button class='btn btn-sm btn-danger remove-row' id='remove-row_" + index + "'><i class='fa fa-trash'></i>&nbsp;Delete</button>" +
+                                        '</div>' +
+                                        "</li>" +
+                                        '</ul>' +
+                                        '</li>';
+
+                            $('.mcq-list').append(content);
+                            if (v.IsQp === true) {
+                                $('#img_pre_sec_' + i).removeAttr('hidden');
+                                $('#mcq_manual_section_' + i).attr('hidden', true);
+                                $('#choice_a_id_' + i).prop('checked', true)
+                                isUploadSection($('#choice_a_id_' + i), i)
+                            }
+                            else {
+                                $('#img_pre_sec_' + i).attr('hidden', true);
+                                $('#choice_a_id_' + i).prop('checked', false)
+                                $('#mcq_manual_section_' + i).removeAttr('hidden');
+                                isUploadSection($('#choice_a_id_' + i))
+                            }
+                            if (v.Is_Url_Choice_A) {
+                                $('#checkbox_choice_a_file_' + i).prop('checked', true)
+                                isUploadChoice('#checkbox_choice_a_file_' + index)
+                            }
+                            if (v.Is_Url_Choice_B) {
+                                $('#checkbox_choice_b_file_' + i).prop('checked', true)
+                                isUploadChoice('#checkbox_choice_b_file_' + index)
+                            }
+                            if (v.Is_Url_Choice_C) {
+                                $('#checkbox_choice_c_file_' + i).prop('checked', true)
+                                isUploadChoice('#checkbox_choice_c_file_' + index)
+                            }
+                            if (v.Is_Url_Choice_D) {
+                                $('#checkbox_choice_d_file_' + i).prop('checked', true)
+                                isUploadChoice('#checkbox_choice_d_file_' + index)
+                            }
+                            $('#correct_ch_' + v.Correct_Choice + '__' + index).prop('checked', true);//correct choice
+                            $('#remove-row_' + i).click(function () {
+                                var $rowId = $(this).parents().find('.mcq-qs-list').attr('id');
+                                $('#' + mcq_Id).remove();
+                            });
+                            $('.file_input_choice_' + index + ',.file_upload_qus_' + index).change(function () {
+                                var choice = $(this).data('choice');
+                                var type = $(this).data('type');
+                                var index = $(this).data('index');
+                                if (type === 'choice') {
+                                    var fileLabel = $(this).next('.file_input_label_' + choice + '_' + index);
+                                    var files = $(this)[0].files;
+                                    var validExts = new Array(".png", ".jpg", ".jpeg");
+                                    var fileExt = $(this).val().toLowerCase();
+                                    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+                                    if (validExts.indexOf(fileExt) < 0) {
+                                        $(this).val('');
+                                        $('.file_input_label_' + choice + '_' + index).text('Choose Excel');
+                                        toastr.info("Invalid file selected, valid files are of " + validExts.toString() + " types.", { "showDuration": "3000" });
+                                        return false;
+                                    }
+                                    var filename = '';
+                                    if (files.length > 2) {
+                                        fileLabel.html(files.length + '&nbsp;files Selected');
+                                    }
+                                    else if (files.length <= 2) {
+                                        $.each(files, function (i, v) {
+                                            var fsize = v.size;
+                                            var size = Math.round((fsize / 1024));
+                                            let names = v.name.length > 50 ? v.name.toLowerCase().split('.')[0].substr(0, 30) + '...' + v.name.toLowerCase().split('.')[1] : v.name.toLowerCase()
+                                            filename += i == 0 ? names + "<span>&nbsp-&nbsp</span>" + size + "kb" : '&nbsp;||&nbsp;' + names + "<span>-</span>" + size + "kb";
+                                            fileLabel.html(filename);
+                                        });
+                                    }
+                                }
+                                else if (type === 'question') {
+                                    var fileLabel = $(this).next('.file_label_qus_' + index);
+                                    var files = $(this)[0].files;
+                                    var validExts = new Array(".png", ".jpg", ".jpeg");
+                                    var fileExt = $(this).val().toLowerCase();
+                                    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+                                    if (validExts.indexOf(fileExt) < 0) {
+                                        $(this).val('');
+                                        $('.file_label_qus_' + index).text('Choose Excel');
+                                        toastr.info("Invalid file selected, valid files are of " + validExts.toString() + " types.", { "showDuration": "3000" });
+                                        return false;
+                                    }
+                                    var filename = '';
+                                    if (files.length > 2) {
+                                        fileLabel.html(files.length + '&nbsp;files Selected');
+                                    }
+                                    else if (files.length <= 2) {
+                                        $.each(files, function (i, v) {
+                                            var fsize = v.size;
+                                            var size = Math.round((fsize / 1024));
+                                            let names = v.name.length > 50 ? v.name.toLowerCase().split('.')[0].substr(0, 30) + '...' + v.name.toLowerCase().split('.')[1] : v.name.toLowerCase()
+                                            filename += i == 0 ? names + "<span>&nbsp-&nbsp</span>" + size + "kb" : '&nbsp;||&nbsp;' + names + "<span>-</span>" + size + "kb";
+                                            fileLabel.html(filename);
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                    }
+                    else {
+                        questionsList(1, 'new');
+                    }
+                    $('#footer-btn').removeAttr('hidden');
+                }),
+                error: ((err) => {
+                    toastr.error('Something went wrong! Please refresh the page and try again.');
+                    console.warn(err);
+                })
+            });
+        }
+        else {
+            toastr.error('Please choose course and then choose IPR.');
+        }
+    }
+    function deletemcqDiv(divId) {
+        $('#' + divId).remove();
+    }
+    function questionsList(count, status) {
+        if (status === 'new' || status === undefined || status === null) {
+            $('.mcq-list').empty();
+        }
+        for (let i = 0; i < count; i++) {
+            var index = status == 'update' ? $('.mcq-qs-list').length : i;
+            var mcq_Id = "mcqmain" + index;
+            var content = '<input hidden id="studentQpId_' + index + '" value="0" />' +
+            '<li class="mb-2 mcq-qs-list" id=' + mcq_Id + '>' +
+            '<div class="form-check">' + //main question is question or image
+            '  <input class="form-check-input option-input checkbox' + index + '" data-index="' + index + '" onclick="isUploadSection(this)" type="checkbox" name="mcq_checkbox' + index + '" id="choice_a_id_' + index + '" value="a">' +
+            '  <label class="col-form-label-sm" for="choice_a_id_' + index + '">Is Uploaded Question</label>' +
+            '</div>' +
+            '<div class="form-row">' +
+            '  <div class="col-md-12">' + //main question image upload section
+            '   <div class="input-group form-group upload_section" id="upload_section_' + index + '" hidden>' +
+            '     <div class="custom-file" id="lock_upload">' +
+            '       <input type="file" data-type="question" data-index="' + index + '" class="custom-file-input file_upload_qus_' + index + '" id="file_input_qus_' + index + '" accept="image/*">' +
+            '       <label class="custom-file-label file_label_qus_' + index + '" for="file_input_qus_' + index + '">Choose file</label>' +
+            '     </div>' +
+            '     <div class="input-group-append">' +
+            '       <button class="btn btn-success" data-type="question"  data-index="' + index + '" id="doc_upload_qus_' + index + '" onclick="file_upload(' + "'#file_input_qus_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+            '       <button class="btn btn-danger" data-type="question"  data-index="' + index + '" id="doc_remove_qus_' + index + '" onclick="delete_single_file(' + "'#file_input_qus_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+            '     </div>' +
+            '   </div>' +
+            '  </div>' +
+            '</div>' + // main question image preview
+            '<div class="form-row img_pre_qus" id="img_pre_qus_' + index + '" hidden>' +
+            '   <div class="col-md-12"> ' +
+            '       <img style="max-width:30vw!important;max-height:50vh!important" src ="" data-file-name="" id="preview_question_' + index + '" class="preview_question" />' +
+            '   </div>' +
+            '</div>' +
+            '<div class="mcq_manual_section" id="mcq_manual_section_' + index + '">' +
+            '   <textarea type="text" placeholder="Enter Question" oninput="checkTxt(this)" class="form-control txtboader mcq" id="mcq' + index + '"></textarea>' +
+            '</div>' +
+            '<ul class="mt-1" style="list-style-type:none!important">' +
+            '<div class="form-check">' + //choice - a
+            '  <input class="form-check-input option-input checkbox_choice_a_file_' + index + '" data-choice="a" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_a_file_' + index + '" value="a">' +
+            '  <label class="col-form-label-sm" for="checkbox_choice_a_file_' + index + '">Is Uploaded Choice A</label>' +
+            '</div>' +
+            '<div class="form-row" id="upload_section_choice_a_' + index + '" hidden>' +
+            '  <div class="col-md-11">' +
+            '   <div class="input-group form-group"><span>a.&nbsp;</span>' + //upload choice a.
+            '     <div class="custom-file" id="lock_upload">' +
+            '      <input type="file" data-choice="a" data-type="choice" data-index="' + index + '" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_a_' + index + '" accept="image/*">' +
+            '      <label class="custom-file-label file_input_label_a_' + index + '" for="file_upload_choice_a_' + index + '">Choose file</label>' +
+            '     </div>' +
+            '     <div class="input-group-append">' +
+            '       <button class="btn btn-success" data-index="' + index + '" data-choice="a" data-type="choice" id="doc_upload_choice_a_"' + index + '" onclick="file_upload(' + "'#file_upload_choice_a_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+            '       <button class="btn btn-danger" data-index="' + index + '" data-choice="a" data-type="choice" id="doc_remove_choice_a_"' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_a_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+            '     </div>' +
+            '   </div>' +
+            '  </div>' +
+            '</div>' + //choice -a image upload preivew
+            '<div class="form-row img_pre_choice_a" id="img_pre_choice_a_' + index + '" hidden>' +
+            '   <div class="col-md-12"> ' +
+            '       <img style="max-width:30vw!important;max-height:50vh!important" src ="" data-file-name="" id="preview_choice_a_' + index + '" class="preview_question" />' +
+            '   </div>' +
+            '</div>' + //choice -a text
+            '<li id="txt_choice_a_' + index + '">' +
+            '   <div class="row">' +
+            '       <span>a.&nbsp;</span>' +
+            '       <div class="col-md-11">' +
+            '           <input type="text" placeholder="Enter Choice A" class="form-control txtboader" id="choice_a_' + index + '" />' +
+            '       <div>' +
+            '   <div>' +
+            '</li>' +
+            '<div class="form-check">' + //choice - b
+            '   <input class="form-check-input option-input checkbox_choice_b_file_' + index + '" data-choice="b" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_b_file_' + index + '" value="a">' +
+            '   <label class="col-form-label-sm" for="checkbox_choice_b_file_' + index + '">Is Uploaded Choice B</label>' +
+            '</div>' +
+            '<div class="form-row" id="upload_section_choice_b_' + index + '" hidden>' +
+            '   <div class="col-md-11">' +
+            '       <div class="input-group form-group"><span>b.&nbsp;</span>' +//upload choice b.
+            '           <div class="custom-file" id="lock_upload">' +
+            '               <input type="file" data-choice="b" data-type="choice" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_b_' + index + '" accept="image/*">' +
+            '               <label class="custom-file-label file_input_label_b_' + index + '" for="file_upload_choice_b_' + index + '">Choose file</label>' +
+            '           </div>' +
+            '           <div class="input-group-append">' +
+            '               <button class="btn btn-success" data-index="' + index + '" data-choice="b" data-type="choice" id="doc_upload_choice_b_' + index + '" onclick="file_upload(' + "'#file_upload_choice_b_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+            '               <button class="btn btn-danger" data-index="' + index + '" data-choice="b" data-type="choice" id="doc_remove_choice_b_' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_b_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+            '           </div>' +
+            '       </div>' +
+            '   </div>' +
+            '</div>' +  //choice -b image upload preivew
+            '<div class="form-row img_pre_choice_b" id="img_pre_choice_b_' + index + '" hidden>' +
+            '   <div class="col-md-12"> ' +
+            '       <img style="max-width:30vw!important;max-height:50vh!important" src ="" data-file-name="" id="preview_choice_b_' + index + '" class="preview_question" />' +
+            '   </div>' +
+            '</div>' +  //choice -b text
+            '<li id="txt_choice_b_' + index + '">' +
+            '   <div class="row">' +
+            '       <span>b.&nbsp;</span>' +
+            '       <div class="col-md-11">' +
+            '           <input type="text" placeholder="Enter Choice B" class="form-control txtboader" id="choice_b_' + index + '"/>' +
+            '       <div>' +
+            '   <div>' +
+            '</li>' +
+            '<div class="form-check">' + //choice - c
+            '   <input class="form-check-input option-input checkbox_choice_c_file_' + index + '"  data-choice="c" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_c_file_' + index + '">' +
+            '   <label class="col-form-label-sm" for="checkbox_choice_c_file_' + index + '">Is Uploaded Choice C</label>' +
+            '</div>' +
+            '<div class="form-row" id="upload_section_choice_c_' + index + '" hidden>' +
+            '   <div class="col-md-11">' +
+            '       <div class="input-group form-group"><span>c.&nbsp;</span>' + //upload choice c.
+            '           <div class="custom-file" id="lock_upload">' +
+            '               <input type="file" data-choice="c" data-type="choice" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_c_' + index + '" accept="image/*">' +
+            '               <label class="custom-file-label file_input_label_c_' + index + '" for="file_upload_choice_c_' + index + '">Choose file</label>' +
+            '           </div>' +
+            '           <div class="input-group-append">' +
+            '               <button class="btn btn-success" data-index="' + index + '" data-choice="c" data-type="choice" id="doc_upload_choice_c_' + index + '" onclick="file_upload(' + "'#file_upload_choice_c_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+            '               <button class="btn btn-danger" data-index="' + index + '" data-choice="c" data-type="choice" id="doc_remove_choice_c_' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_c_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+            '           </div>' +
+            '       </div>' +
+            '   </div>' +
+            '</div>' +  //choice -c image upload preivew
+            '<div class="form-row img_pre_choice_c" id="img_pre_choice_c_' + index + '" hidden>' +
+            '   <div class="col-md-12"> ' +
+            '       <img style="max-width:30vw!important;max-height:50vh!important" src ="" data-file-name="" id="preview_choice_c_' + index + '" class="preview_question" />' +
+            '   </div>' +
+            '</div>' +  //choice -c text
+            '<li id="txt_choice_c_' + index + '">' +
+            '   <div class="row">' +
+            '       <span>c.&nbsp;</span>' +
+            '       <div class="col-md-11">' +
+            '           <input type="text" placeholder="Enter Choice C" class="form-control txtboader" id="choice_c_' + index + '" />' +
+            '       <div>' +
+            '   <div>' +
+            '</li>' +
+            '<div class="form-check">' + //choice - d
+            '   <input class="form-check-input option-input checkbox_choice_d_file_' + index + '" data-choice="d" data-index="' + index + '" onclick="isUploadChoice(this)" type="checkbox" id="checkbox_choice_d_file_' + index + '">' +
+            '   <label class="col-form-label-sm" for="checkbox_choice_d_file_' + index + '">Is Uploaded Choice D</label>' +
+            '</div>' +
+            '<div class="form-row" id="upload_section_choice_d_' + index + '" hidden>' +
+            '   <div class="col-md-11">' +
+            '       <div class="input-group form-group"><span>d.&nbsp;</span>' + //upload choice d.
+            '           <div class="custom-file" id="lock_upload">' +
+            '               <input type="file" data-choice="d" data-type="choice" data-index="' + index + '" class="custom-file-input file_input_choice_' + index + ' file_upload" id="file_upload_choice_d_' + index + '" accept="image/*">' +
+            '               <label class="custom-file-label file_input_label_d_' + index + '" for="file_upload_choice_d_' + index + '">Choose file</label>' +
+            '           </div>' +
+            '           <div class="input-group-append">' +
+            '               <button class="btn btn-success" data-index="' + index + '" data-choice="d" data-type="choice" id="doc_upload_choice_d_' + index + '" onclick="file_upload(' + "'#file_upload_choice_d_" + index + "',this" + ')" type="button"><i class="fa fa-upload"></i>&nbsp;Upload</button>' +
+            '               <button class="btn btn-danger" data-index="' + index + '" data-choice="d" data-type="choice" id="doc_remove_choice_d_' + index + '" onclick="delete_single_file(' + "'#file_upload_choice_d_" + index + "',this" + ')" type="button"><i class="fa fa-trash"></i>&nbsp;Remove</button>' +
+            '           </div>' +
+            '       </div>' +
+            '   </div>' +
+            '</div>' +  //choice -d image upload preivew
+            '<div class="form-row img_pre_choice_d" id="img_pre_choice_d_' + index + '" hidden>' +
+            '   <div class="col-md-12"> ' +
+            '       <img style="max-width:30vw!important;max-height:50vh!important" src ="" data-file-name="" id="preview_choice_d_' + index + '" class="preview_question" />' +
+            '   </div>' +
+            '</div>' +  //choice -d text
+            '<li id="txt_choice_d_' + index + '">' +
+            '   <div class="row">' +
+            '       <span>d.&nbsp;</span>' +
+            '       <div class="col-md-11">' +
+            '   <input type="text" placeholder="Enter Choice D" class="form-control txtboader" id="choice_d_' + index + '" />' +
+            '</li>' +
+            '<li class="mt-2 form-inline" style="list-style-type:none">' +
+            '   <label class="col-form-label-sm">Correct Choice : &nbsp;&nbsp;</label>' +
+            '<div class="form-check">' +
+            '   <label class="col-form-label-sm" for="correct_ch_a' + index + '">A.&nbsp;&nbsp;</label>' +
+            '   <input class="form-radio-input option-input correct_ch_a__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_a__' + index + '" value="a">' +
+            '</div>' +
+            '<div class="form-check">' +
+            '   <label class="col-form-label-sm" for="correct_ch_b' + index + '">B.&nbsp;&nbsp;</label>' +
+            '   <input class="form-check-input option-input correct_ch_b__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_b__' + index + '" value="b">' +
+            '</div>' +
+            '<div class="form-check">' +
+            '   <label class="col-form-label-sm" for="correct_ch_c' + index + '">C.&nbsp;&nbsp;</label>' +
+            '   <input class="form-check-input option-input correct_ch_c__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_c__' + index + '" value="c">' +
+            '</div>' +
+            '<div class="form-check">' +
+            '   <label class="col-form-label-sm" for="correct_ch_d' + index + '">D.&nbsp;&nbsp;</label>' +
+            '   <input class="form-check-input option-input correct_ch_d__' + index + '" type="radio" style="border-radius:23px" name="correct_ch__' + index + '" id="correct_ch_d__' + index + '" value="d">' +
+            '</div>' +
+            '<div class="ml-auto">' +
+            "   <button class='btn btn-sm btn-danger remove-row' id='remove-row_" + index + "'><i class='fa fa-trash'></i>&nbsp;Delete</button>" +
+            '</div>' +
+            "</li>" +
+            '</ul>' +
+            '</li>';
+            $('.mcq-list').append(content);
+            $('#remove-row_' + index).click(function () {
+                var $rowId = $(this).parents().find('.mcq-qs-list').attr('id');
+                $('#' + mcq_Id).remove();
+            });
+            //file browse change events labels
+            $('.file_input_choice_' + index + ',.file_upload_qus_' + index).change(function () {
+                //debugger
+                var choice = $(this).data('choice');
+                var type = $(this).data('type');
+                var index = $(this).data('index');
+                if (type === 'choice') {
+                    var fileLabel = $(this).next('.file_input_label_' + choice + '_' + index);
+                    var files = $(this)[0].files;
+                    var validExts = new Array(".png", ".jpg", ".jpeg");
+                    var fileExt = $(this).val().toLowerCase();
+                    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+                    if (validExts.indexOf(fileExt) < 0) {
+                        $(this).val('');
+                        $('.file_input_label_' + choice + '_' + index).text('Choose Excel');
+                        toastr.info("Invalid file selected, valid files are of " + validExts.toString() + " types.", { "showDuration": "3000" });
+                        return false;
+                    }
+                    var filename = '';
+                    if (files.length > 2) {
+                        fileLabel.html(files.length + '&nbsp;files Selected');
+                    }
+                    else if (files.length <= 2) {
+                        $.each(files, function (i, v) {
+                            var fsize = v.size;
+                            var size = Math.round((fsize / 1024));
+                            let names = v.name.length > 50 ? v.name.toLowerCase().split('.')[0].substr(0, 30) + '...' + v.name.toLowerCase().split('.')[1] : v.name.toLowerCase()
+                            filename += i == 0 ? names + "<span>&nbsp-&nbsp</span>" + size + "kb" : '&nbsp;||&nbsp;' + names + "<span>-</span>" + size + "kb";
+                            fileLabel.html(filename);
+                        });
+                    }
+                }
+                else if (type === 'question') {
+                    var fileLabel = $(this).next('.file_label_qus_' + index);
+                    var files = $(this)[0].files;
+                    var validExts = new Array(".png", ".jpg", ".jpeg");
+                    var fileExt = $(this).val().toLowerCase();
+                    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+                    if (validExts.indexOf(fileExt) < 0) {
+                        $(this).val('');
+                        $('.file_label_qus_' + index).text('Choose Excel');
+                        toastr.info("Invalid file selected, valid files are of " + validExts.toString() + " types.", { "showDuration": "3000" });
+                        return false;
+                    }
+                    var filename = '';
+                    if (files.length > 2) {
+                        fileLabel.html(files.length + '&nbsp;files Selected');
+                    }
+                    else if (files.length <= 2) {
+                        $.each(files, function (i, v) {
+                            var fsize = v.size;
+                            var size = Math.round((fsize / 1024));
+                            let names = v.name.length > 50 ? v.name.toLowerCase().split('.')[0].substr(0, 30) + '...' + v.name.toLowerCase().split('.')[1] : v.name.toLowerCase()
+                            filename += i == 0 ? names + "<span>&nbsp-&nbsp</span>" + size + "kb" : '&nbsp;||&nbsp;' + names + "<span>-</span>" + size + "kb";
+                            fileLabel.html(filename);
+                        });
+                    }
+                }
+            });
+        }
+    }
+    //click is-upload question...
+    var isUploadSection = function (e, i) {
+        var isreq = required_validation();
+        let index = $(e).data('index');
+        let is_checked = $(e).is(':checked');
+
+        if (is_checked) {
+            $('#upload_section_' + index).removeAttr('hidden');
+            $('#img_pre_qus_' + index).removeAttr('hidden');
+            $('#mcq_manual_section_' + index).attr('hidden', true);
+        }
+        else {
+            $('#upload_section_' + index).attr('hidden', true);
+            $('#img_pre_qus_' + index).attr('hidden', true);
+            $('#mcq_manual_section_' + index).removeAttr('hidden');
+        }
+    }
+    //click is-upload choice...
+    var isUploadChoice = function (e) {
+        //debugger
+        let choice = $(e).data('choice');
+        let index = $(e).data('index');
+        let is_checked = $(e).is(':checked');
+
+        if (is_checked) {
+            $('#choice_' + choice + '_' + index).val('');
+            $('#upload_section_choice_' + choice + '_' + index).removeAttr('hidden');
+            $('#img_pre_choice_' + choice + '_' + index).removeAttr('hidden');
+            $('#txt_choice_' + choice + '_' + index).attr('hidden', true);
+        }
+        else {
+            $('#choice_' + choice + '_' + index).val('');
+            $('#upload_section_choice_' + choice + '_' + index).attr('hidden', true);
+            $('#txt_choice_' + choice + '_' + index).removeAttr('hidden');
+            $('#img_pre_choice_' + choice + '_' + index).attr('hidden', true);
+        }
+        //console.log(choice + '_' + index + '_' + is_checked)
+    }
+    var checkTxt = function (k) {
+        var add_prms = ($('#addQuestions').data('check') != '' && $('#addQuestions').data('check') != null) ? $('#addQuestions').data('check') : $('#updateQuestions').data('check');
+        if (add_prms === '') { toastr.info("Please Add All the Question and Click Add Button.", { "showDuration": "3000" }); $(k).val(''); return false; };
+    }
+    var file_upload = function (input, e) {
+        //debugger
+        var crt_element = $(e).data('type');
+        var choice = $(e).data('choice');
+        var index = $(e).data('index');
+
+        if (crt_element === 'question') {
+            var files = $(input)[0].files;
+            if (files.length > 0) {
+                var formData = new FormData();
+                for (var img = 0; img < files.length; img++) {
+                    formData.append("file", files[img]);
+                }
+                $.ajax({
+                    url: '@Url.Action("UploadStudentMCQ", "Intro", null)',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: ((data) => {
+                        if (data != null) {
+                            $('#img_pre_qus_' + index + ',#preview_question_' + index).attr('src', data.Result).data('file-name', data.Doc_Name);
+                            $('#img_pre_qus_' + index).removeAttr('hidden');
+                            $('#doc_upload_qus_' + choice + '_' + index).attr('disabled', true);
+                        }
+                        else {
+                            $('#img_pre_qus_' + index + ',#preview_question_' + index).attr('src', '').data('file-name', '');
+                        }
+                    }),
+                    error: function (err) {
+                        console.warn(err);
+                    }
+                });
+            }
+            else {
+                toastr.info("Please Choose the file and upload it!!!")
+            }
+        }
+        else {
+            var files = $(input)[0].files;
+            if (files.length > 0) {
+                var formData = new FormData();
+                for (var img = 0; img < files.length; img++) {
+                    formData.append("file", files[img]);
+                }
+                $.ajax({
+                    url: '@Url.Action("UploadStudentMCQ", "Intro", null)',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: ((data) => {
+                        if (data != null) {
+                            $('#img_pre_choice_' + choice + '_' + index + ',#preview_choice_' + choice + '_' + index).attr('src', data.Result).data('file-name', data.Doc_Name);
+                            $('#img_pre_choice_' + choice + '_' + index).removeAttr('hidden');
+                            $('#doc_upload_choice_' + choice + '_' + index).attr('disabled', true);
+                        }
+                        else {
+                            $('#img_pre_choice_' + choice + '_' + index + ',#preview_choice_' + choice + '_' + index).attr('src', '').data('file-name', '');
+                        }
+                    }),
+                    error: function (err) {
+                        console.warn(err);
+                    }
+                });
+            }
+            else {
+                toastr.info("Please Choose the file and upload it!!!")
+            }
+        }
+    }
+    var delete_single_file = function (e) {
+        //debugger
+        let index = $(e).data('index');
+        let type = $(e).data('type');
+        let choice = $(e).data('choice');
+        let is_checked = $(e).is(':checked');
+        var doc_name = $('#preview_choice_' + choice + '_' + index).data('file-name');
+        var arr = new Array();
+        arr.push(doc_name);
+        //return false;
+        $.ajax({
+            url: '@Url.Action("DeleteStudentMCQ", "Intro", null)',
+            type: "post",
+            data: { fileName: arr },
+            dataType: 'json',
+            success: ((data) => {
+                if (data !== null) {
+                    if (type == 'question') {
+                        $('#img_pre_qus_' + index + ',#preview_question_' + index).attr('src', '').data('file-name', '');
+                        $('#img_pre_qus_' + index).attr('hidden', true);
+                        $('#doc_upload_qus_' + choice + '_' + index).attr('disabled', true);
+                        $('#file_input_qus_' + index).attr('disabled', false).val(null);
+                        $('.file_label_qus_' + index).text('Choose file');
+                    }
+                    else if (type == 'choice') {
+                        $('#img_pre_choice_' + choice + '_' + index + ',#preview_choice_' + choice + '_' + index).attr('src', '').data('file-name', '');
+                        $('#img_pre_choice_' + choice + '_' + index).attr('hidden', true);
+                        $('#file_upload_choice_' + choice + '_' + index).attr('disabled', false).val(null);
+                        $('.file_input_label_' + choice + '_' + index).text('Choose file');
+                    }
+                }
+            }),
+            error: function (err) {
+                console.warn(err);
+            }
+        });
+    }
+    $('#clearQuestions').click(function () {
+        $('#addQuestions').data('check', '');
+        delete_multiple_file();
+    });
+
+    // #region Delete_File_Multiple
+    function delete_multiple_file(input) {
+        if (input === '') {
+            $.confirm({
+                title: 'Are you sure?',
+                content: "If you clear this question, Your uploaded files and question are deleted permanently and not able to restore.!!!",
+                type: 'yellow',
+                typeAnimated: true,
+                animation: 'news',
+                theme: 'supervan',
+                closeAnimation: 'news',
+                buttons: {
+                    tryAgain: {
+                        text: 'Delete',
+                        btnClass: 'btn-red',
+                        action: function () {
+                            var arr = new Array();
+                            $('.mcq-list .mcq-qs-list').map((i, v) => {
+                                var is_check_upload = $(v).find('.checkbox' + i).is(':checked');
+                                if (is_check_upload) {
+                                    var doc_name = $(v).find('.img_pre_sec .preview_question').data('file-name');
+                                    arr.push(doc_name);
+                                }
+                            });
+                            if (arr.length > 0) {
+                                $.ajax({
+                                    url: '@Url.Action("DeleteStudentMCQ", "Intro", null)',
+                                    type: "post",
+                                    data: { fileName: arr },
+                                    dataType: 'json',
+                                    success: ((data) => {
+                                        if (data != null) {
+                                            $(input).parent().parent().parent().find('.img_pre_sec .preview_question').attr('src', '').data('file-name', '');
+                                            $(input).parent().parent().parent().find('.img_pre_sec').attr('hidden', true);
+                                            $(input).parent().parent().find('.file_upload').attr('disabled', false).val(null);
+                                            $(input).parent().parent().find('.custom-file-label').text('Choose file');
+                                        }
+                                        else {
+                                            $(input).parents().find('.img_pre_sec .preview_question').attr('src', '');
+                                            $(input).parent().parent().find('.file_upload').attr('disabled', false).val(null);
+                                            $(input).parent().parent().find('.custom-file-label').text('Choose file');
+                                        }
+                                    }),
+                                    error: function (err) {
+                                        console.warn(err);
+                                    },
+                                    complete: (() => {
+                                        questionsList(1, 'new');
+                                        $('#questionCount,#addQuestions,#totalMark,#perQusMark').removeAttr('disabled').val('');
+                                        $('#chapterList,#courseList').val(0).select2();
+                                    })
+                                });
+                            }
+                            else {
+                                questionsList(1, 'new');
+                                $('#questionCount,#addQuestions,#totalMark,#perQusMark').removeAttr('disabled').val('');
+                                $('#chapterList,#courseList').val(0).select2();
+                            }
+                        }
+                    },
+                    close: function () {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Uploaded files and Questions are Safe.'
+                        })
+                    }
+                }
+            });
+        }
+        else {
+            questionsList(1);
+            $('#questionCount,#addQuestions,#totalMark,#perQusMark').removeAttr('disabled').val('');
+            $('#chapterList,#courseList').val(0).select2();
+        }
+    }
+    $('#saveQuestions').click(function () {
+        //debugger
+        var token = $('input[name="__RequestVerificationToken"]').val()
+        let question_arr = new Array();
+        var valid = false;
+        var course = $('#courseList').val();
+        var chapter = $('#chapterList').val();
+        var qsCount = $('#questionCount').val();
+        $('.mcq-list .mcq-qs-list').each((i, v) => {
+            let data = {};
+            data.QuestionNo = i + 1;
+            data.StudentQpId = $('#studentQpId_' + i).val();
+            data.CourseId = $('#courseList').val();
+            data.ChapterId = $('#chapterList').val();
+
+            data.IsQp = $(v).find('[name="mcq_checkbox' + i + '"]').is(':checked');
+            data.Qp_Doc_Name = $(v).find('#preview_question_' + i).data('file-name');
+            data.Question = $(v).find('#mcq' + i + '').val();
+
+            data.Is_Url_Choice_A = $(v).find('#checkbox_choice_a_file_' + i).is(':checked');
+            data.Choice_A_Url = $(v).find('#preview_choice_a_' + i).data('file-name');
+            data.Choice_A = $(v).find('#choice_a_' + i).val();
+
+            data.Is_Url_Choice_B = $(v).find('#checkbox_choice_b_file_' + i).is(':checked');
+            data.Choice_B_Url = $(v).find('#preview_choice_b_' + i).data('file-name');
+            data.Choice_B = $(v).find('#choice_b_' + i).val();
+
+            data.Is_Url_Choice_C = $(v).find('#checkbox_choice_c_file_' + i).is(':checked');
+            data.Choice_C_Url = $(v).find('#preview_choice_c_' + i).data('file-name');
+            data.Choice_C = $(v).find('#choice_c_' + i).val();
+
+            data.Is_Url_Choice_D = $(v).find('#checkbox_choice_d_file_' + i).is(':checked');
+            data.Choice_D_Url = $(v).find('#preview_choice_d_' + i).data('file-name');
+            data.Choice_D = $(v).find('#choice_d_' + i).val();
+
+            data.Correct_Choice = $(v).find('input[name="correct_ch__' + i + '"]:checked').val();
+            data.PerQuestionMark = $('#perQusMark').val().trim();
+            if (data.PerQuestionMark === null || data.PerQuestionMark === '' || data.PerQuestionMark === undefined) {
+                valid = true;
+                return true;
+            }
+            data.TotalMarks = $('#totalMark').val();
+            data.IsActive = true;
+            question_arr.push(data);
+        });
+        if (valid) {
+            toastr.error('Enter Question Mark');
+            return false;
+        }
+        if (course === '' || chapter === '' || qsCount === '' || question_arr.length === 0) {
+            toastr.error('Fill all the required fields.');
+            return false;
+        }
+        //var data = $.sstm_encrypt(JSON.stringify(question_arr))
+        var data = JSON.stringify(question_arr);
+        $.ajax({
+            url: "@Url.Action("CreateStudentMCQ", "Intro",null)",
+            method: "POST",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            data: { query: data, __RequestVerificationToken: token },
+            success: (() => {
+                setTimeout(() => { $(".loadingDiv").hide() }, 2000);
+                toastr.success('Question Paper Saved Successfully.!!!');
+                setTimeout(() => { delete_multiple_file('refresh') }, 3000);
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+    });
+</script>

@@ -1,0 +1,59 @@
+﻿@model SSTM.Core.Course_Reminder.Course_Reminder_Latter_Undertaking
+@{
+    ViewBag.Title = "Latter Of Undertaking";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Latter Of Undertaking</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-10">
+                    <label>Latter Content</label>
+                    <textarea  id="content">@Model.latter_content</textarea>
+                    <button type="submit" id="btnSaveCourse" class="btn btn-success mt-2 pull-right" style="display:none">Save</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+    <input type="hidden" value="@Model.Id" id="lid" />
+</section>
+@Scripts.Render("~/bundles/jqueryval")
+<script>
+
+    var savelatterUrl = '@Url.Action("savelatter", "CourseReminder", new { area = "" })';
+    $("#btnSaveCourse").on("click", function () {
+       
+        if ($("#content").val() == "") {
+            toastr.error("Latter content can't blank");
+            $("#content").focus();
+            return;
+        }
+      
+        Ajaxhelper.post(savelatterUrl, { "data": $('#content').summernote('code'), "id": $("#lid").val() }, onSuccessSavelatterlatter, null, null);
+
+        function onSuccessSavelatterlatter(data) {
+            if (data.result)
+                toastr.success(data.message);
+            else
+                toastr.error(data.message);
+        }
+    });
+    $(document).ready(function () {
+        $('#content').summernote({ height: 500});
+        $('#content').summernote({ focus: true });
+    })
+</script>
+  <!-- include summernote css/js -->
+@*<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>*@
+<link href="~/Scripts/summernote/summernote.min.css" rel="stylesheet" />
+<script src="~/Scripts/summernote/summernote.min.js"></script>

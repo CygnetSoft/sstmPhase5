@@ -1,0 +1,224 @@
+﻿@model SSTM.Core.Course_Reminder.CourseReminder
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .signature-component {
+        text-align: left;
+        display: inline-block;
+        max-width: 100%;
+    }
+    canvas {
+        display: block;
+        position: relative;
+        border: 1px solid;
+    }
+</style>
+
+@using (Html.BeginForm("SaveCourse", "Course", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmnewAddOrUpdateCourse", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" id="newcourseid" value="@Model.Id" />
+    <input type="hidden" id="developerid" value="@Model.DeveloperId" />
+    <div class="modal-header">
+        <h4 class="modal-title">Letter of undertaking</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Latter Undertaking</label>
+                        <textarea name="content" id="editor">@ViewBag.latter</textarea>
+                    </div>
+                </div>
+            </div>
+            <div style="border: 1px solid #ccc;margin:4px" class="col-12">
+                <div class="col-md-12 mt-3">
+                    <div class="row">
+                        <div class="col-6">
+
+                            <canvas id="colors_sketch" width="370" height="200" style="border: 1px solid #ccc"></canvas>
+                            <input type="hidden" name="base64String" />
+                            <div class="tools">
+                                <div style="text-align:center">Sign above after download attach</div>
+                                <a href="#colors_sketch" class="btn btn-sm btn-warning" data-tool="marker">Marker</a>
+                                <a href="#colors_sketch" class="btn btn-sm btn-danger" data-tool="eraser">
+                                    Eraser
+                                </a>
+                                <button type="button" id="save" class="btn btn-sm btn-info" data-action="save-png">Save as PNG</button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="col-6"><b>Attach Sign:</b> &nbsp;</div>
+                            <div class="col-9">
+                                @*@if (!string.IsNullOrEmpty(Model.latter_signature) || currentSession.UserRole == "Developer")
+                                {*@
+                                    @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director")
+                                    {
+                                        <input type="checkbox" id="isdeveloper"  value="Is Developer"/> 
+                                        <label for="isdeveloper">Is developer</label>
+                                    }
+                                    <input type="file" id="refdoc" class="form-control-file" />
+                                    <br />
+                                    @if (!string.IsNullOrEmpty(Model.latter_signature))
+                                    {
+                                        <label><a href="@Model.latter_signature" target="_blank">Developer Sign</a></label><br />
+                                    }
+                                    else
+                                    {
+                                        <label class="label label-info">Pending Developer Sign</label><br />
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.director_latter_signature))
+                                    {
+                                        <label><a href="@Model.director_latter_signature" target="_blank">Director Sign</a></label>
+                                    }
+                                    else
+                                    {
+                                        <label class="label label-info">Pending Director Sign</label>
+                                    }
+                                @*}
+                                else
+                                {
+                                    <label style="color:red">Note: Developer not attach signature first developer attach signature after approve director or admin latter.</label>
+                                }*@
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        @if (string.IsNullOrEmpty(Model.latter_signature))
+        {
+            if (currentSession.UserRole == "Developer")
+            {
+                <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+            }
+        }
+        @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director")
+        {
+            <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+        }
+    </div>
+    if (string.IsNullOrEmpty(Model.latter_signature))
+    {
+        if (currentSession.UserRole == "Developer")
+        {
+            <b> Note: if you want to attach sign after you dont change if you want to change contact to administrator</b>
+        }
+    }
+    if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director")
+    {
+        <b>Note : If any developer remove sign, so don't attach image/pdf press save button after save data without sign and remove sign.</b>
+    }
+}
+
+
+@Scripts.Render("~/bundles/jqueryval")
+
+
+<script>
+
+    var CourseReminder_LatterUrl = '@Url.Action("CourseReminder_Latter", "CourseReminder", new { area = "" })';
+
+
+    $(document).ready(function () {
+        $('#editor').summernote({ height: 400, toolbar: false });
+        $('#editor').next().find(".note-editable").attr("contenteditable", false);
+    })
+
+    $.validator.unobtrusive.parse("#frmnewAddOrUpdateCourse");
+    $('#frmnewAddOrUpdateCourse').on('submit', function (e) {
+        e.preventDefault();
+
+        if ($('#frmnewAddOrUpdateCourse').valid()) {
+            
+            if (window.FormData !== undefined) {
+
+                //var fileUpload = $('input[type="file"]').get(0);
+               
+                //var files = fileUpload.files;
+                ////alert(files);
+                //// Create FormData object
+                var fileData = new FormData();
+
+                //// Looping over all files and add it to FormData object
+                //for (var i = 0; i < files.length; i++) {
+                //    fileData.append(files[i].name, files[i]);
+                //    alert(files[i].name);
+                //}
+
+                fileData.append('id', $("#newcourseid").val());
+                fileData.append('isdeveloper', $("#isdeveloper")[0].checked);
+                fileData.append('developerid', $("#developerid").val());
+                fileData.append('file', $('#refdoc')[0].files[0]);
+
+                $.ajax({
+                    url: CourseReminder_LatterUrl,
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data  ,
+                    data: fileData,
+                    success: function (data) {
+                        try {
+                            if (data.result) {
+                                GetNewCoursesList();
+                                $('#LatterCourseModal').modal('hide');
+                                toastr.success(data.message);
+                            }
+                            else
+                                toastr.error(data.message);
+                        } catch (e) {
+                            alert(e.message);
+                        }
+                    },
+
+                    error: function (err) {
+                        toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                    }
+                }).done(function () {
+
+                });
+            }
+            else
+                toastr.error("FormData is not supported.");
+        }
+    });
+
+</script>
+
+
+<script type="text/javascript">
+    var saveButton = document.getElementById('save');
+    saveButton.addEventListener('click', function (event) {
+        var data = $('#colors_sketch')[0].toDataURL('image/png');
+        // window.location.href = data;
+        var a = document.createElement("a"); //Create <a>
+        a.href = data //Image Base64 Goes here
+        a.download = "Singnature.png"; //File name Here
+        a.click(); //Downloaded file
+        //window.save(data);
+    });
+
+    $(function () {
+        $('#colors_sketch').sketch();
+        $(".tools a").eq(0).attr("style", "color:#000");
+        $(".tools a").click(function () {
+            $(".tools a").removeAttr("style");
+            $(this).attr("style", "color:#000");
+        });
+    });
+</script>
+
+

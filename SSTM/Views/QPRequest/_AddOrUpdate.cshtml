@@ -1,0 +1,85 @@
+﻿@model SSTM.Models.QPRequest.QPRequestModel
+
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 53% !important;
+    }
+</style>
+
+@using (Html.BeginForm("SaveQPRequest", "QPRequest", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmAddOrUpdateQp", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="modal-header">
+        @if (Model.Id > 0)
+        {
+            <h4 class="modal-title">Update Course</h4>
+        }
+        else
+        {
+            <h4 class="modal-title">New QP Request</h4>
+        }
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 form-group">
+                <label>Course Name</label>
+                @Html.DropDownList("CourseName", new SelectList(TempData["CourseName"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.CourseName, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Course Code</label>
+                @Html.DropDownList("CourseCode", new SelectList(TempData["CourseCode"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.CourseCode, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Footer :</label>
+                @Html.TextBoxFor(m => m.EnterFooter, new { @class = "form-control", maxlength = "100" })
+                @Html.ValidationMessageFor(m => m.EnterFooter, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Choose Outside User list</label>
+                @Html.DropDownList("DeveloperName", new SelectList(TempData["Developer"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.DeveloperName, null, new { @class = "alert-danger" })
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+    </div>
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+
+<script>
+    var SaveQPRequestUrl = '@Url.Action("SaveQPRequest", "QPRequest")';
+    
+    $.validator.unobtrusive.parse("#frmAddOrUpdateQp");
+    $('#frmAddOrUpdateQp').on('submit', function (e) {
+
+        if ($('#frmAddOrUpdateCourse').valid()) {
+            Ajaxhelper.post(SaveQPRequestUrl, $('#frmAddOrUpdateCourse').serialize(), onSuccessSaveQPRequestUrl, null, null);
+
+            function onSuccessSaveQPRequestUrl(data) {
+                if (data.result) {
+                    GetQPRequestList();
+                    $('#AddOrEditQPRequestModal').modal('hide');
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+    });
+
+</script>

@@ -1,0 +1,790 @@
+﻿@model  SSTM.Models.IntroPage.IntroStudentCount
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+<style>
+    .zoom {
+        padding: 50px;
+        background-color: green;
+        transition: transform .2s; /* Animation */
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+    }
+
+        .zoom.hover {
+            transform: scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+        }
+
+    mark {
+        color: #000;
+        background-color: #f4d03f;
+    }
+</style>
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="font-weight-bolder">Trainer Page</h6>
+            </div>
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="form-row">
+                        <div id="trainerdiv" class="col-md-4">
+                            <div class="card card-danger card-outline">
+                                <img class="align-middle" style="margin-left:8em;margin-top:1em!important" width="100" height="100" id="trainerimage" src="https://www.shareicon.net/data/512x512/2016/09/01/822711_user_512x512.png" alt="Card image cap">
+                                <div class="card-body">
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Trainer Name: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="trainerName" class="col-form-label-sm font-weight-normal"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Designation: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="desgination" class="col-form-label-sm font-weight-normal"></span><i style="display:none;color:red;" title="Login to trainer portal and update designation" class="designation fa fa-exclamation-circle" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Industry Type: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="industryType" class="col-form-label-sm font-weight-normal"></span><i style="display:none;color:red;" title="Login to trainer portal and update Industry type" class="industrytype fa fa-exclamation-circle" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Industry Experience: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="year" class="col-form-label-sm font-weight-normal"></span><i style="display:none;color:red;" title="Login to trainer portal and update Industry experience" class="industryexp fa fa-exclamation-circle" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">About Me: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="aboutMe" class="col-form-label-sm font-weight-normal"></span><i style="display:none;color:red;" title="Login to trainer portal and update your details" class="aboutme fa fa-exclamation-circle" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    @*<div class="form-row mt-2">
+                        <button type="button" onclick="SendNotification()" class="btn btn-warning btn-block">Send Notification to All students</button>
+                    </div>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card trainerDetails card-outline card-danger stud_det_l">
+                                <div class="card-body" style="padding-bottom: 70px;">
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Course: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <select class="form-control select2" data-width="100%" id="courseList" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Batch: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <select class="form-control select2" data-width="100%" id="batchList" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Total Students: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="totalstudents" class="badge badge-primary">@Model.TotalStudent</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Intro Completed: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="introcompleted" class="badge badge-primary">@Model.IntroCompleted</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <span class="col-form-label-sm font-weight-bold">Intro Pending: </span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <span id="intropending" class="badge badge-primary">@Model.IntroPending</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-md-5">
+                                            <a onclick="openView()" class="btn button-red text-white">View Intro</a>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <button type="button" onclick="SendNotification()" class="btn btn-warning btn-block">Send Notification to All students</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="col-md-12">
+
+                            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                                <div class="carousel-inner form-row speech studentDetails" id="studentDetails">
+                                    @*<div class="form-row speech studentDetails" id="studentDetails">
+
+            </div>*@
+
+                                </div>
+                                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev" style="background-color:red;">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next" style="background-color:red;">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+
+                                @*@for (var i = 0; i <= 6; i++)
+        {
+            string bg_path = string.Empty;
+            string user_path = string.Empty;
+            if (i % 2 == 0)
+            {
+                bg_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-2.svg";
+                user_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/avatars/014-girl-7.svg";
+            }
+            else
+            {
+                bg_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-4.svg";
+                user_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/avatars/004-boy-1.svg";
+            }
+        }*@
+
+                            </div>
+                                    <div class="card card-outline card-danger" id="player_controls">
+                                        <div class="card-body" style="padding: 0rem;">
+                                            <div class="wrapper-icons articulate-area">
+                                                <div class="icon player_play btn button-red" id="playButton">
+                                                    <div class="tooltip">Play</div>
+                                                    <span><i class="fa fa-play fa-1x"></i></span>
+                                                </div>
+                                                <div class="icon player_pause btn button-red" id="pauseButton">
+                                                    <div class="tooltip">Pause</div>
+                                                    <span><i class="fa fa-pause fa-1x"></i></span>
+                                                </div>
+                                                <div class="icon player_resume button-red" id="resumeButton">
+                                                    <div class="tooltip">Resume</div>
+                                                    <span><i class="fa fa-repeat fa-1x"></i></span>
+                                                </div>
+                                                <div class="icon player_stop btn button-red" id="stopButton">
+                                                    <div class="tooltip">Stop</div>
+                                                    <span><i class="fa fa-stop fa-1x"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="btnModal" class="btn btn-primary" data-toggle="modal" data-target="#myModal" hidden>
+                                        Open modal
+                                    </button>
+                                    <div class="modal fade" id="myModal">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+
+                                                <!-- Modal Header -->
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Intro</h4>
+                                                    @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+                                                </div>
+
+                                                <!-- Modal body -->
+                                                <div class="modal-body" id="modalbody">
+
+                                                </div>
+
+                                                <!-- Modal footer -->
+                                                <div class="modal-footer">
+                                                    <button type="button" id="btnModalClose" class="btn btn-secondary" data-dismiss="modal" hidden>Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<textarea id="textarea" style="width:100%;height:150px;">
+    Science Literacy is a way of approaching the world. It's a way of equipping yourself to interpret what happens in front of you. It's methods and tools that enable it to act as a kind of a utility belt necessary for what you encounter in the moment. It's methods of mathematical analysis, interpretation, some basic laws of physics so when someone says I have these two crystals and if you rub them together you get healthy. Rather than just discount it, because that's as lazy as accepting it, what you should do is inquire.
+
+    So do you know how to inquire? Every scientist would know how to start that conversation. Where did you get these? What does it cure? How does it work? How much does it cost? Can you demonstrate? Science literacy is vaccine against charlatans of the world that would exploit your ignorance of the forces of nature. Become scientifically literate.
+    </textarea>
+    <br>
+    <input type="button" id="playButton" value="Play" />
+    <input type="button" id="pauseButton" value="Pause" />
+    <input type="button" id="resumeButton" value="Resume" />
+    <input type="button" id="stopButton" value="Stop" />*@
+<script src="~/Scripts/Speechjs/articulate.js"></script>
+<script src="~/Scripts/Speechjs/articulate.min.js"></script>
+<script>
+
+
+	var utterance = new SpeechSynthesisUtterance();
+	utterance.lang = 'ta-In';
+	utterance.rate = 1;
+
+    document.getElementById('playButton').onclick = function () {       
+
+        
+
+        var text = $('#studentDetails').text();
+
+        $("#btnModal").click();
+
+       
+
+		// create the utterance on play in case user called stop
+		// reference https://stackoverflow.com/a/47276578/441016
+		utterance = new SpeechSynthesisUtterance();
+		utterance.onboundary = onboundaryHandler;
+		utterance.text = text;
+		speechSynthesis.speak(utterance);
+	};
+
+	document.getElementById('pauseButton').onclick = function () {
+		if (speechSynthesis) {
+			speechSynthesis.pause();
+		}
+	};
+
+	document.getElementById('resumeButton').onclick = function () {
+		if (speechSynthesis) {
+			speechSynthesis.resume();
+		}
+	};
+
+	document.getElementById('stopButton').onclick = function () {
+		if (speechSynthesis) {
+			speechSynthesis.cancel();
+		}
+	};
+    var cardStart;    
+
+	function onboundaryHandler(event) {
+		var textarea = $('#studentDetails').text();
+		var value = textarea;
+		var index = event.charIndex;
+		var word = getWordAt(value, index);
+		if (word.search('key') >= 0)
+        {
+            //$("#btnModal").click();
+
+            $(".modal-body").html($('#' + word + '').html());
+
+            $('#' + word + '').addClass('shadow-lg').css("border", '3px solid green')
+
+			cardStart = word;
+		} else if (word.search('endval') >= 0)
+		{
+            $('#' + cardStart + '').removeClass('shadow-lg').css("border", '0px solid green')
+            //$("#btnModalClose").click();
+		}		
+	};
+
+	// Get the word of a string given the string and index
+	function getWordAt(str, pos) {
+		// Perform type conversions.
+		str = String(str);
+		pos = Number(pos) >>> 0;
+
+		// Search for the word's beginning and end.
+		var left = str.slice(0, pos + 1).search(/\S+$/),
+			right = str.slice(pos).search(/\s/);
+
+		// The last word in the string is a special case.
+		if (right < 0) {
+			return str.slice(left);
+		}
+
+		// Return the word, using the located bounds to extract it from the string.
+		return str.slice(left, right + pos);
+	}
+
+	// Get the position of the beginning of the word
+	function getWordStart(str, pos) {
+		str = String(str);
+		pos = Number(pos) >>> 0;
+
+		// Search for the word's beginning
+		var start = str.slice(0, pos + 1).search(/\S+$/);
+		return start;
+	}
+
+
+
+    $(document).ready(function () {
+        $('.studentDetails,#player_controls').hide();
+        loadTrainerDetails();
+        loadCourseandBatch();
+
+        LoadIntroSummary();
+
+        $('#batchList').change(function () {
+            let courseId = Number($('#courseList').val());
+            let batchId = Number($('#batchList').val());
+
+            if (courseId == 0 || batchId == 0) {
+                toastr.error('Please select course and batch.');
+                return;
+            }
+
+             $.ajax("@Url.Action("AssignBatch", "Intro")?courseId=" + courseId + '&batchId=' + batchId,
+        ).then(function (data) {
+            //if (data == 'Success') {
+            //    $('#chapterList').prop('selectedIndex', 1);
+            //}
+        });
+
+            LoadIntroSummary();
+        });
+    });
+
+    function LoadIntroSummary() {
+        let courseId = Number($('#courseList').val());
+        let batchId = Number($('#batchList').val());
+
+        if (courseId == 0 || batchId == 0) {
+            toastr.error('Please select course and batch.');
+            return;
+        }
+
+         $.ajax("@Url.Action("GetIntroSummary", "Intro")?courseId=" + courseId + '&batchId=' + batchId,
+            ).then(function (data) {
+                if (data.Result!=null) {
+
+                    $("#totalstudents")[0].innerText = data.Result.TotalStudent;
+                    $("#introcompleted")[0].innerText =data.Result.IntroCompleted;
+                    $("#intropending")[0].innerText = data.Result.IntroPending;
+                }
+                else {
+                    $("#totalstudents")[0].innerText = 0;
+                    $("#introcompleted")[0].innerText = 0;
+                    $("#intropending")[0].innerText = 0;
+                }
+            });           
+    }
+
+
+
+	function loadTrainerDetails() {
+		$.ajax({
+			url: "@Url.Action("GetTrainerDetails", "Intro",null)",
+			method: "GET",
+			dataType: "json",
+			beforeSend: function () {
+				$(".loadingDiv").show();
+			},
+			success: function (data, xhr) {
+				if (data.trainername == null) {
+					toastr.warning('Class not available now...');
+				}
+				if (data.Photopath != null) {
+					$('#trainerimage').attr("src", data.Photopath)
+				}
+				else {
+					$('#trainerimage').attr("src", "https://www.shareicon.net/data/512x512/2016/09/01/822711_user_512x512.png")
+				}
+				$('#trainerName').text(data.trainername != null ? data.trainername : "N/A");
+				$('#desgination').text(data.designation != null ? data.designation : "N/A");
+				$('#industryType').text(data.industry != null ? data.industry : "N/A");
+				$('#year').text(data.Experince != null ? data.Experince : "N/A");
+                $('#aboutMe').text(data.Aboutme != null ? data.Aboutme : "N/A");
+
+                if (data.trainername == null) $(".trainername").removeAttr("style");
+                if (data.designation == null) $(".designation").removeAttr("style");
+                if (data.industry == null) $(".industrytype").removeAttr("style");
+                if (data.Experince == null) $(".industryexp").removeAttr("style");
+                if (data.Aboutme == null) $(".aboutme").removeAttr("style");
+
+
+			}
+		});
+
+    }
+
+    $('#courseList').change(function () {
+        let courseId = Number($('#courseList').val());
+
+        if (courseId == 0) {
+            $('#batchList').val(0).select2();
+
+            toastr.error('Please select course.');
+            return;
+        }
+
+        $.ajax({
+            url: "@Url.Action("GetBatchesBasedOnCourseId", "Intro")?courseId=" + courseId,
+            method: "Get",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            success: ((data) => {
+
+                if (data.Batchs.length > 0) {
+
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $.map(data.Batchs, function (v, j) {
+                        $('#batchList').append($('<option></option>').val(v.BatchId).html(v.BatchId));
+                    });
+
+                    $('#batchList').prop('selectedIndex', 1);                  
+
+                    LoadIntroSummary();
+
+                }
+                else {
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $('#batchList').prop('selectedIndex', 0);
+                }
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+    });
+
+    @*$('#batchList').change(function () {
+        let courseId = Number($('#courseList').val());
+        let batchId = Number($('#batchList').val());
+
+        if (courseId == 0 || batchId == 0) {
+            toastr.error('Please select course and batch.');
+            return;
+        }        
+
+        $.ajax("@Url.Action("AssignBatch", "Intro")?courseId=" + courseId + '&batchId=' + batchId,
+        ).then(function (data) {
+            //if (data == 'Success') {
+            //    $('#chapterList').prop('selectedIndex', 1);
+            //}
+        });
+       
+    });*@
+
+    function loadCourseandBatch() {
+        $.ajax({
+            url: "@Url.Action("GetAllCourse", "Intro",null)",
+            method: "Get",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            success: ((data) => {
+                let k = JSON.parse(data.Result);
+                $('#courseList').empty().append($('<option/>').val(0).html('Select'))
+                $.map(k, function (v, i) {
+                    $('#courseList').append($('<option></option>').val(v.CourseId).html(v.CourseName));
+                });
+
+                $('#courseList').prop('selectedIndex', 1);
+
+                if (data.Batchs !=null && data.Batchs.length > 0) {
+
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $.map(data.Batchs, function (v, j) {
+                        $('#batchList').append($('<option></option>').val(v.BatchId).html(v.BatchId));
+                    });
+
+                    $('#batchList').prop('selectedIndex', 1);
+
+                    LoadIntroSummary();
+                }
+                else {
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $('#batchList').prop('selectedIndex', 0);
+                }
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+    }
+
+
+	var totalStudent;
+	var startintroId = "key";
+	var endintroId = "endval";
+	function openView() {
+		$('.studentDetails').show();
+		$('.player_play').click();
+		//$('.trainerDetails').css('display', 'none');
+        let courseId = Number($('#courseList').val());
+        let batchId = Number($('#batchList').val());
+
+        if (courseId == 0 || batchId == 0) {
+            toastr.error('Please select course and batch.');
+            return;
+        }
+
+		$.ajax({
+			url: "@Url.Action("GetAllIntroStudent", "Intro")?courseId=" + courseId + '&batchId=' + batchId,
+			method: "GET",
+			dataType: "json",
+			beforeSend: function () {
+				$(".loadingDiv").show();
+			},
+			success: function (data, xhr) {
+				$('#studentDetails').empty();
+				totalStudent = 0;
+                totalStudent++;
+
+                if (data.length == 0) {
+                    toastr.error('No intro details found for the selected course and batch.');
+                    return;
+                }
+
+                var active = 'active';
+
+				$.map(data, function (v, i) {
+
+					startintroId = 'key';
+					endintroId = 'endval';
+
+					startintroId = startintroId+totalStudent;
+					endintroId = endintroId+totalStudent;
+
+                    $('#studentDetails').append('<div class="col-xl-12 carousel-item ' + active+'">' +
+                        '<span class="col-form-label-sm font-weight-bold d-none">' + startintroId + '</span >' +
+						'                                        <div class="card card-outline card-danger" style="background-repeat:no-repeat; background-position: right top; background-size: 40% auto; background-image: url(https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-2.svg)">' +
+                        '                                            <div class="card-body py-0" id=' + startintroId + '>' +
+                        '<div class="form-row">' +
+                        '                                                    <img style="margin-left: 190px!important;" class="h-75px" onerror=\'this.src = "../Theme/images/noimage.png"\' src="' + v.StudentImage + '">' +
+                        '                                                </div>' +
+						'                                                <div class="form-row form-group mt-2">' +
+						'                                                    <div class="col-md-5">' +
+						'                                                        <span class="col-form-label-sm font-weight-bold">Student Name</span > ' +
+						'                                                    </div>' +
+						'                                                    <div class="col-md-7">' +
+						'                                                        <span class="col-form-label-sm font-weight-normal">' + v.StudentName + '</span>' +
+						'                                                       </div>' +
+						'                                                </div>' +
+						'                                                <div class="form-row form-group">' +
+						'                                                    <div class="col-md-5">' +
+						'                                                        <span class="col-form-label-sm font-weight-bold">Company Name</span > ' +
+						'                                                    </div>' +
+						'                                                    <div class="col-md-7">' +
+						'                                                        <span class="col-form-label-sm font-weight-normal">' + v.CompanyName + '</span>' +
+						'                                                    </div>' +
+						'                                                </div>' +
+						'                                                <div class="form-row form-group">' +
+						'                                                    <div class="col-md-5">' +
+						'                                                        <span class="col-form-label-sm font-weight-bold">Industry Type</span>' +
+						'                                                    </div>' +
+						'                                                    <div class="col-md-7">' +
+						'                                                        <span class="col-form-label-sm font-weight-normal">' + v.IndustryType + '</span>' +
+						'                                                    </div>' +
+						'                                                </div>' +
+						'                                                <div class="form-row form-group">' +
+						'                                                    <div class="col-md-5">' +
+						'                                                        <span class="col-form-label-sm font-weight-bold">Qualification</span>' +
+						'                                                    </div>' +
+						'                                                    <div class="col-md-7">' +
+						'                                                        <span class="col-form-label-sm font-weight-normal">' + v.Qualification + '</span>' +
+						'                                                    </div>' +
+						'                                                </div>' +
+						'                                                <div class="form-row form-group">' +
+						'                                                    <div class="col-md-5">' +
+						'                                                        <span class="col-form-label-sm font-weight-bold">Purpose of Study</span>' +
+						'                                                    </div>' +
+						'                                                    <div class="col-md-7">' +
+						'                                                        <span class="col-form-label-sm font-weight-normal">' + v.PurposeOfStudy + '</span>' +
+						'                                                    </div>' +
+						'                                                </div>' +
+						'                                            </div>' +
+						'                                        </div>' +
+						'<span class="col-form-label-sm font-weight-bold d-none">' + endintroId + '</span >' +
+						'                                    </div>');
+                    totalStudent++;
+                    active = '';
+				});
+                if (data.length > 0) {
+
+        //            var text = $('#trainerdiv').text();
+        //// create the utterance on play in case user called stop
+        //// reference https://stackoverflow.com/a/47276578/441016
+        //utterance = new SpeechSynthesisUtterance();
+        //utterance.onboundary = onboundaryHandlerTrainer;
+        //utterance.text = text;
+        //            speechSynthesis.speak(utterance);
+
+        //            $("#btnModal").click();
+
+        //            $(".modal-body").html($("#trainerdiv").html());
+
+        //            $("#trainerdiv").addClass('shadow-lg').css("border", '3px solid green')
+
+
+        //            $("#trainerdiv").removeClass('shadow-lg').css("border", '0px solid green')
+        //            $("#btnModalClose").click();
+
+
+                    $('#playButton').click();
+                    $('#player_controls').show();
+                    //const element = $('#studentDetails');
+                    //element.scroll();
+                }
+			},
+			error: function (err) {
+				toastr.error('Something went wrong! Please refresh the page and try again.');
+				console.warn(err);
+			}
+		});
+	}
+
+
+	//signalr connection
+	$(function () {
+		var chat = $.connection.webSocketHub;
+		$.connection.hub.logging = true;
+		chat.client.SendPushNotifyToClient = function (name, v) {
+			name = JSON.parse(name);
+			if (name.Notify == 'intro' && name.TrainerId == '@Model.TrainerId')
+			{
+				v = JSON.parse(v);
+				startintroId = 'key';
+				endintroId = 'endval';
+
+				startintroId = startintroId + totalStudent;
+				endintroId = endintroId + totalStudent;
+				var divDetails = '<div class="col-xl-4">' +
+					'<span class="col-form-label-sm font-weight-bold d-none">' + startintroId + '</span >' +
+					'                                        <div class="card card-outline card-danger" style="background-repeat:no-repeat; background-position: right top; background-size: 40% auto; background-image: url(https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-2.svg)">' +
+                    '                                            <div class="card-body py-0" id=' + startintroId + '>' +
+                    '<div class="form-row">' +
+                    '                                                    <img style="margin-left: 190px!important;" class="h-75px" onerror=\'this.src = "../Theme/images/noimage.png"\' src="' + v.StudentImage + '">' +
+                            '                                                </div>' +
+					'                                                <div class="form-row form-group mt-2">' +
+					'                                                    <div class="col-md-5">' +
+					'                                                        <span class="col-form-label-sm font-weight-bold">Student</span > ' +
+					'                                                    </div>' +
+					'                                                    <div class="col-md-7">' +
+					'                                                        <span class="col-form-label-sm font-weight-normal">' + v.StudentName + '</span>' +
+					'                                                       </div>' +
+					'                                                </div>' +
+					'                                                <div class="form-row form-group">' +
+					'                                                    <div class="col-md-5">' +
+					'                                                        <span class="col-form-label-sm font-weight-bold">Companys Name</span > ' +
+					'                                                    </div>' +
+					'                                                    <div class="col-md-7">' +
+					'                                                        <span class="col-form-label-sm font-weight-normal">' + v.CompanyName + '</span>' +
+					'                                                    </div>' +
+					'                                                </div>' +
+					'                                                <div class="form-row form-group">' +
+					'                                                    <div class="col-md-5">' +
+					'                                                        <span class="col-form-label-sm font-weight-bold">Industry Type</span>' +
+					'                                                    </div>' +
+					'                                                    <div class="col-md-7">' +
+					'                                                        <span class="col-form-label-sm font-weight-normal">' + v.IndustryType + '</span>' +
+					'                                                    </div>' +
+					'                                                </div>' +
+					'                                                <div class="form-row form-group">' +
+					'                                                    <div class="col-md-5">' +
+					'                                                        <span class="col-form-label-sm font-weight-bold">Qualification</span>' +
+					'                                                    </div>' +
+					'                                                    <div class="col-md-7">' +
+					'                                                        <span class="col-form-label-sm font-weight-normal">' + v.Qualification + '</span>' +
+					'                                                    </div>' +
+					'                                                </div>' +
+					'                                                <div class="form-row form-group">' +
+					'                                                    <div class="col-md-5">' +
+					'                                                        <span class="col-form-label-sm font-weight-bold">Purpose of Study</span>' +
+					'                                                    </div>' +
+					'                                                    <div class="col-md-7">' +
+					'                                                        <span class="col-form-label-sm font-weight-normal">' + v.PurposeOfStudy + '</span>' +
+					'                                                    </div>' +
+					'                                                </div>' +
+					'                                            </div>' +
+					'                                        </div>' +
+					'<span class="col-form-label-sm font-weight-bold d-none">' + endintroId + '</span >' +
+					'                                    </div>';
+				$('#studentDetails').append(divDetails);
+				divDetails = divDetails.replace(/(<([^>]+)>)/ig, "");
+				utterance.text = divDetails;
+				speechSynthesis.speak(utterance);
+				totalStudent++;
+			}
+		};
+		chat.client.SstmClientConnection = function (name, connectionId) {
+			//console.log(name + " : " + connectionId);
+		};
+		$.connection.hub.start().done(function (dt) {
+			chat.server.onConnect();
+		});
+	});
+
+	//setInterval(function ()
+	//{
+	//	startintroId = 'key';
+	//	endintroId = 'endval';
+
+	//	startintroId = startintroId + totalStudent;
+	//	endintroId = endintroId +totalStudent;
+
+	//	var ss = '<div class="col-xl-6"><span class="col-form-label-sm font-weight-bold d-none">' + startintroId + '</span>                                        <div class="card card-outline card-danger" style="background-repeat:no-repeat; background-position: right top; background-size: 40% auto; background-image: url(https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-2.svg)">                                            <div class="card-body py-0" id="' + startintroId + '" style="border: 0px solid green;">                                                <div class="form-row form-group mt-2">                                                    <div class="col-md-5">                                                        <span class="col-form-label-sm font-weight-bold">Student</span>                                                     </div>                                                    <div class="col-md-7">                                                        <span class="col-form-label-sm font-weight-normal">MADURAI VIGNESH</span>                                                       </div>                                                </div>                                                <div class="form-row form-group">                                                    <div class="col-md-5">                                                        <span class="col-form-label-sm font-weight-bold">Companys Name</span>                                                     </div>                                                    <div class="col-md-7">                                                        <span class="col-form-label-sm font-weight-normal">MADURAI VIGNESH Company</span>                                                    </div>                                                </div>                                                <div class="form-row form-group">                                                    <div class="col-md-5">                                                        <span class="col-form-label-sm font-weight-bold">Industry Type</span>                                                    </div>                                                    <div class="col-md-7">                                                        <span class="col-form-label-sm font-weight-normal">Induatry Type MADURAI VIGNESH </span>                                                    </div>                                                </div>                                                <div class="form-row form-group">                                                    <div class="col-md-5">                                                        <span class="col-form-label-sm font-weight-bold">Qualification</span>                                                    </div>                                                    <div class="col-md-7">                                                        <span class="col-form-label-sm font-weight-normal">Qualification MADURAI VIGNESH</span>                                                    </div>                                                </div>                                                <div class="form-row form-group">                                                    <div class="col-md-5">                                                        <span class="col-form-label-sm font-weight-bold">Purpose of Study</span>                                                    </div>                                                    <div class="col-md-7">                                                        <span class="col-form-label-sm font-weight-normal">Purpose of Study MADURAI VIGNESH</span>                                                    </div>                                                </div>                                                <div class="form-row">                                                    <img src="https://sstmtest.s3.ap-southeast-1.amazonaws.com/StudentIntroImages/637729120508537870.png" class="align-self-end ml-auto h-75px">                                                </div>                                            </div>                                        </div><span class="col-form-label-sm font-weight-bold d-none">' +endintroId+'</span>                                    </div>';
+	//	$('#studentDetails').append(ss);
+	//	utterance.text = ss;
+	//	speechSynthesis.speak(utterance);
+	//	totalStudent++;
+	//}, 20000)
+
+
+    function SendNotification() {
+
+        let courseId = Number($('#courseList').val());
+        let batchId = Number($('#batchList').val());
+
+        if (courseId == 0 || batchId == 0) {
+            toastr.error('Please select course and batch.');
+            return;
+        }
+
+
+		$.ajax({
+            url: "@Url.Action("SendNotification", "Intro")?windowLocation=" + window.location.origin + '&courseId=' + courseId + '&batchId=' + batchId,
+			method: "GET",
+			dataType: "json",
+			beforeSend: function () {
+				$(".loadingDiv").show();
+			},
+			success: function (data, xhr) {
+				$.map(data, function (v, i) {
+					window.open(v, '_blank');
+				});
+			}
+		});
+	}
+	function speak(obj) {
+
+        $(obj).articulate('speak');
+    }
+    function pause() {
+        $().articulate('pause');
+    }
+    function resume() {
+        $().articulate('resume');
+    }
+    function stop() {
+        $().articulate('stop');
+    }
+</script>

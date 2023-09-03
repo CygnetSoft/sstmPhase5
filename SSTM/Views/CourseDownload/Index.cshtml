@@ -1,0 +1,58 @@
+﻿@model SSTM.Helpers.App.AppSession
+@{
+    ViewBag.Title = "Course Download";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">@ViewBag.Coursename Courses </h3>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblDownloadCourses" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th class="text-center" style="width:14%">Sub Course</th>
+                                <th class="text-center" style="width:8%">Documents</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<input type="hidden" value="@ViewBag.MasterCourse" id="MasterCourse" />
+<input type="hidden" value="@ViewBag.MasterCourseId" id="MasterCourseId" />
+
+<div class="modal fade" id="AddOrEditCourseDocsModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" style="max-width:90%;">
+        <div id="divAddOrEditCourseDocsModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/CourseDownload/CourseDonwload.js"></script>
+@section scripts{
+
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var userRole = '@Model.UserRole';
+        var CourseType = "other";
+        var MasterCourse = $("#MasterCourse").val();
+        var MasterCourseId = $("#MasterCourseId").val();
+        var openCourseDocumentsListUrl = '@Url.Action("OpenCourseDocumentsList", "CourseDoc")';
+        var getDownloadCoursesListUrl = '@Url.Action("GetDownloadCoursesList", "CourseDownload")';
+        var GotoCourseUrl = '@Url.Action("index", "CourseDownload")';
+    </script>
+}

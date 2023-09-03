@@ -1,0 +1,11 @@
+coursedocreramk->reviewcoursedocument remove comment OLD
+CourseDoc -> CourseDocViewer remove comment OLD
+
+
+COntroller
+courseDocConteler-> CourseDocViewer
+"442967"	
+
+ALTER SCHEMA sstmo   TRANSFER [dbo].[TrainerQP_Shared_Student]
+-------li system link-------------
+http://li.eversafe.com.sg/services/sstm.asmx?op=TodayCoursesWithSection

@@ -1,0 +1,106 @@
+﻿@model IEnumerable<SSTM.Models.CourseSharing.SharedCourseListModel>
+
+@{
+    ViewBag.Title = "Shared Courses List";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">@ViewBag.Coursename Courses</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblCourses" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="text-center" style="width:14%">Sub Course</th>
+                                <th class="text-center" style="width:10%">Documents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="@item.CourseId">
+                                    <td>@item.CourseName</td>
+                                    <td><button type='button' title='Sub Course' class='btn btn-warning btn-sm btnSubCourse'>Sub Course</button></td>
+                                    <td class="text-center">
+                                        <button type='button' title='Documents' class='btn btn-info btn-sm btnCourseDocs'>
+                                            <i class='fa fa-files-o'></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="ViewCourseDocsModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divViewCourseDocsModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var viewCourseDocsUrl = '@Url.Action("ViewCourseDocs", "CourseDoc")';
+        var GotoShareUrl = '@Url.Action("SharedCoursesList", "Course")';
+
+        $(function () {
+            InittblCourses();
+        });
+
+        function InittblCourses() {
+            $('#tblCourses > tbody > tr').on('click', '.btnCourseDocs', function (e) {
+                e.preventDefault();
+
+                var courseId = $(this).closest('tr').attr('id');
+                var courseName = $(this).closest('tr').find('td:eq(0)').html();
+
+                Ajaxhelper.post(viewCourseDocsUrl, { courseId: courseId }, onSuccessViewCourseDocs, null, null);
+
+                function onSuccessViewCourseDocs(data) {
+                    $('#divViewCourseDocsModal').html(data);
+
+                    $('#h4CourseDocsModal').html(courseName + " Douments");
+
+                    $('#ViewCourseDocsModal').modal('show');
+                }
+            });
+
+            $('#tblCourses > tbody > tr').on('click', '.btnSubCourse', function (e) {
+               // alert(GotoShareUrl + "?MasterCourse=false&MasterCourseId=" + Id + "&Coursename=" + $(this).closest('tr').find('td:eq(0)').html());
+                e.preventDefault();
+                var Id = $(this).closest('tr').attr('id');
+                window.location.href = GotoShareUrl + "/?MasterCourse=false&MasterCourseId=" + Id + "&Coursename=" + $(this).closest('tr').find('td:eq(0)').html();
+            });
+
+            $('#tblCourses').dataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                'order': [0, 'asc'],
+                'aoColumns': [null, { "bSortable": false }, { "bSortable": false }]
+            }).fnDraw();
+        }
+    </script>
+}

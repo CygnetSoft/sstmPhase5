@@ -1,0 +1,146 @@
+﻿@model SSTM.Models.Config.ConfigModel
+
+@{
+    ViewBag.Title = "Settings";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Areas/Administration/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    @using (Html.BeginForm("SaveRecord", "Config", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", id = "frmSaveSettings", autocomplete = "off" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+    <!-- Default box -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Settings</h3>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">AWS Configurations</h3>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label>Profile Name</label>
+                                        @Html.TextBoxFor(m => m.AWSProfileName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.AWSProfileName, null, new { @class = "alert-danger" })
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label>Bucket Name</label>
+                                        @Html.TextBoxFor(m => m.BucketName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.BucketName, null, new { @class = "alert-danger" })
+                                    </div>
+
+                                    <div class="form-group col-12">
+                                        <label>Access Key</label>
+                                        @Html.TextBoxFor(m => m.AWSAccessKey, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.AWSAccessKey, null, new { @class = "alert-danger" })
+                                    </div>
+
+                                    <div class="form-group col-12">
+                                        <label>Secret Key</label>
+                                        @Html.TextBoxFor(m => m.AWSSecretKey, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.AWSSecretKey, null, new { @class = "alert-danger" })
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label>Zoho API Key</label>
+                                        @Html.TextBoxFor(m => m.ZohoApiKey, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.ZohoApiKey, null, new { @class = "alert-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Email Configurations</h3>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-9 form-group">
+                                        <label>Host</label>
+                                        @Html.TextBoxFor(m => m.Host, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Host, null, new { @class = "alert-danger" })
+                                    </div>
+
+                                    <div class="col-3 form-group">
+                                        <label>Port</label>
+                                        @Html.TextBoxFor(m => m.Port, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Port, null, new { @class = "alert-danger" })
+                                    </div>
+
+                                    <div class="col-12 form-group">
+                                        <label>Email</label>
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Email, null, new { @class = "alert-danger" })
+                                    </div>
+
+                                    <div class="col-12 form-group">
+                                        <label>Password</label>
+                                        @Html.TextBoxFor(m => m.Pass, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Pass, null, new { @class = "alert-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer text-right">
+                <button type="submit" class="btn btn-success">
+                    Save
+                </button>
+            </div>
+        </div>
+    }
+</section>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var saveRecordUrl = '@Url.Action("SaveRecord", "Config", new { area="Administration"})';
+
+        $.validator.unobtrusive.parse("#frmSaveSettings");
+        $('#frmSaveSettings').on('submit', function (e) {
+            e.preventDefault();
+
+            if ($('#frmSaveSettings').valid()) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you wish to save configuration settings?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Continue!'
+                }).then((result) => {
+                    if (result.value)
+                        Ajaxhelper.post(saveRecordUrl, $('#frmSaveSettings').serialize(), onSuccessSettings, null, null);
+                });
+            }
+        });
+
+        function onSuccessSettings(data) {
+            if (data.result)
+                toastr.success("Settings saved successfully.");
+            else
+                toastr.error(data.message);
+        }
+    </script>
+}
+}

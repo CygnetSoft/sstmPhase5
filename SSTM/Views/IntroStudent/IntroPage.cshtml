@@ -1,0 +1,311 @@
+﻿@{
+	Layout = null;
+}
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700,900&display=swap" rel="stylesheet">
+	<link href="@Url.Content("~/Content/intro-page/bootstrap.min.css")" rel="stylesheet" />
+	<link href="@Url.Content("~/Theme/plugins/fontawesome-free/css/all.min.css")" rel="stylesheet" />
+	<link href="@Url.Content("~/Theme/plugins/toastr/toastr.min.css")" rel="stylesheet" />
+	<title>Intro Page</title>
+	<style>
+        body {
+            font-family: 'Roboto Slab', serif!important;
+            background-image: url( @Url.Content("~/Content/intro-page/working_from_anywhere.svg") ),url( @Url.Content("~/Content/intro-page/biblio_re_xarc.svg") );
+            background-position: left bottom,right top;
+            background-repeat: no-repeat;
+            background-size: 600px 400px;
+        }
+        .bg-info, btn-info {
+            background-color: rgb(108, 99, 255) !important;
+            background: rgb(108, 99, 255) !important;
+            color:white!important
+        }
+        .rating-area {
+            width: 100px;
+            padding: 10px 0 10px 0;
+            background: #e8e8e8;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+        .align-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .transition-fast {
+            transition: 0.2s ease-out;
+        }
+        .thumbs-up-circle {
+            width: 50px;
+            height: 50px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+            cursor: pointer;
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+
+        .thumbs-up {
+            color: #2196f3;
+            font-size: 24px;
+            transform: rotate(0) translate(0);
+        }
+
+        .thumbs-up-circle:hover {
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+            .thumbs-up-circle:hover .thumbs-up {
+                color: #1976D2;
+                transform: rotate(-5deg) translate(0px, -1px);
+            }
+
+        .thumbs-up-circle:active {
+            background: #e0e0e0;
+            box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+
+            .thumbs-up-circle:active .thumbs-up {
+                color: #065bae;
+                transition: 0.1s;
+                transform: rotate(-10deg) translate(0px, -2px);
+            }
+
+        .thumbs-down {
+            color: #9E9E9E;
+            font-size: 24px;
+            transform: rotate(0) translate(0);
+        }
+
+        .thumbs-up-circle:hover .thumbs-down {
+            color: #565656;
+            transform: rotate(5deg) translate(0px, 1px);
+        }
+
+        .thumbs-up-circle:active .thumbs-down {
+            color: #424242;
+            transition: 0.1s;
+            transform: rotate(10deg) translate(0px, 2px);
+        }
+
+        .success-box {
+            margin: 20px 0;
+            padding: 7px 7px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+        }
+
+            .success-box img {
+                margin-right: 10px;
+                display: inline-block;
+                vertical-align: top;
+            }
+
+            .success-box > div {
+                vertical-align: top;
+                display: inline-block;
+                color: #888;
+            }
+	</style>
+</head>
+<body style="">
+	@Html.AntiForgeryToken()
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-6 pb-5">
+				<div class="card rounded-0 mt-5 shadow-lg">
+					<div class="card-header p-0">
+						<div class="bg-info text-white text-center py-2">
+							<img src="@Url.Content("~/Theme/images/eversafe-logo-.png")" />
+							<p class="m-0">Intro Page</p>
+						</div>
+					</div>
+					<div class="card-body p-3">
+						<div class="form-group">							
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<div class="input-group-text"><i class="fa fa-user text-info" style="color: rgb(108, 99, 255) !important"></i></div>
+								</div>
+								<input value="@TempData["studentName"]" type="text" class="form-control" id="txtmyname" name="txtmyname" placeholder="My Name" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<div class="input-group-text"><i class="fa fa-tasks text-info" style="color: rgb(108, 99, 255) !important"></i></div>
+								</div>
+								<input  type="text" class="form-control" id="txtcompanyName" name="txtcompanyName" placeholder="Company Name" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<div class="input-group-text"><i class="fa fa-industry text-info" style="color: rgb(108, 99, 255) !important"></i></div>
+								</div>
+								<input type="text" class="form-control" id="txtindustrytype" name="txtindustrytype" placeholder="Industry Type" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<div class="input-group-text"><i class="fa fa-book text-info" style="color: rgb(108, 99, 255) !important"></i></div>
+								</div>
+								<input type="text" class="form-control" id="qualification" name="nombre" placeholder="Qualification" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<div class="input-group-text"><i class="fa fa-sticky-note text-info" style="color: rgb(108, 99, 255) !important"></i></div>
+								</div>
+								<input type="text" class="form-control" id="purposeofstudy" name="purposeofstudy" placeholder="Purpose Of Study" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="card">
+								<div class="form-row">
+									<div class="col-md-6">
+										<video width="200" height="200" autoplay="true" id="video"></video>
+									</div>
+									<div class="col-md-6">
+										<canvas width="200" height="200" id="canvas"></canvas>
+									</div>
+								</div>
+								<p onclick="capture()" style="cursor:pointer" class="text-danger" align="center"><i class="fa fa-camera text-danger"></i> Capture Me</p>
+								<p style="display:none" id="printresult"></p>
+							</div>
+						</div>						
+					</div>
+					<div class="text-center mb-3">
+						<button type="button" onclick="submit()" class="btn bg-info rounded-2 py-2">Submit</button>
+					</div>
+				</div>
+				<div class="card-footer text-center" style="background:none">
+					<h6>&copy;@DateTime.Now.Year All Rights Reserved. EverSafe Academy</h6>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script src="@Url.Content("//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")"></script>
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js")"></script>
+<script src="@Url.Content("//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js")"></script>
+<script src="@Url.Content("//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Scripts/sstm_js_enc/_sstm_enc.js")"></script>
+<script src="~/Theme/plugins/toastr/toastr.min.js"></script>
+<script>
+	$(document).ready(function () {
+
+	});
+	var studentIntroImage;
+	function base64ImageToBlob(str) {
+		var pos = str.indexOf(';base64,');
+		var type = str.substring(5, pos);
+		var b64 = str.substr(pos + 8);
+		var imageContent = atob(b64);
+		var buffer = new ArrayBuffer(imageContent.length);
+		var view = new Uint8Array(buffer);
+		for (var n = 0; n < imageContent.length; n++) {
+			view[n] = imageContent.charCodeAt(n);
+		}
+		var blob = new Blob([buffer], { type: type });
+		var fileOfBlob = new File([blob], 'student.png');
+		var formData = new FormData();
+		formData.append("file", fileOfBlob);
+		$.ajax({
+			url: '@Url.Action("StudentImageUpload", "IntroStudent", null)',
+			type: "POST",
+			async: false,
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: ((data) => {
+				//debugger;
+				studentIntroImage = data;
+				console.log(data)
+			}),
+			error: function (err) {
+				console.log(err)
+			}
+		});
+		return blob;
+	}
+	var video = document.querySelector("#video");
+	if (navigator.mediaDevices.getUserMedia) {
+		navigator.mediaDevices.getUserMedia({ video: true })
+			.then(function (stream) {
+				video.srcObject = stream;
+			})
+			.catch(function (err0r) {
+				console.log("Something went wrong!");
+			});
+	}
+	var resultb64 = "";
+	function capture() {
+		var canvas = document.getElementById('canvas');
+		var video = document.getElementById('video');
+		canvas.width = 200;
+		canvas.height = 200;
+		canvas.getContext('2d').drawImage(video, 0, 0, 200, 200);
+		resultb64 = canvas.toDataURL();
+		document.getElementById("printresult").innerHTML = canvas.toDataURL();
+	}
+	document.getElementById("printresult").innerHTML = resultb64;
+
+
+	function submit()
+	{
+		var token = $('input[name="__RequestVerificationToken"]').val()
+
+		var txtmyname = $('#txtmyname').val();
+		var txtcompanyName = $('#txtcompanyName').val();
+		var txtindustrytype = $('#txtindustrytype').val();
+		var qualification = $('#qualification').val();
+		var purposeofstudy = $('#purposeofstudy').val();
+		var printresult = $('#printresult').text();
+
+		base64ImageToBlob(printresult)
+		let data = {};
+		data.StudentId = @TempData["studentId"];
+		data.CourseId = @TempData["courseId"];
+		data.BatchId = @TempData["batchId"];
+		data.StudentName = txtmyname;
+		data.IndustryType = txtindustrytype;
+		data.Qualification = qualification;
+		data.PurposeOfStudy = purposeofstudy;
+		data.CompanyName = txtcompanyName;
+		data.StudentImage = studentIntroImage;
+		data.TrainerId = @TempData["trainerId"];
+
+		var encryData = $.sstm_encrypt(JSON.stringify(data))
+        $.ajax({
+            url: "@Url.Action("CreateIntroPage", "IntroStudent", null)",
+            method: "POST",
+            dataType: "json",
+            beforeSend: ((k) => { $(".loadingDiv").show(); }),
+			data: { query: encryData, __RequestVerificationToken: token },
+			success: ((data) => {
+				if (data.status == true) {
+				    setTimeout(() => { $(".loadingDiv").hide(); }, 2000);	
+				    toastr.success('Intro Send Successfully.!!!');
+
+				} else
+				{
+					toastr.warning(data.response);
+				}
+            }),
+			error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+	}
+</script>

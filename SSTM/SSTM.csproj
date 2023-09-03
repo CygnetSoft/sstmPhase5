@@ -1,0 +1,1929 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A57D24E2-F9BC-46A4-BD7C-3A8B7738D330}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SSTM</RootNamespace>
+    <AssemblyName>SSTM</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>false</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper, Version=3.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper.Net4, Version=3.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.4.1.1\lib\net45\Castle.Windsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml">
+      <HintPath>Package\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GleamTech.Common, Version=4.2.0.0, Culture=neutral, PublicKeyToken=a05198837413a6d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\GleamTech.Common.4.2.2\lib\net40\GleamTech.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GleamTech.DocumentUltimate, Version=5.0.0.0, Culture=neutral, PublicKeyToken=a05198837413a6d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\GleamTech.DocumentUltimate.5.4.2\lib\net40\GleamTech.DocumentUltimate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Hangfire.Core, Version=1.7.33.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.7.33\lib\net45\Hangfire.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.7.33.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.7.33\lib\net45\Hangfire.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="IoC, Version=1.3.7.0, Culture=neutral, PublicKeyToken=620ded7f0cf61090, processorArchitecture=MSIL">
+      <HintPath>..\packages\IoC.Container.1.3.7\lib\net45\IoC.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ionic.Zip.1.9.1.8\lib\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqToExcel, Version=1.11.0.0, Culture=neutral, PublicKeyToken=9c8ea65a58f03f1f, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqToExcel.1.11.0\lib\LinqToExcel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.0.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.0.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.0.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.0.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.0.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.0.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.2\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.2\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Outlook.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Outlook.dll</HintPath>
+      <Private>True</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.PowerPoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Microsoft.Office.Interop.PowerPoint.15.0.4420.1017\lib\net20\Microsoft.Office.Interop.PowerPoint.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Microsoft.Office.Interop.Word.15.0.4420.1017\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.2.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.2.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=2.0.1.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.2.0.1.0\lib\Ninject.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenHtmlToPdf, Version=1.12.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenHtmlToPdf.1.12.0.0\lib\net45\OpenHtmlToPdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RadPdf, Version=3.33.0.1, Culture=neutral, PublicKeyToken=ceef76a2a0e50e3b, processorArchitecture=MSIL">
+      <HintPath>..\packages\RadPdf.3.35.0\lib\net35\RadPdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Remotion, Version=1.13.52.2, Culture=neutral, PublicKeyToken=0669cf0452175907, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqToExcel.1.11.0\lib\Remotion.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Remotion.Data.Linq, Version=1.13.52.2, Culture=neutral, PublicKeyToken=0669cf0452175907, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqToExcel.1.11.0\lib\Remotion.Data.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Remotion.Interfaces, Version=1.13.52.2, Culture=neutral, PublicKeyToken=0669cf0452175907, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqToExcel.1.11.0\lib\Remotion.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.11.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.11.4\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.Compression.Base, Version=21.2450.5.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.OfficeChartToImageConverter.AspNet.Mvc5.21.2.5\lib\net45\Syncfusion.Compression.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocIO.Base, Version=21.2450.4.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DocIO.AspNet.Mvc5.21.2.4\lib\net45\Syncfusion.DocIO.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=21.2451.5.0, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.21.2.5\lib\net451\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.OfficeChart.Base, Version=21.2450.5.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.OfficeChartToImageConverter.AspNet.Mvc5.21.2.5\lib\net45\Syncfusion.OfficeChart.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.OfficeChartToImageConverter.Wpf, Version=21.2450.5.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.OfficeChartToImageConverter.AspNet.Mvc5.21.2.5\lib\net45\Syncfusion.OfficeChartToImageConverter.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Pdf.Base, Version=21.2450.5.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Pdf.AspNet.Mvc5.21.2.5\lib\net45\Syncfusion.Pdf.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Presentation.Base, Version=21.2450.4.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Presentation.AspNet.Mvc5.21.2.4\lib\net45\Syncfusion.Presentation.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfChart.WPF, Version=21.2450.5.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.OfficeChartToImageConverter.AspNet.Mvc5.21.2.5\lib\net45\Syncfusion.SfChart.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.4\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.Cors, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.4\lib\net45\System.Web.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.4\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.4\lib\net45\System.Web.Http.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_GlobalResources\PdfWebControlResources1.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PdfWebControlResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Administration\AdministrationAreaRegistration.cs" />
+    <Compile Include="Areas\Administration\Controllers\ActivityLogController.cs" />
+    <Compile Include="Areas\Administration\Controllers\AdminHomeController.cs" />
+    <Compile Include="Areas\Administration\Controllers\ConfigController.cs" />
+    <Compile Include="Areas\Administration\Controllers\LoginController.cs" />
+    <Compile Include="Areas\Administration\Controllers\TrainingCenterController.cs" />
+    <Compile Include="Areas\Administration\Controllers\UserController.cs" />
+    <Compile Include="AutomailSent.cs" />
+    <Compile Include="Common\powerpoint\PowerPointParameter.cs" />
+    <Compile Include="Common\powerpoint\PowerPointTemplate.cs" />
+    <Compile Include="Common\word_text_replace\FlatConstants.cs" />
+    <Compile Include="Common\word_text_replace\FlatDocument.cs" />
+    <Compile Include="Common\word_text_replace\FlatText.cs" />
+    <Compile Include="Common\word_text_replace\FlatTextRange.cs" />
+    <Compile Include="Common\word_text_replace\Program.cs" />
+    <Compile Include="Common\word_text_replace\SearchAndReplace.cs" />
+    <Compile Include="Common\word_text_replace\WordDocumentService.cs" />
+    <Compile Include="Common\word_text_replace\XDocumentCollection.cs" />
+    <Compile Include="Controllers\AssessmentPaperController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BulkImportExportController.cs" />
+    <Compile Include="Controllers\CourseLessonPlanController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\CourseController.cs" />
+    <Compile Include="Controllers\CourseDocController.cs" />
+    <Compile Include="Controllers\CourseDocRemarksController.cs" />
+    <Compile Include="Controllers\CourseDocVersionController.cs" />
+    <Compile Include="Controllers\CourseDownloadController.cs" />
+    <Compile Include="Controllers\CourseReminderController.cs" />
+    <Compile Include="Controllers\CourseReminderDownloadController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IntroController.cs" />
+    <Compile Include="Controllers\IntroStudentController.cs" />
+    <Compile Include="Controllers\MemorandomController.cs" />
+    <Compile Include="Controllers\QPAPIController.cs" />
+    <Compile Include="Controllers\QPRequestController.cs" />
+    <Compile Include="Controllers\TodayCentralClassDocsController.cs" />
+    <Compile Include="Controllers\TodayClassDocsController.cs" />
+    <Compile Include="Controllers\TrainerQPUploadController.cs" />
+    <Compile Include="Controllers\TrainerUploadDocumentController.cs" />
+    <Compile Include="Controllers\TrainnerMacAddressController.cs" />
+    <Compile Include="Controllers\UserLoginController.cs" />
+    <Compile Include="DocViewer\DocumentViewer.aspx.cs">
+      <DependentUpon>DocumentViewer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DocViewer\DocumentViewer.aspx.designer.cs">
+      <DependentUpon>DocumentViewer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Filters\ErrorHandler.cs" />
+    <Compile Include="Filters\FileExt.cs" />
+    <Compile Include="Filters\SessionExpire.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="IoCConfig.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Startup.cs" />
+    <Compile Include="Web References\CourseService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\sg.com.eversafe.li\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Websockets\WebSocketHub.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\image\img1.jpg" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\image\img1.png" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\image\img2.jpg" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\image\lgimg1.jpg" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\image\lgimg2.jpg" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\image\te.jpg" />
+    <Content Include="Content\CentralizeCss.css" />
+    <Content Include="Content\downloadTrainer\OFAC Videos\mk_05052023012512.webm" />
+    <Content Include="Content\form-inputmask\demo-mask.js" />
+    <Content Include="Content\form-inputmask\jquery.inputmask.bundle.js" />
+    <Content Include="Content\form-inputmask\jquery.inputmask.bundle.min.js" />
+    <Content Include="Content\form-inputmask\jquery.mask.js" />
+    <Content Include="Content\form-inputmask\jquery.mask.min.js" />
+    <Content Include="Content\form-inputmask\js\jquery.inputmask.js" />
+    <Content Include="Content\intopage_custom.css" />
+    <Content Include="Content\intro-page\biblio_re_xarc.svg" />
+    <Content Include="Content\intro-page\bootstrap.min.css" />
+    <Content Include="Content\intro-page\feedback.svg" />
+    <Content Include="Content\intro-page\tropy-gold.jpg" />
+    <Content Include="Content\intro-page\tropy.jpg" />
+    <Content Include="Content\intro-page\working_from_anywhere.svg" />
+    <Content Include="Content\QPPdfimage\p3.jpg" />
+    <Content Include="Content\Videoplayer\css\app.css" />
+    <Content Include="Content\Videoplayer\css\videre.css" />
+    <Content Include="Content\Videoplayer\js\app.js" />
+    <Content Include="Content\Videoplayer\js\videre.js" />
+    <Content Include="DocViewer\DocumentViewer.aspx" />
+    <Content Include="EmailTemplates\AEBMeetingToDeveloper.html" />
+    <Content Include="EmailTemplates\ApprovedCourseDocNotificatoinToDirectorAndDeveloper.html" />
+    <Content Include="EmailTemplates\ApprovedCourseNotificationToDirector.html" />
+    <Content Include="EmailTemplates\AssessmentPaperToTrainer.html" />
+    <Content Include="EmailTemplates\DownloadUserNotification.html" />
+    <Content Include="EmailTemplates\Letterofundertaking.html" />
+    <Content Include="EmailTemplates\NewCourseAssociateDeveloper.html" />
+    <Content Include="EmailTemplates\NewCourseAutoReminder.html" />
+    <Content Include="EmailTemplates\NewCourseRemindermail.html" />
+    <Content Include="EmailTemplates\NotificationAssignSMETracking.html" />
+    <Content Include="EmailTemplates\NewDocNotificationToDirector.html" />
+    <Content Include="EmailTemplates\NotificationToPrintIncharge.html" />
+    <Content Include="EmailTemplates\NotificationToSMEAndDeveloper.html" />
+    <Content Include="EmailTemplates\NotificationToTrainer.html" />
+    <Content Include="EmailTemplates\OuterTrainerActivetedStatus.html" />
+    <Content Include="EmailTemplates\OuterTrainerVerification.html" />
+    <Content Include="EmailTemplates\PoorFeedbackToTrainer.html" />
+    <Content Include="EmailTemplates\ReleaseNotificationToHR.html" />
+    <Content Include="EmailTemplates\RemarksSummaryNotificationToDirectorAndDeveloper.html" />
+    <Content Include="EmailTemplates\TrainerQPReview.html" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="index.html" />
+    <Content Include="Package\DocumentFormat.OpenXml.dll" />
+    <Content Include="Package\DotNetZip.dll" />
+    <Content Include="Package\System.IO.Compression.ZipFile.dll" />
+    <Content Include="Samples\sample.txt" />
+    <Content Include="Scripts\administration\activityLog\index.js" />
+    <Content Include="Scripts\administration\user\outeruser.js" />
+    <Content Include="Scripts\AssessmentPaper\index.js" />
+    <Content Include="Scripts\courseDocRemarks\reviewCourseDocument.js" />
+    <Content Include="Scripts\courseDocVersion\index.js" />
+    <Content Include="Scripts\courseDocVersion\RecentUpdatdDocument.js" />
+    <Content Include="Scripts\courseDoc\_addOrUpdateCourseDocs.js" />
+    <Content Include="Scripts\courseDoc\_courseDocsSharing.js" />
+    <Content Include="Scripts\courseDoc\_smeCourseDocuments.js" />
+    <Content Include="Scripts\CourseDownload\CourseDonwload.js" />
+    <Content Include="Scripts\CourseReminder\courseIndex.js" />
+    <Content Include="Scripts\CourseReminder\index.js" />
+    <Content Include="Scripts\CourseReminder\sketch.min.js" />
+    <Content Include="Scripts\course\BulkImport.js" />
+    <Content Include="Scripts\course\Bulk_video_upload_import.js" />
+    <Content Include="Scripts\course\CentralizeCourse.js" />
+    <Content Include="Scripts\course\Centralize_list.js" />
+    <Content Include="Scripts\course\CourseReminder.js" />
+    <Content Include="Scripts\course\CourseStatus.js" />
+    <Content Include="Scripts\course\index.js" />
+    <Content Include="Scripts\administration\login\index.js" />
+    <Content Include="Scripts\administration\login\verifyLogin.js" />
+    <Content Include="Scripts\administration\trainingCenter\index.js" />
+    <Content Include="Scripts\administration\user\index.js" />
+    <Content Include="Scripts\ai.0.22.9-build00167.js" />
+    <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
+    <Content Include="Scripts\ajaxHelper.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\Administration\Views\web.config" />
+    <Content Include="Areas\Administration\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Administration\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Administration\Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Areas\Administration\Views\Login\Index.cshtml" />
+    <Content Include="Areas\Administration\Views\Login\VerifyLogin.cshtml" />
+    <Content Include="Areas\Administration\Views\AdminHome\Index.cshtml" />
+    <Content Include="Areas\Administration\Views\TrainingCenter\Index.cshtml" />
+    <Content Include="Areas\Administration\Views\Shared\_HeaderNavbar.cshtml" />
+    <Content Include="Areas\Administration\Views\Shared\_MenuSidebar.cshtml" />
+    <Content Include="Areas\Administration\Views\TrainingCenter\_AddOrUpdate.cshtml" />
+    <Content Include="Areas\Administration\Views\User\Index.cshtml" />
+    <Content Include="Areas\Administration\Views\User\_AddOrUpdate.cshtml" />
+    <Content Include="Areas\Administration\Views\ActivityLog\Index.cshtml" />
+    <Content Include="Areas\Administration\Views\Config\Index.cshtml" />
+    <Content Include="Areas\Administration\Views\User\OuterUserList.cshtml" />
+    <Content Include="Common\word_text_replace\Sample Input.docx" />
+    <None Include="connectionStrings.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="libman.json" />
+    <Content Include="Content\form-inputmask\README.md" />
+    <Content Include="Content\Videoplayer\css\videre.css.map" />
+    <Content Include="Content\Videoplayer\css\videre.sass" />
+    <Content Include="EmailTemplates\CourseProposalToDeveloper.html" />
+    <Content Include="Courses Materials\SSTMDownloads.text" />
+    <Content Include="Content\latter_of_undertaking\4latter_of_undertaking.pdf" />
+    <Content Include="Content\assement_paperfile.pdf" />
+    <Content Include="Content\form-inputmask.zip" />
+    <Content Include="Content\assement_paper\456_293.0_f8182635t.pdf" />
+    <Content Include="Content\assement_paper\456_293.0_G8119829U.pdf" />
+    <Content Include="Content\assement_paper\file.pdf" />
+    <Content Include="Content\downloadCourseFile\Test Course 31052022\mnmn_05052023235100.pdf" />
+    <Content Include="Content\downloadCourseFile\Test Course 31052022\nnnnn_05052023235100.pdf" />
+    <Content Include="Content\downloadCourseFile\Test Course 31052022\nn_05052023235100.pdf" />
+    <Content Include="Content\downloadCourseFile\Test Course 31052022\t3_05052023235100.pdf" />
+    <Content Include="Content\Temp\17\mm_01062023_233158.docx" />
+    <Content Include="Content\Temp\test_04022023_22519.doc\test_04022023_22519.doc" />
+    <Content Include="Content\Temp\test_04022023_232937.doc\test_04022023_232937.doc" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Manage\CentralizePPT.pptx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Manage\FG_TEMPLATE.docx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Manage\LG_TEMPLATE.docx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Professional\CentralizePPT.pptx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Professional\FG_TEMPLATE.docx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Professional\LG_TEMPLATE.docx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Supervisor\CentralizePPT.pptx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Supervisor\FG_TEMPLATE.docx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Supervisor\LG_TEMPLATE.docx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Worker\CentralizePPT.pptx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Worker\FG_TEMPLATE.docx" />
+    <Content Include="Content\CenteralizedCourseSamplePPT\RAW_DOC\Worker\LG_TEMPLATE.docx" />
+    <None Include="Properties\PublishProfiles\SSTM.pubxml" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="Samples\output.pptx" />
+    <Content Include="Samples\output095443.pptx" />
+    <Content Include="Samples\output100317.pptx" />
+    <Content Include="Samples\output100744.pptx" />
+    <Content Include="Samples\sample.docx" />
+    <Content Include="Samples\sample.eml" />
+    <Content Include="Samples\sample.msg" />
+    <Content Include="Samples\sample.pdf" />
+    <Content Include="Samples\sample.pptx" />
+    <Content Include="Samples\sample.rtf" />
+    <Content Include="Samples\sample.xlsx" />
+    <Content Include="Samples\sample122.pptx" />
+    <Content Include="Samples\test.pptx" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\Dashbord\dashboard.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.2.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.2.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jquery\jquery.min.js" />
+    <Content Include="Scripts\loader.js" />
+    <Content Include="Scripts\login\index.js" />
+    <Content Include="Scripts\MainCourse\Index.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\pdf.js\build\pdf.js" />
+    <Content Include="Scripts\pdf.js\build\pdf.worker.js" />
+    <Content Include="Scripts\pdf.js\web\debugger.js" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-check.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-comment.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-help.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-insert.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-key.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-newparagraph.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-noicon.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-note.svg" />
+    <Content Include="Scripts\pdf.js\web\images\annotation-paragraph.svg" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-next%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-next-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-next-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-next.png" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-previous%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-previous-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-previous-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\findbarButton-previous.png" />
+    <Content Include="Scripts\pdf.js\web\images\grab.cur" />
+    <Content Include="Scripts\pdf.js\web\images\grabbing.cur" />
+    <Content Include="Scripts\pdf.js\web\images\loading-icon.gif" />
+    <Content Include="Scripts\pdf.js\web\images\loading-small%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\loading-small.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-documentProperties%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-documentProperties.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-firstPage%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-firstPage.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-handTool%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-handTool.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-lastPage%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-lastPage.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-rotateCcw%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-rotateCcw.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-rotateCw%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-rotateCw.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-selectTool%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\secondaryToolbarButton-selectTool.png" />
+    <Content Include="Scripts\pdf.js\web\images\shadow.png" />
+    <Content Include="Scripts\pdf.js\web\images\texture.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-bookmark%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-bookmark.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-download%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-download.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-menuArrows%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-menuArrows.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-openFile%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-openFile.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageDown%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageDown-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageDown-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageDown.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageUp%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageUp-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageUp-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-pageUp.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-presentationMode%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-presentationMode.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-print%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-print.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-search%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-search.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-secondaryToolbarToggle%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-secondaryToolbarToggle-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-secondaryToolbarToggle-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-secondaryToolbarToggle.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-sidebarToggle%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-sidebarToggle-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-sidebarToggle-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-sidebarToggle.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewAttachments%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewAttachments.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewOutline%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewOutline-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewOutline-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewOutline.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewThumbnail%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-viewThumbnail.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-zoomIn%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-zoomIn.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-zoomOut%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\toolbarButton-zoomOut.png" />
+    <Content Include="Scripts\pdf.js\web\images\treeitem-collapsed%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\treeitem-collapsed-rtl%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\treeitem-collapsed-rtl.png" />
+    <Content Include="Scripts\pdf.js\web\images\treeitem-collapsed.png" />
+    <Content Include="Scripts\pdf.js\web\images\treeitem-expanded%402x.png" />
+    <Content Include="Scripts\pdf.js\web\images\treeitem-expanded.png" />
+    <Content Include="Scripts\pdf.js\web\pagevalidation.js" />
+    <Content Include="Scripts\pdf.js\web\viewer.css" />
+    <Content Include="Scripts\pdf.js\web\viewer.html" />
+    <Content Include="Scripts\pdf.js\web\viewer.js" />
+    <Content Include="Scripts\pdfEdit\arrow.fabric.js" />
+    <Content Include="Scripts\pdfEdit\pdfannotate.css" />
+    <Content Include="Scripts\pdfEdit\pdfannotate.js" />
+    <Content Include="Scripts\pdfEdit\script.js" />
+    <Content Include="Scripts\pdfEdit\styles.css" />
+    <Content Include="Scripts\QPRequest\index.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Speechjs\articulate.js" />
+    <Content Include="Scripts\Speechjs\articulate.min.js" />
+    <Content Include="Scripts\sstm_js_enc\_sstm_enc.js" />
+    <Content Include="Scripts\SubCourse\index.js" />
+    <Content Include="Scripts\summernote\summernote.min.css" />
+    <Content Include="Scripts\summernote\summernote.min.js" />
+    <Content Include="Scripts\trainerDocument\TrainerDocument.js" />
+    <Content Include="Scripts\TrainerQPUpload\QPApprovelLevel.js" />
+    <Content Include="Scripts\TrainerQPUpload\QPStudent.js" />
+    <Content Include="Scripts\TrainerQPUpload\TrainerQP.js" />
+    <Content Include="Scripts\TrainnerMacAddress\TrainnerMacAddress.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="SqlChangeScript\change for view page .txt" />
+    <Content Include="SqlChangeScript\changes.txt" />
+    <Content Include="SqlChangeScript\DBscript.sql" />
+    <Content Include="SqlChangeScript\DBscript10-12-2021.sql" />
+    <Content Include="SqlChangeScript\sstm change 11-06-2021.txt" />
+    <Content Include="Theme\accessForbidden\403Forbidden.js" />
+    <Content Include="Theme\accessForbidden\403Forbidden.css" />
+    <Content Include="Theme\build\config\postcss.config.js" />
+    <Content Include="Theme\build\config\rollup.config.js" />
+    <Content Include="Theme\build\js\AdminLTE.js" />
+    <Content Include="Theme\build\js\CardRefresh.js" />
+    <Content Include="Theme\build\js\CardWidget.js" />
+    <Content Include="Theme\build\js\ControlSidebar.js" />
+    <Content Include="Theme\build\js\DirectChat.js" />
+    <Content Include="Theme\build\js\Dropdown.js" />
+    <Content Include="Theme\build\js\Layout.js" />
+    <Content Include="Theme\build\js\PushMenu.js" />
+    <Content Include="Theme\build\js\SiteSearch.js" />
+    <Content Include="Theme\build\js\Toasts.js" />
+    <Content Include="Theme\build\js\TodoList.js" />
+    <Content Include="Theme\build\js\Treeview.js" />
+    <Content Include="Theme\build\npm\DocsPlugins.js" />
+    <Content Include="Theme\build\npm\DocsPublish.js" />
+    <Content Include="Theme\build\npm\Plugins.js" />
+    <Content Include="Theme\build\npm\Publish.js" />
+    <Content Include="Theme\dist\css\adminlte.css" />
+    <Content Include="Theme\dist\css\adminlte.min.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.components.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.components.min.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.core.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.core.min.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.extra-components.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.extra-components.min.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.pages.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.pages.min.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.plugins.css" />
+    <Content Include="Theme\dist\css\alt\adminlte.plugins.min.css" />
+    <Content Include="Theme\dist\css\custom.css" />
+    <Content Include="Theme\dist\img\AdminLTELogo.png" />
+    <Content Include="Theme\dist\img\avatar.png" />
+    <Content Include="Theme\dist\img\avatar04.png" />
+    <Content Include="Theme\dist\img\avatar2.png" />
+    <Content Include="Theme\dist\img\avatar3.png" />
+    <Content Include="Theme\dist\img\avatar5.png" />
+    <Content Include="Theme\dist\img\boxed-bg.jpg" />
+    <Content Include="Theme\dist\img\boxed-bg.png" />
+    <Content Include="Theme\dist\img\credit\american-express.png" />
+    <Content Include="Theme\dist\img\credit\cirrus.png" />
+    <Content Include="Theme\dist\img\credit\mastercard.png" />
+    <Content Include="Theme\dist\img\credit\mestro.png" />
+    <Content Include="Theme\dist\img\credit\paypal.png" />
+    <Content Include="Theme\dist\img\credit\paypal2.png" />
+    <Content Include="Theme\dist\img\credit\visa.png" />
+    <Content Include="Theme\dist\img\default-150x150.png" />
+    <Content Include="Theme\dist\img\icons.png" />
+    <Content Include="Theme\dist\img\photo1.png" />
+    <Content Include="Theme\dist\img\photo2.png" />
+    <Content Include="Theme\dist\img\photo3.jpg" />
+    <Content Include="Theme\dist\img\photo4.jpg" />
+    <Content Include="Theme\dist\img\prod-1.jpg" />
+    <Content Include="Theme\dist\img\prod-2.jpg" />
+    <Content Include="Theme\dist\img\prod-3.jpg" />
+    <Content Include="Theme\dist\img\prod-4.jpg" />
+    <Content Include="Theme\dist\img\prod-5.jpg" />
+    <Content Include="Theme\dist\img\user1-128x128.jpg" />
+    <Content Include="Theme\dist\img\user2-160x160.jpg" />
+    <Content Include="Theme\dist\img\user3-128x128.jpg" />
+    <Content Include="Theme\dist\img\user4-128x128.jpg" />
+    <Content Include="Theme\dist\img\user5-128x128.jpg" />
+    <Content Include="Theme\dist\img\user6-128x128.jpg" />
+    <Content Include="Theme\dist\img\user7-128x128.jpg" />
+    <Content Include="Theme\dist\img\user8-128x128.jpg" />
+    <Content Include="Theme\dist\js\adminlte.js" />
+    <Content Include="Theme\dist\js\adminlte.min.js" />
+    <Content Include="Theme\dist\js\common.js" />
+    <Content Include="Theme\dist\js\defaultSettings.js" />
+    <Content Include="Theme\dist\js\demo.js" />
+    <Content Include="Theme\dist\js\detectInactivity.js" />
+    <Content Include="Theme\dist\js\pages\dashboard.js" />
+    <Content Include="Theme\dist\js\pages\dashboard2.js" />
+    <Content Include="Theme\dist\js\pages\dashboard3.js" />
+    <Content Include="Theme\dist\MultiSteps\script.js" />
+    <Content Include="Theme\dist\MultiSteps\style.css" />
+    <Content Include="Theme\images\bg\bg-login-1.jpg" />
+    <Content Include="Theme\images\bg\bg-login-2.jpg" />
+    <Content Include="Theme\images\bg\bg-login-0.jpg" />
+    <Content Include="Theme\images\eversafe-logo-.png" />
+    <Content Include="Theme\images\greenthumb.jpg" />
+    <Content Include="Theme\images\loading.gif" />
+    <Content Include="Theme\images\png-clipart-computer-icons-user-profile-avatar-avatar-face-heroes.png" />
+    <Content Include="Theme\images\redthumb.jpg" />
+    <Content Include="Theme\images\timeout-icon.png" />
+    <Content Include="Theme\images\yellowthumb.jpg" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.bundle.js" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.bundle.min.js" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.js" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Theme\plugins\datatables-bs4\css\dataTables.bootstrap4.css" />
+    <Content Include="Theme\plugins\datatables-bs4\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Theme\plugins\datatables-bs4\js\dataTables.bootstrap4.js" />
+    <Content Include="Theme\plugins\datatables-bs4\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Theme\plugins\datatables-responsive\css\responsive.bootstrap4.css" />
+    <Content Include="Theme\plugins\datatables-responsive\css\responsive.bootstrap4.min.css" />
+    <Content Include="Theme\plugins\datatables-responsive\js\dataTables.responsive.js" />
+    <Content Include="Theme\plugins\datatables-responsive\js\dataTables.responsive.min.js" />
+    <Content Include="Theme\plugins\datatables-responsive\js\responsive.bootstrap4.js" />
+    <Content Include="Theme\plugins\datatables-responsive\js\responsive.bootstrap4.min.js" />
+    <Content Include="Theme\plugins\datatables\jquery.dataTables.js" />
+    <Content Include="Theme\plugins\datatables\jquery.dataTables.min.js" />
+    <Content Include="Theme\plugins\datepicker\bootstrap-datepicker.min.css" />
+    <Content Include="Theme\plugins\datepicker\bootstrap-datepicker.min.js" />
+    <Content Include="Theme\plugins\fontawesome-free\css\all.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\all.min.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\brands.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\brands.min.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\fontawesome.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\fontawesome.min.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\regular.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\regular.min.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\solid.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\solid.min.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\svg-with-js.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\svg-with-js.min.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\v4-shims.css" />
+    <Content Include="Theme\plugins\fontawesome-free\css\v4-shims.min.css" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-brands-400.svg" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-regular-400.svg" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-solid-900.svg" />
+    <Content Include="Theme\plugins\icheck-bootstrap\icheck-bootstrap.css" />
+    <Content Include="Theme\plugins\icheck-bootstrap\icheck-bootstrap.min.css" />
+    <Content Include="Theme\plugins\jquery-ui\AUTHORS.txt" />
+    <Content Include="Theme\plugins\jquery-ui\external\jquery\jquery.js" />
+    <Content Include="Theme\plugins\jquery-ui\images\ui-icons_444444_256x240.png" />
+    <Content Include="Theme\plugins\jquery-ui\images\ui-icons_555555_256x240.png" />
+    <Content Include="Theme\plugins\jquery-ui\images\ui-icons_777620_256x240.png" />
+    <Content Include="Theme\plugins\jquery-ui\images\ui-icons_777777_256x240.png" />
+    <Content Include="Theme\plugins\jquery-ui\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Theme\plugins\jquery-ui\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.css" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.js" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.min.css" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.min.js" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.structure.css" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.structure.min.css" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.theme.css" />
+    <Content Include="Theme\plugins\jquery-ui\jquery-ui.theme.min.css" />
+    <Content Include="Theme\plugins\jquery-ui\LICENSE.txt" />
+    <Content Include="Theme\plugins\mask\jquery.mask.js" />
+    <Content Include="Theme\plugins\mask\jquery.mask.min.js" />
+    <Content Include="Theme\plugins\overlayScrollbars\css\OverlayScrollbars.css" />
+    <Content Include="Theme\plugins\overlayScrollbars\css\OverlayScrollbars.min.css" />
+    <Content Include="Theme\plugins\overlayScrollbars\js\jquery.overlayScrollbars.js" />
+    <Content Include="Theme\plugins\overlayScrollbars\js\jquery.overlayScrollbars.min.js" />
+    <Content Include="Theme\plugins\overlayScrollbars\js\OverlayScrollbars.js" />
+    <Content Include="Theme\plugins\overlayScrollbars\js\OverlayScrollbars.min.js" />
+    <Content Include="Theme\plugins\select2-bootstrap4-theme\select2-bootstrap4.css" />
+    <Content Include="Theme\plugins\select2-bootstrap4-theme\select2-bootstrap4.min.css" />
+    <Content Include="Theme\plugins\select2\css\select2.css" />
+    <Content Include="Theme\plugins\select2\css\select2.min.css" />
+    <Content Include="Theme\plugins\select2\js\i18n\af.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ar.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\az.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\bg.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\bn.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\bs.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\build.txt" />
+    <Content Include="Theme\plugins\select2\js\i18n\ca.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\cs.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\da.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\de.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\dsb.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\el.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\en.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\es.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\et.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\eu.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\fa.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\fi.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\fr.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\gl.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\he.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\hi.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\hr.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\hsb.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\hu.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\hy.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\id.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\is.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\it.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ja.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ka.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\km.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ko.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\lt.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\lv.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\mk.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ms.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\nb.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ne.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\nl.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\pl.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ps.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\pt-BR.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\pt.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ro.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\ru.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\sk.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\sl.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\sq.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\sr-Cyrl.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\sr.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\sv.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\th.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\tk.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\tr.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\uk.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\vi.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\zh-CN.js" />
+    <Content Include="Theme\plugins\select2\js\i18n\zh-TW.js" />
+    <Content Include="Theme\plugins\select2\js\select2.full.js" />
+    <Content Include="Theme\plugins\select2\js\select2.full.min.js" />
+    <Content Include="Theme\plugins\select2\js\select2.js" />
+    <Content Include="Theme\plugins\select2\js\select2.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ar-AR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ar-AR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ar-AR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-az-AZ.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-az-AZ.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-az-AZ.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-bg-BG.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-bg-BG.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-bg-BG.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ca-ES.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ca-ES.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ca-ES.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-cs-CZ.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-cs-CZ.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-cs-CZ.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-da-DK.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-da-DK.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-da-DK.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-de-DE.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-de-DE.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-de-DE.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-el-GR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-el-GR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-el-GR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-es-ES.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-es-ES.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-es-ES.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-es-EU.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-es-EU.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-es-EU.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fa-IR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fa-IR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fa-IR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fi-FI.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fi-FI.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fi-FI.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fr-FR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fr-FR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-fr-FR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-gl-ES.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-gl-ES.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-gl-ES.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-he-IL.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-he-IL.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-he-IL.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-hr-HR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-hr-HR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-hr-HR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-hu-HU.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-hu-HU.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-hu-HU.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-id-ID.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-id-ID.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-id-ID.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-it-IT.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-it-IT.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-it-IT.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ja-JP.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ja-JP.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ja-JP.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ko-KR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ko-KR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ko-KR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-lt-LT.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-lt-LT.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-lt-LT.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-lt-LV.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-lt-LV.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-lt-LV.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-mn-MN.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-mn-MN.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-mn-MN.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-nb-NO.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-nb-NO.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-nb-NO.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-nl-NL.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-nl-NL.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-nl-NL.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pl-PL.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pl-PL.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pl-PL.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pt-BR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pt-BR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pt-BR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pt-PT.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pt-PT.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-pt-PT.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ro-RO.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ro-RO.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ro-RO.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ru-RU.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ru-RU.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ru-RU.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sk-SK.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sk-SK.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sk-SK.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sl-SI.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sl-SI.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sl-SI.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sr-RS-Latin.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sr-RS-Latin.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sr-RS-Latin.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sr-RS.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sr-RS.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sr-RS.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sv-SE.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sv-SE.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-sv-SE.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ta-IN.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ta-IN.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-ta-IN.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-th-TH.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-th-TH.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-th-TH.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-tr-TR.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-tr-TR.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-tr-TR.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-uk-UA.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-uk-UA.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-uk-UA.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-uz-UZ.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-uz-UZ.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-uz-UZ.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-vi-VN.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-vi-VN.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-vi-VN.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-zh-CN.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-zh-CN.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-zh-CN.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-zh-TW.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-zh-TW.min.js" />
+    <Content Include="Theme\plugins\summernote\lang\summernote-zh-TW.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\plugin\databasic\summernote-ext-databasic.css" />
+    <Content Include="Theme\plugins\summernote\plugin\databasic\summernote-ext-databasic.js" />
+    <Content Include="Theme\plugins\summernote\plugin\hello\summernote-ext-hello.js" />
+    <Content Include="Theme\plugins\summernote\plugin\specialchars\summernote-ext-specialchars.js" />
+    <Content Include="Theme\plugins\summernote\summernote-bs4.css" />
+    <Content Include="Theme\plugins\summernote\summernote-bs4.js" />
+    <Content Include="Theme\plugins\summernote\summernote-bs4.min.css" />
+    <Content Include="Theme\plugins\summernote\summernote-bs4.min.js" />
+    <Content Include="Theme\plugins\summernote\summernote-bs4.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\summernote-lite.css" />
+    <Content Include="Theme\plugins\summernote\summernote-lite.js" />
+    <Content Include="Theme\plugins\summernote\summernote-lite.min.css" />
+    <Content Include="Theme\plugins\summernote\summernote-lite.min.js" />
+    <Content Include="Theme\plugins\summernote\summernote-lite.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\summernote\summernote.css" />
+    <Content Include="Theme\plugins\summernote\summernote.js" />
+    <Content Include="Theme\plugins\summernote\summernote.min.css" />
+    <Content Include="Theme\plugins\summernote\summernote.min.js" />
+    <Content Include="Theme\plugins\summernote\summernote.min.js.LICENSE.txt" />
+    <Content Include="Theme\plugins\sweetalert2\sweetalert2.all.js" />
+    <Content Include="Theme\plugins\sweetalert2\sweetalert2.all.min.js" />
+    <Content Include="Theme\plugins\sweetalert2\sweetalert2.css" />
+    <Content Include="Theme\plugins\sweetalert2\sweetalert2.js" />
+    <Content Include="Theme\plugins\sweetalert2\sweetalert2.min.css" />
+    <Content Include="Theme\plugins\sweetalert2\sweetalert2.min.js" />
+    <Content Include="Theme\plugins\timeout\timeout-dialog.css" />
+    <Content Include="Theme\plugins\timeout\timeout-dialog.js" />
+    <Content Include="Theme\plugins\toastr\toastr.css" />
+    <Content Include="Theme\plugins\toastr\toastr.min.css" />
+    <Content Include="Theme\plugins\toastr\toastr.min.js" />
+    <Content Include="Theme\QP1.css" />
+    <Content Include="Views\AssessmentPaper\PdfEditor.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Error\InternalServerError.cshtml" />
+    <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\Error\AccessForbidden.cshtml" />
+    <Content Include="Views\UserLogin\Index.cshtml" />
+    <Content Include="Views\Course\Index.cshtml" />
+    <Content Include="Views\Course\_AddOrUpdate.cshtml" />
+    <Content Include="Views\Shared\_HeaderNavbar.cshtml" />
+    <Content Include="Views\Shared\_MenuSidebar.cshtml" />
+    <Content Include="Views\Course\_SMEListModal.cshtml" />
+    <Content Include="Theme\plugins\summernote\font\summernote.eot" />
+    <Content Include="Theme\plugins\summernote\font\summernote.ttf" />
+    <Content Include="Theme\plugins\summernote\font\summernote.woff" />
+    <Content Include="Theme\plugins\summernote\font\summernote.woff2" />
+    <Content Include="Theme\plugins\summernote\summernote-bs4.js.map" />
+    <Content Include="Theme\plugins\summernote\summernote-bs4.min.js.map" />
+    <Content Include="Theme\plugins\summernote\summernote-lite.js.map" />
+    <Content Include="Theme\plugins\summernote\summernote-lite.min.js.map" />
+    <Content Include="Theme\plugins\summernote\summernote.js.map" />
+    <Content Include="Theme\plugins\summernote\summernote.min.js.map" />
+    <Content Include="Views\Course\SharedCoursesList.cshtml" />
+    <Content Include="Views\CourseDoc\_AddOrUpdateCourseDocs.cshtml" />
+    <Content Include="Views\CourseDoc\_SMECourseDocuments.cshtml" />
+    <Content Include="Views\CourseDocRemarks\ReviewCourseDocument_old.cshtml" />
+    <Content Include="Views\CourseDocRemarks\_ViewCourseDocRemarks.cshtml" />
+    <Content Include="Views\CourseDoc\_CourseDocsSharing.cshtml" />
+    <Content Include="Views\CourseDoc\_ViewCourseDocsModal.cshtml" />
+    <Content Include="Views\CourseDoc\CourseDocViewer_old.cshtml" />
+    <Content Include="Views\CourseDocVersion\Index.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\GetGeoLocation.cshtml" />
+    <Content Include="Views\CourseDoc\viewZoho.cshtml" />
+    <Content Include="Views\Course\StaffIndex.cshtml" />
+    <Content Include="Views\Course\MainCourse.cshtml" />
+    <Content Include="Views\Course\_AddOrUpdateMainCategory.cshtml" />
+    <Content Include="Views\Course\MainStaffCourse.cshtml" />
+    <Content Include="Views\Course\SubCourse.cshtml" />
+    <Content Include="Views\Course\_AddOrUpdateSubCategory.cshtml" />
+    <Content Include="Views\Course\SubStaffCourse.cshtml" />
+    <Content Include="Views\CourseDocVersion\DocumentRecentlyUpdated.cshtml" />
+    <Content Include="Views\Course\CourseStatus.cshtml" />
+    <Content Include="Views\CourseDoc\OldDocuments.cshtml" />
+    <Content Include="Views\CourseDownload\Index.cshtml" />
+    <Content Include="Views\Course\_DownloadUser.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\TrainerUploadDocument\Index.cshtml" />
+    <Content Include="Views\TrainerUploadDocument\_AddTrainerDocument.cshtml" />
+    <Content Include="Views\TrainerUploadDocument\CommonDocument.cshtml" />
+    <Content Include="Views\TrainerUploadDocument\VideoFiles.cshtml" />
+    <Content Include="Views\TrainnerMacAddress\Index.cshtml" />
+    <Content Include="Views\TrainerUploadDocument\ConnfidentialDocument.cshtml" />
+    <Content Include="Views\TrainerQPUpload\Index.cshtml" />
+    <Content Include="Views\Course\ISOEdutrust.cshtml" />
+    <Content Include="Views\TrainerQPUpload\_SMEQPListModal.cshtml" />
+    <Content Include="Views\TrainerQPUpload\SharedStudentList.cshtml" />
+    <Content Include="Scripts\pdf.js\build\pdf.js.map" />
+    <Content Include="Scripts\pdf.js\build\pdf.worker.js.map" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78-RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78ms-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\78ms-RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\83pv-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\90ms-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\90ms-RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\90msp-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\90msp-RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\90pv-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\90pv-RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Add-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Add-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Add-RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Add-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-0.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-1.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-3.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-4.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-5.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-6.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-CNS1-UCS2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-GB1-0.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-GB1-1.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-GB1-2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-GB1-3.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-GB1-4.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-GB1-5.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-GB1-UCS2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-0.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-1.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-3.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-4.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-5.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-6.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Japan1-UCS2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Korea1-0.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Korea1-1.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Korea1-2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Adobe-Korea1-UCS2.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\B5pc-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\B5pc-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\CNS-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\CNS-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\CNS1-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\CNS1-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\CNS2-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\CNS2-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\ETen-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\ETen-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\ETenms-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\ETenms-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\ETHK-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\ETHK-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Ext-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Ext-RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Ext-RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Ext-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GB-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GB-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GB-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GB-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBK-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBK-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBK2K-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBK2K-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBKp-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBKp-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBpc-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBpc-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBT-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBT-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBT-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBT-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBTpc-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\GBTpc-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Hankaku.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Hiragana.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKdla-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKdla-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKdlb-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKdlb-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKgccs-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKgccs-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKm314-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKm314-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKm471-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKm471-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKscs-B5-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\HKscs-B5-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Katakana.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSC-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSC-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSC-Johab-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSC-Johab-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSCms-UHC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSCms-UHC-HW-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSCms-UHC-HW-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSCms-UHC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSCpc-EUC-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\KSCpc-EUC-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\LICENSE" />
+    <Content Include="Scripts\pdf.js\web\cmaps\NWP-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\NWP-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\RKSJ-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\RKSJ-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\Roman.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UCS2-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UCS2-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UTF16-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UTF16-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UTF32-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UTF32-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UTF8-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniCNS-UTF8-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UCS2-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UCS2-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UTF16-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UTF16-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UTF32-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UTF32-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UTF8-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniGB-UTF8-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UCS2-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UCS2-HW-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UCS2-HW-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UCS2-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UTF16-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UTF16-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UTF32-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UTF32-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UTF8-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS-UTF8-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS2004-UTF16-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS2004-UTF16-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS2004-UTF32-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS2004-UTF32-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS2004-UTF8-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJIS2004-UTF8-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJISPro-UCS2-HW-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJISPro-UCS2-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJISPro-UTF8-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJISX0213-UTF32-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJISX0213-UTF32-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJISX02132004-UTF32-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniJISX02132004-UTF32-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UCS2-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UCS2-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UTF16-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UTF16-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UTF32-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UTF32-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UTF8-H.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\UniKS-UTF8-V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\V.bcmap" />
+    <Content Include="Scripts\pdf.js\web\cmaps\WP-Symbol.bcmap" />
+    <Content Include="Scripts\pdf.js\web\compressed.tracemonkey-pldi-09.pdf" />
+    <Content Include="Scripts\pdf.js\web\locale\ach\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\af\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ak\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\an\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ar\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ast\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\as\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\az\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\be\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\bg\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\bn-BD\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\bn-IN\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\br\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\bs\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ca\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\csb\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\cs\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\cy\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\da\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\de\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\el\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\en-GB\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\en-US\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\en-ZA\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\eo\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\es-AR\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\es-CL\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\es-ES\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\es-MX\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\et\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\eu\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\fa\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ff\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\fi\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\fr\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\fy-NL\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ga-IE\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\gd\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\gl\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\gu-IN\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\he\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\hi-IN\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\hr\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\hu\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\hy-AM\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\id\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\is\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\it\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ja\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ka\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\kk\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\km\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\kn\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ko\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ku\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\lg\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\lij\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\locale.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\lt\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\lv\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\mai\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\mk\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ml\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\mn\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\mr\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ms\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\my\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\nb-NO\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\nl\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\nn-NO\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\nso\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\oc\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\or\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\pa-IN\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\pl\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\pt-BR\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\pt-PT\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\rm\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ro\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ru\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\rw\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\sah\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\si\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\sk\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\sl\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\son\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\sq\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\sr\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\sv-SE\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\sw\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ta-LK\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ta\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\te\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\th\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\tl\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\tn\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\tr\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\uk\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\ur\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\vi\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\wo\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\xh\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\zh-CN\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\zh-TW\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\locale\zu\viewer.properties" />
+    <Content Include="Scripts\pdf.js\web\viewer.js.map" />
+    <Content Include="Views\CourseDocRemarks\ReviewCourseDocument.cshtml" />
+    <Content Include="Views\CourseDoc\CourseDocViewer.cshtml" />
+    <Content Include="Views\TrainerQPUpload\QP_Approval_Level.cshtml" />
+    <Content Include="Views\IntroStudent\AnswerStudentMCQ.cshtml" />
+    <Content Include="Views\IntroStudent\CongratulationStudents.cshtml" />
+    <Content Include="Views\Intro\CreateStudentMCQ.cshtml" />
+    <Content Include="Views\IntroStudent\Feedback.cshtml" />
+    <Content Include="Views\Intro\FeedbackStudentView.cshtml" />
+    <Content Include="Views\Intro\Index.cshtml" />
+    <Content Include="Views\IntroStudent\IntroPage.cshtml" />
+    <Content Include="Views\Intro\StudentOverallMarkSummary.cshtml" />
+    <Content Include="Views\Intro\ViewAnswerSheet.cshtml" />
+    <Content Include="Views\Intro\ViewStudentMCQ.cshtml" />
+    <Content Include="Views\Shared\_introMenuSidebar.cshtml" />
+    <Content Include="Views\CourseReminder\Index.cshtml" />
+    <Content Include="Views\CourseReminder\_RequestCourseAddOrUpdate.cshtml" />
+    <Content Include="Views\CourseReminder\_Renewal_course.cshtml" />
+    <Content Include="Views\CourseReminder\latter_of_undertaking.cshtml" />
+    <Content Include="Views\CourseReminder\_developer_latter_undertaking.cshtml" />
+    <Content Include="Views\CourseReminder\NewCourseIndex.cshtml" />
+    <Content Include="Views\CourseReminder\_FixCourseDeveloper.cshtml" />
+    <Content Include="Views\QPAPI\Letterofundertaking.cshtml" />
+    <Content Include="Views\QPAPI\View.cshtml" />
+    <Content Include="Views\Shared\_latterlayout.cshtml" />
+    <Content Include="Views\CourseReminder\NewCourseStatus.cshtml" />
+    <Content Include="Views\QPAPI\directorLetterofundertaking.cshtml" />
+    <Content Include="Views\IntroStudent\FeedbackView.cshtml" />
+    <Content Include="Views\QPRequest\Index.cshtml" />
+    <Content Include="Views\QPRequest\_AddOrUpdate.cshtml" />
+    <Content Include="Views\Course\_RenewalReminderForm.cshtml" />
+    <Content Include="Views\CourseReminderDownload\Letterofundertaking.cshtml" />
+    <Content Include="Views\CourseReminderDownload\LetterofundertakingList.cshtml" />
+    <Content Include="Views\CourseReminderDownload\AebApproved.cshtml" />
+    <Content Include="Views\CourseReminderDownload\CourseProposalDownload.cshtml" />
+    <Content Include="Views\CourseReminderDownload\NeedAnalysisDownload.cshtml" />
+    <Content Include="Views\CourseReminderDownload\CourseReviewlist.cshtml" />
+    <Content Include="Views\CourseReminderDownload\DesignChangeRequestlist.cshtml" />
+    <Content Include="Views\Report\Index.cshtml" />
+    <Content Include="Views\Intro\ViewBlendedLearning.cshtml" />
+    <Content Include="Views\Intro\RiskAssessment.cshtml" />
+    <Content Include="Views\IntroStudent\RADeclarationByStudents.cshtml" />
+    <Content Include="Views\Intro\OpenRASWP.cshtml" />
+    <Content Include="Views\CourseDoc\_ViewRASWPDocsModal.cshtml" />
+    <Content Include="Views\BulkImportExport\ExportCourse.cshtml" />
+    <Content Include="Views\BulkImportExport\Index.cshtml" />
+    <Content Include="Views\CentralizedCourseMaster\Index.cshtml" />
+    <Content Include="Views\CentralizedCourse\Index.cshtml" />
+    <Content Include="Views\AssessmentPaper\Index.cshtml" />
+    <Content Include="Views\AssessmentPaper\_AddOrUpdate.cshtml" />
+    <Content Include="Views\AssessmentPaper\viewZoho.cshtml" />
+    <Content Include="Views\AssessmentPaper\DeveloperMonitorList.cshtml" />
+    <Content Include="Views\Shared\_PDFEdittorLayout.cshtml" />
+    <Content Include="Views\AssessmentPaper\Student_list.cshtml" />
+    <Content Include="Views\AssessmentPaper\Student_assement_paper.cshtml" />
+    <Content Include="Views\AssessmentPaper\Student_assement_paper_view.cshtml" />
+    <Content Include="Views\CourseLessonPlan\Index.cshtml" />
+    <Content Include="Views\TodayClassDocs\CourseDocViewer.cshtml" />
+    <Content Include="Views\TodayClassDocs\_ViewCourseDocsTodayCourseModel.cshtml" />
+    <Content Include="Views\CentralizedCourse\_mandatory1.cshtml" />
+    <Content Include="Views\CentralizedCourse\_mandatory2.cshtml" />
+    <Content Include="Views\CentralizedCourse\PPT.cshtml" />
+    <Content Include="Views\CentralizedCourse\remininig_document.cshtml" />
+    <Content Include="Views\CentralizedCourse\lp_document.cshtml" />
+    <Content Include="Views\CentralizedCourse\Centralize_history.cshtml" />
+    <Content Include="Views\BulkImportExport\uploadVideoFiles.cshtml" />
+    <Content Include="Views\CentralizedCourse\central_list.cshtml" />
+    <Content Include="Views\CentralizedCourse\_SMEListModal.cshtml" />
+    <Content Include="Views\CentralizedCourse\_SME_developer_comment.cshtml" />
+    <Content Include="Views\CentralizedCourse\_CentralizeDocumentsList.cshtml" />
+    <Content Include="Views\CentralizedCourse\_CourseDocsSharing.cshtml" />
+    <Content Include="Views\CourseDoc\_viewzohoCentralDoc.cshtml" />
+    <Content Include="Views\CentralizedCourse\_addCourse.cshtml" />
+    <Content Include="Views\CentralizedCourse\_PlaceholderReplacement.cshtml" />
+    <Content Include="Views\TodayCentralClassDocs\Index.cshtml" />
+    <Content Include="Views\TodayCentralClassDocs\_ViewCentralCourseDocsTodayCourseModel.cshtml" />
+    <None Include="Web References\CourseService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Views\Memorandom\Index.cshtml" />
+    <Content Include="Views\TodayClassDocs\Index.cshtml" />
+    <None Include="Web References\CourseService\sstm.wsdl" />
+    <None Include="Web References\sg.com.eversafe.li\myweb.disco" />
+    <None Include="Web References\CourseService\sstm.disco" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Theme\build\js\.jscsrc" />
+    <Content Include="Theme\build\scss\.csslintrc" />
+    <Content Include="Theme\build\scss\AdminLTE-components.scss" />
+    <Content Include="Theme\build\scss\AdminLTE-core.scss" />
+    <Content Include="Theme\build\scss\AdminLTE-extra-components.scss" />
+    <Content Include="Theme\build\scss\AdminLTE-pages.scss" />
+    <Content Include="Theme\build\scss\AdminLTE-plugins.scss" />
+    <Content Include="Theme\build\scss\AdminLTE-raw.scss" />
+    <Content Include="Theme\build\scss\AdminLTE.scss" />
+    <Content Include="Theme\build\scss\mixins\_accent.scss" />
+    <Content Include="Theme\build\scss\mixins\_backgrounds.scss" />
+    <Content Include="Theme\build\scss\mixins\_cards.scss" />
+    <Content Include="Theme\build\scss\mixins\_custom-forms.scss" />
+    <Content Include="Theme\build\scss\mixins\_direct-chat.scss" />
+    <Content Include="Theme\build\scss\mixins\_miscellaneous.scss" />
+    <Content Include="Theme\build\scss\mixins\_navbar.scss" />
+    <Content Include="Theme\build\scss\mixins\_sidebar.scss" />
+    <Content Include="Theme\build\scss\mixins\_toasts.scss" />
+    <Content Include="Theme\build\scss\pages\_404_500_errors.scss" />
+    <Content Include="Theme\build\scss\pages\_e-commerce.scss" />
+    <Content Include="Theme\build\scss\pages\_invoice.scss" />
+    <Content Include="Theme\build\scss\pages\_lockscreen.scss" />
+    <Content Include="Theme\build\scss\pages\_login_and_register.scss" />
+    <Content Include="Theme\build\scss\pages\_mailbox.scss" />
+    <Content Include="Theme\build\scss\pages\_profile.scss" />
+    <Content Include="Theme\build\scss\pages\_projects.scss" />
+    <Content Include="Theme\build\scss\parts\_components.scss" />
+    <Content Include="Theme\build\scss\parts\_core.scss" />
+    <Content Include="Theme\build\scss\parts\_extra-components.scss" />
+    <Content Include="Theme\build\scss\parts\_miscellaneous.scss" />
+    <Content Include="Theme\build\scss\parts\_pages.scss" />
+    <Content Include="Theme\build\scss\parts\_plugins.scss" />
+    <Content Include="Theme\build\scss\plugins\_bootstrap-slider.scss" />
+    <Content Include="Theme\build\scss\plugins\_bootstrap-switch.scss" />
+    <Content Include="Theme\build\scss\plugins\_fullcalendar.scss" />
+    <Content Include="Theme\build\scss\plugins\_icheck-bootstrap.scss" />
+    <Content Include="Theme\build\scss\plugins\_jqvmap.scss" />
+    <Content Include="Theme\build\scss\plugins\_mapael.scss" />
+    <Content Include="Theme\build\scss\plugins\_miscellaneous.scss" />
+    <Content Include="Theme\build\scss\plugins\_mixins.scss" />
+    <Content Include="Theme\build\scss\plugins\_pace.scss" />
+    <Content Include="Theme\build\scss\plugins\_select2.scss" />
+    <Content Include="Theme\build\scss\plugins\_sweetalert2.scss" />
+    <Content Include="Theme\build\scss\plugins\_toastr.scss" />
+    <Content Include="Theme\build\scss\_alerts.scss" />
+    <Content Include="Theme\build\scss\_bootstrap-variables.scss" />
+    <Content Include="Theme\build\scss\_brand.scss" />
+    <Content Include="Theme\build\scss\_buttons.scss" />
+    <Content Include="Theme\build\scss\_callout.scss" />
+    <Content Include="Theme\build\scss\_cards.scss" />
+    <Content Include="Theme\build\scss\_carousel.scss" />
+    <Content Include="Theme\build\scss\_colors.scss" />
+    <Content Include="Theme\build\scss\_control-sidebar.scss" />
+    <Content Include="Theme\build\scss\_direct-chat.scss" />
+    <Content Include="Theme\build\scss\_dropdown.scss" />
+    <Content Include="Theme\build\scss\_elevation.scss" />
+    <Content Include="Theme\build\scss\_forms.scss" />
+    <Content Include="Theme\build\scss\_info-box.scss" />
+    <Content Include="Theme\build\scss\_layout.scss" />
+    <Content Include="Theme\build\scss\_main-header.scss" />
+    <Content Include="Theme\build\scss\_main-sidebar.scss" />
+    <Content Include="Theme\build\scss\_miscellaneous.scss" />
+    <Content Include="Theme\build\scss\_mixins.scss" />
+    <Content Include="Theme\build\scss\_modals.scss" />
+    <Content Include="Theme\build\scss\_navs.scss" />
+    <Content Include="Theme\build\scss\_print.scss" />
+    <Content Include="Theme\build\scss\_products.scss" />
+    <Content Include="Theme\build\scss\_progress-bars.scss" />
+    <Content Include="Theme\build\scss\_sidebar-mini.scss" />
+    <Content Include="Theme\build\scss\_small-box.scss" />
+    <Content Include="Theme\build\scss\_social-widgets.scss" />
+    <Content Include="Theme\build\scss\_table.scss" />
+    <Content Include="Theme\build\scss\_text.scss" />
+    <Content Include="Theme\build\scss\_timeline.scss" />
+    <Content Include="Theme\build\scss\_toasts.scss" />
+    <Content Include="Theme\build\scss\_users-list.scss" />
+    <Content Include="Theme\build\scss\_variables.scss" />
+    <Content Include="Theme\dist\css\adminlte.css.map" />
+    <Content Include="Theme\dist\css\adminlte.min.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.components.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.components.min.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.core.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.core.min.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.extra-components.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.extra-components.min.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.pages.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.pages.min.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.plugins.css.map" />
+    <Content Include="Theme\dist\css\alt\adminlte.plugins.min.css.map" />
+    <Content Include="Theme\dist\js\adminlte.js.map" />
+    <Content Include="Theme\dist\js\adminlte.min.js.map" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-brands-400.eot" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-brands-400.ttf" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-brands-400.woff" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-brands-400.woff2" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-regular-400.eot" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-regular-400.ttf" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-regular-400.woff" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-regular-400.woff2" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-solid-900.eot" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-solid-900.ttf" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-solid-900.woff" />
+    <Content Include="Theme\plugins\fontawesome-free\webfonts\fa-solid-900.woff2" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.bundle.js.map" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.bundle.min.js.map" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.js.map" />
+    <Content Include="Theme\plugins\bootstrap\js\bootstrap.min.js.map" />
+    <Content Include="Theme\plugins\icheck-bootstrap\LICENSE" />
+    <Content Include="Theme\plugins\toastr\toastr.js.map" />
+    <None Include="Web References\sg.com.eversafe.li\myweb.wsdl" />
+    <None Include="Web References\sg.com.eversafe.li\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\Administration\Models\" />
+    <Folder Include="BackgroundWorker\" />
+    <Folder Include="Content\CenteralizedCourseSamplePPT\doc\" />
+    <Folder Include="Content\CenteralizedCourseSamplePPT\export\" />
+    <Folder Include="Content\CenteralizedCourseSamplePPT\ppt\" />
+    <Folder Include="Content\CenteralizedCourseSamplePPT\temp\" />
+    <Folder Include="Content\downloadCourseFile\CTAG-Call For Proposal-2021\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE01 - Advanced Construction Materials %28ACM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE02 -  Advanced Surveying %28AS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE03 - Hydraulics Engineering %28HE%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE04 - Advanced Construction Technology %28ACT%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE05 - Advanced Structural Engineering %28ASE%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE06 - Environmental Sustainability Engineering %28ESE%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE07 - Advanced Concrete Design %28ACD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Civil Engineering %28ADCE%29\ADCE08 - Advanced Steel Structure %28ASS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE01 - Design of Digital Logic Circuits %28DDLC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE02 - Electron Devices and Circuits with Power Rating %28EDCP%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE03 - Power Plant Engineering %28PPE%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE04 - Transmission and Distribution of Power %28TDP%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE05 - Linear Integrated Circuits and Applications %28LICA%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE06 - Special Electrical Machines %28SEM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE07 - Protection and Switchgear %28PS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Electrical and Electronics Engineering %28ADEEE%29\ADEEE08 - Utilization and Conservation of Electric Power %28UCEP%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME01 - Advanced Manufacturing Technology %28AMT%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME02 - Advanced Strength of Materials for Mechanical Engineers %28ASM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME03 - Advanced Fluid Mechanics and Machinery %28AFMM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME04 - Advanced Material Science and Metallurgy %28AMSM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME05 - Kinematics and Dynamics of Machines %28KDM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME06 - Advanced Thermodynamics %28AT%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME07 - Applied Hydraulics and Pneumatics %28AHP%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Advanced Diploma in Mechanical Engineering %28ADME%29\ADME08 - Computer-Aided Design and Manufacturing %28CADM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Graphic Design %28CGD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Yoga for Human Excellence %28CYHE%29 - English\CYHE01 - Yogic Life %28Physical Body, Life-Force, and Mind%29 %28YL%29 - %28English%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Yoga for Human Excellence %28CYHE%29 - English\CYHE01-Yogic Life %28Tamil%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Yoga for Human Excellence %28CYHE%29 - English\CYHE02 - Sublimation and Social Welfare  %28SSW%29 - %28English%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Yoga for Human Excellence %28CYHE%29 - English\CYHE03 - Yoga Practice %28YP%29 - %28English%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Yoga for Human Excellence %28CYHE%29 - Tamil\CYHE01 - Yogic Life %28Physical Body, Life-Force, and Mind%29 %28YL%29 %28Tamil%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Yoga for Human Excellence %28CYHE%29 - Tamil\CYHE02 - Sublimation and Social Welfare %28SSW%29 %28Tamil%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Certificate in Yoga for Human Excellence %28CYHE%29 - Tamil\CYHE03 - Yoga Practice %28YP%29 %28Tamil%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA01 - Financial Accounting %28FA%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA02 - Management Accounting %28MA%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA03 - Managerial Economics %28ME%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA04 - Principles of Banking and Finance %28PBF%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA05 - Commercial Law %28CL%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA06 - Research Methods Statistical Techniques %28RMST%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA07 - Business Management %28BM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Accounts %28DA%29\DA08 - Managerial Communication %28MC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE01 - Construction Materials %28CM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE02 - Soil Mechanics %28SM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE03 - Estimation and Costing %28EC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE04 - Construction Technology %28CT%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE05 - Civil Engineering Drawing %28CED%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE06 - Site Surveying %28SS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE07 - Applied Mathematics %28AM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Civil Engineering %28DCE%29\DCE08 - Sustainable Environment for Civil Engineers %28SECE%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS01 - Communicative English %28CE%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS02 - Basic Computer Programming %27C%27 %28BCP%27C%27%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS03 - Data Structures using C - %28DSC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS04 - Object Oriented Programming %27C++%27 %28OOP %27C++%27%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS05 - Operating Systems %28OS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS06 - Computer Networking %28CN%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS07 - Web Design and Development %28WDD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Computer Science %28DCS%29\DCS08 - Cloud Computing %28CC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE01 - Fundamentals of Electrical Power System %28FEPS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE02 - Electrical Engineering Materials %28EEM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE03 - Electrical Machines %28EMach%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE04 - Circuit Analysis and Design %28CAD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE05 - Microprocessor and Microcontroller %28MPMC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE06 - Programmable Logic Controller %28PLC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE07 - Engineering Mathematics %28EM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Electrical Engineering %28DEE%29\DEE08 - Workplace Safety %28WS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM01 - Management Concepts %28MC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM02 - Human Resource Management %28HRM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM03 - Applied Operations Research %28AOR%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM04 - Strategic HRM Development %28SD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM05 - Performance Management - %28PM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM06 - Training and Development %28TD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM07 - Labour Welfare and Industrial Relations %28LWIR%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Human Resource Management %28DHRM%29\DHRM08 - Stress Management %28SM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE01 - Engineering Mathematics\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE02 - Engineering Science\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE03 - Introduction to Mechanical Engineering Principles\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE04 - Fundamentals of Thermodynamics and Fluid Mechanics\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE05 - Introduction to Electrical Engineering Principles\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE06 - Principles of Electronics\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE07 - Strength of Materials\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical and Electrical Engineering %28DMEE%29\DMEE08 - M&amp;E Equipments\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME01 - Thermodynamics %28TD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME02 - Fluid Mechanics %28FM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME03 - Strength of Materials %28SM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME04 - Manufacturing Technology %28MT%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME05 - Engineering Drawing %28ED%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME06 - Mechatronics %28MTRO%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME07 - Engineering Mathematics %28EM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Mechanical Engineering %28DME%29\DME08 - Workplace Safety %28WS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS01 - Measurement of Quantities and Estimation-I %28MQE I%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS02 - Measurement of Quantities and Estimation-II %28MQE II%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS03 - Analysis of Rates and Tendering %28ART%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS04 - Cost Planning and Cost Control %28CPCC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS05 - Administration of Contracts %28AC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS06 - Variation, Extension of Time, Contractual Claims and Payments %28VECP%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS07 - Construction Contract and Applicable Law %28CCAL%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Quantity Surveying %28DQS%29\DQS08 - Disputes and Dispute Resolution %28DDR%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT01 - Introduction to Multimedia and the Internet %28IMI%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT02 - Introduction to Data Communications %28IDC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT03 - Oracle for Developers %28OD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT04 - HTML CSS %28HC%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT05 - JavaScript %28JS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT06 - Java Servlets and Java Server Pages %28JSJS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT07 - PHP and MySQL %28PM%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Web Technology %28DWT%29\DWT08 - Web Application Development using Python Flask and Django %28WAD%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-English\DYOGA-01-Yogic Life%28Physical Body, Life Force and Mind%29-%28YL%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-English\DYOGA-02-Sublimation and Social Welfare%28SSW%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-English\DYOGA-03-Mental Prosperity and Human Excellence%28MPHE%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-English\DYOGA-04-Science of Divinity and Realization of Self%28SDRS%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-English\DYOGA-05-Yoga Practice-I%28YP-I%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-English\DYOGA-06-Yoga Practice-II%28YP-II%29\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-Tamil\DYOGA-01-Yogic Life %28Physical Body, Life Force and Mind%29-%28YL%29 - Tamil\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-Tamil\DYOGA-02-Sublimation and Social Welfare%28SSW%29-Tamil\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-Tamil\DYOGA-03-Mental Prosperity and Human Excellence%28MPHE%29-Tamil\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-Tamil\DYOGA-04-Science of Divinity and Realization of Self%28SDRS%29-Tamil\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-Tamil\DYOGA-05-Yoga Practice-I%28YP-I%29-Tamil\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_Live\Diploma in Yoga for Human Excellence%28DYOGA%29-Tamil\DYOGA-06-Yoga Practice-II%28YP-II%29-Tamil\" />
+    <Folder Include="Content\downloadCourseFile\Diploma_old\Diploma in Hotel and Restaurant Management%28DRM-001-Restaurant Management%29-Blended\" />
+    <Folder Include="Content\downloadCourseFile\Question Paper\ACS%2801-02-2022 to 31-07-2022%29\" />
+    <Folder Include="Content\downloadCourseFile\Trainer Guide\" />
+    <Folder Include="Content\Temp\15\" />
+    <Folder Include="Content\Temp\20016\" />
+    <Folder Include="Content\Upload\" />
+    <Folder Include="TempFiles\" />
+    <Folder Include="Theme\plugins\sweetalert2-theme-bootstrap-4\" />
+    <Folder Include="Views\Base\" />
+    <Folder Include="Views\ExecuteTaskServiceCallJob\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Project_Readme.html" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SSTM.Business\SSTM.Business.csproj">
+      <Project>{e6c49228-6e2e-4c0a-9f01-334b72ea6f8a}</Project>
+      <Name>SSTM.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SSTM.Core\SSTM.Core.csproj">
+      <Project>{b141196a-9153-4bdf-a9d7-2419310682a7}</Project>
+      <Name>SSTM.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SSTM.Data\SSTM.Data.csproj">
+      <Project>{8175efcd-7e34-4c8e-8df1-199f16bb6a87}</Project>
+      <Name>SSTM.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SSTM.Helpers\SSTM.Helpers.csproj">
+      <Project>{ed727c87-74de-4244-b6bb-1939011b9592}</Project>
+      <Name>SSTM.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SSTM.Models\SSTM.Models.csproj">
+      <Project>{fe7f1e08-cc95-4265-b6d1-31e54221352d}</Project>
+      <Name>SSTM.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebFormsDocumentViewer\WebFormsDocumentViewer.csproj">
+      <Project>{cbb712cd-dc08-4f05-808c-a41024538e0b}</Project>
+      <Name>WebFormsDocumentViewer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://li.eversafe.com.sg/services/myweb.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\sg.com.eversafe.li\</RelPath>
+      <UpdateFromURL>http://li.eversafe.com.sg/services/myweb.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>SSTM_sg_com_eversafe_li_MyWeb</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://li.eversafe.com.sg/services/sstm.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\CourseService\</RelPath>
+      <UpdateFromURL>http://li.eversafe.com.sg/services/sstm.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>SSTM_CourseService_SSTM</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\PdfWebControlResources.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>PdfWebControlResources1.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>53913</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:53913/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+          <servers defaultServer="SelfHostServer">
+            <server name="SelfHostServer" exePath="" cmdArgs="" url="http://localhost:53913/" workingDir="" />
+          </servers>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\RadPdf.3.35.0\build\RadPdf.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RadPdf.3.35.0\build\RadPdf.targets'))" />
+  </Target>
+  <Import Project="..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\RadPdf.3.35.0\build\RadPdf.targets" Condition="Exists('..\packages\RadPdf.3.35.0\build\RadPdf.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

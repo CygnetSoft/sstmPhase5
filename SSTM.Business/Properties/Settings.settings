@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SSTM.Business.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SSTM_Business_CourseServiceMethod_SSTM" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://li.eversafe.com.sg/services/sstm.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

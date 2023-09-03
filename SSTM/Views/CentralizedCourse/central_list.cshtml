@@ -1,0 +1,146 @@
+﻿@model SSTM.Helpers.App.AppSession
+@{
+    ViewBag.Title = "Central List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+<link href="~/Content/CentralizeCss.css" rel="stylesheet" />
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Centralize Course document </h3>
+            </div>
+            @if(Model.UserRole== "Administration" || Model.UserRole == "Director" || Model.UserRole == "Developer")
+            {
+            <div class="col-3 row" style="float: right;margin-left: 7px;">
+
+                <div class="col-12 mb-2">
+                    <button type="button" onclick="OpenAddOrUpdate(0);" class="btn btn-primary btn-sm float-right">
+                        <i class="fa fa-plus-square"></i>&nbsp;Add New
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div id="divFilterByDocStatus" class="col-md-12 form-group" style="display:none">
+                    <div class="row pull-right">
+                        <div class="col-md-12" style="float:right">
+                            <div class="col-md-12">
+                                <label>Filter by Course Status:</label>
+                            </div>
+                            @Html.DropDownList("ddlCourseStatus", new SelectList(TempData["CourseStatusList"] as SelectList, "Value", "Text"), new { @class = "form-control radioSelect" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <table id="tblCourses" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:8%">Central Course</th>
+                                <th style="width:10%">Document Type</th>
+                                <th  style="width:5%">Developer</th>
+                                <th  style="width:5%">SME</th>
+                                <th class="text-center" style="width:8%">Documents</th>
+                                <th class="text-center" style="width:8%">Remarks</th>
+                                <th class="text-center" style="width:8%">SME Assign</th>
+                                <th class="text-center" style="width:8%">Comment</th>
+                                <th class="text-center" style="width:8%">Approve</th>
+                                <th class="text-center" style="width:8%">Release</th>
+                                <th class="text-center" style="width:8%">Sharing</th>
+                                <th class="text-center" style="width:8%">Current Status</th>
+                                <th class="text-center" style="width:5%">Actions</th>
+                                <th class="text-center" style="width:5%">Placeholder</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="AssignCourseToSMEModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAssignCourseToSMEModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="SMECommentModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divSMECommentModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="DocumentList" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width:90%;">
+        <div id="divDocumentModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="CourseDocsSharingModal" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog  modal-lg">
+        <div id="divCourseDocsSharingModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="CentralNewCourseModal" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog  modal-lg">
+        <div id="divNewCourseDocsModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CoursePlaceholderModal" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="width: 100%;height: 100%;margin: 0;padding: 0;max-width: none;">
+        <div id="divCoursePlaceholderModal" class="modal-content" style="height: auto;min-height: 100%;border-radius: 0;">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var currentstatus = "";
+        var AddNewCourseUrl = '@Url.Action("CentralNewCourse", "CentralizedCourse")';
+        var AddPlaceholderPageUrl = '@Url.Action("PlaceholderReplacementDataForm", "CentralizedCourse")';
+        var GotoaddUrl = '@Url.Action("Index", "CentralizedCourse")';
+        var getCentralCoursesListUrl = '@Url.Action("get_central_list", "CentralizedCourse")';
+        var get_Central_dataURL = '@Url.Action("Get_Centrail_data", "CentralizedCourse")';
+        var openSMEListUrl = '@Url.Action("OpenSMEList", "CentralizedCourse")';
+        var SelectedSMEListUrl = '@Url.Action("AssignSME", "CentralizedCourse")';
+
+        var Central_CourseDoclistViewerURL = '@Url.Action("Central_CourseDocViewer", "CourseDoc")';
+
+        var openDocumentsUrl = '@Url.Action("openDocuments", "CentralizedCourse")';
+        var openSMECommentUrl = '@Url.Action("openSMEComment", "CentralizedCourse")';
+
+        var openShareCourseUrl = '@Url.Action("OpenCourseDocsSharing", "CentralizedCourse")';
+
+        var releaseCentralDocUrl = '@Url.Action("ReleaseCourse", "CentralizedCourse")';
+        
+        
+
+        var userRole = '@Model.UserRole';
+
+        $(document).ready(function () {
+            localStorage.setItem("master_centeral_doc_id", 0);
+            $("body").addClass("sidebar-collapse");
+        });
+    </script>
+    <script src="~/Scripts/course/Centralize_list.js"></script>
+}

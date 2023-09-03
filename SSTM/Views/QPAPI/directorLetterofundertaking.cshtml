@@ -1,0 +1,158 @@
+﻿@model SSTM.Core.Course_Reminder.CourseReminder
+@{
+    ViewBag.Title = "Director Latter undertaiking";
+    Layout = "~/Views/Shared/_latterlayout.cshtml";
+}
+
+<div class="card-outline card-success">
+    <div class="col-12" style="text-align:center">
+        <label style="color:red">@ViewBag.error</label>
+    </div>
+    <input type="hidden" id="newcourseid" value="@Model.Id" />
+    <input type="hidden" id="developerid" value="@Model.DeveloperId" />
+    @if (ViewBag.newcourseid != 0)
+    {
+        using (Html.BeginForm("SaveCourse", "Course", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmnewAddOrUpdateCourse", autocomplete = "off" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Latter</label>
+                        <textarea name="content" id="editor">@ViewBag.latter</textarea>
+                    </div>
+                </div>
+            </div>
+            <div style="border: 1px solid #ccc;margin:4px" class="col-12">
+                <div class="col-md-12 mt-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <canvas id="colors_sketch" width="370" height="200" style="border: 1px solid #ccc"></canvas>
+                            <input type="hidden" name="base64String" />
+                            <div class="tools">
+                                <div style="text-align:center">Sign above after download attach</div>
+                                <a href="#colors_sketch" class="btn btn-sm btn-warning" data-tool="marker">Marker</a>
+                                <a href="#colors_sketch" class="btn btn-sm btn-danger" data-tool="eraser">
+                                    Eraser
+                                </a>
+                                <button type="button" id="save" class="btn btn-sm btn-info" data-action="save-png">Save as PNG</button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="col-6"><b>Attach Sign:</b> &nbsp;</div>
+                            <div class="col-9">
+                                <input type="file" id="refdoc" class="form-control-file" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+            </div>
+        }
+    }
+    @if (ViewBag.newcourseid != 0)
+    {
+        <b> Note: if you want to attach sign after you dont change if you want to change contact to administrator</b>
+    }
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")
+
+<script>
+    var CourseReminder_LatterUrl = '@Url.Action("CourseReminder_Latter", "QPAPI", new { area = "" })';
+
+
+    $(document).ready(function () {
+        $('#editor').summernote({ height: 600, toolbar: false });
+        $('#editor').next().find(".note-editable").attr("contenteditable", false);
+    })
+
+    $.validator.unobtrusive.parse("#frmnewAddOrUpdateCourse");
+    $('#frmnewAddOrUpdateCourse').on('submit', function (e) {
+        e.preventDefault();
+
+        if ($('#frmnewAddOrUpdateCourse').valid()) {
+
+            if (window.FormData !== undefined) {
+                var fileData = new FormData();
+
+                fileData.append('id', $("#newcourseid").val());
+                fileData.append('isdeveloper', false);
+                fileData.append('developerid', $("#developerid").val());
+                fileData.append('file', $('#refdoc')[0].files[0]);
+
+                $.ajax({
+                    url: CourseReminder_LatterUrl,
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data  ,
+                    data: fileData,
+                    success: function (data) {
+                        try {
+                            if (data.result) {
+                                alert("Successfully submitted");
+                                window.close();
+                            }
+                            else
+                                alert("Error try again");
+                        } catch (e) {
+                            alert(e.message);
+                        }
+                    },
+
+                    error: function (err) {
+                        toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                    }
+                }).done(function () {
+
+                });
+            }
+            else
+                toastr.error("FormData is not supported.");
+        }
+    });
+
+</script>
+
+
+<script type="text/javascript">
+    var saveButton = document.getElementById('save');
+    saveButton.addEventListener('click', function (event) {
+        var data = $('#colors_sketch')[0].toDataURL('image/png');
+        // window.location.href = data;
+        var a = document.createElement("a"); //Create <a>
+        a.href = data //Image Base64 Goes here
+        a.download = "Singnature.png"; //File name Here
+        a.click(); //Downloaded file
+        //window.save(data);
+    });
+
+    $(function () {
+        $('#colors_sketch').sketch();
+        $(".tools a").eq(0).attr("style", "color:#000");
+        $(".tools a").click(function () {
+            $(".tools a").removeAttr("style");
+            $(this).attr("style", "color:#000");
+        });
+    });
+</script>
+
+@*<script src="@Url.Content("//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")"></script>*@
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js")"></script>
+<script src="@Url.Content("~/Theme/plugins/select2/js/select2.min.js")"></script>
+
+<script src="@Url.Content("//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js")"></script>
+
+<script src="~/Theme/plugins/toastr/toastr.min.js"></script>
+
+<script type="text/javascript" src="~/Scripts/CourseReminder/sketch.min.js"></script>
+
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>

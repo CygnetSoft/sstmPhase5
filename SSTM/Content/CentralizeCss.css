@@ -1,0 +1,118 @@
+﻿  
+.select2-container--default .select2-selection--multiple {
+  
+    width: 350px !important;
+}
+.select2-container--default .select2-results > .select2-results__options {
+   
+    width: 350px !important;
+}
+
+.select2-dropdown 
+{
+    
+     width: 350px !important;
+}
+
+table {
+  table-layout:fixed;
+}
+table td {
+  word-wrap: break-word;
+  max-width: 400px;
+}
+#example td {
+  white-space:inherit;
+}
+    .btnSkipAll {
+        box-shadow: 0 0 0 1px #5bc0de inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #46b8da, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+        background-color: #5bc0de;
+    }
+
+    .btnTraking {
+        box-shadow: 0 0 0 1px #f0ad4e inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #eea236, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+        background-color: #f0ad4e;
+    }
+
+    .btn3d {
+        transition: all .08s linear;
+        position: relative;
+        outline: medium none;
+        -moz-outline-style: none;
+        border: 0px;
+        color: black !important;
+        font-weight: bold;
+    }
+
+        .btn3d:focus {
+            outline: medium none;
+            -moz-outline-style: none;
+        }
+
+    .radioSelectContainer > select {
+        display: none !important;
+    }
+    /* http://jsfiddle.net/496c9/ */
+    .radioSelectContainer > select {
+        /*display: none;*/
+    }
+
+    .radioSelectContainer > label {
+        /*display: inline-block;
+            margin: 0.3em 0.3em 0 0;
+            background-color:#EFEFEF;
+            border-radius:4px;
+            border:1px solid #D0D0D0;*/
+        margin: .1rem;
+        color: inherit;
+        word-wrap: break-word;
+        white-space: normal;
+        cursor: pointer;
+        border: 0;
+        border-radius: .125rem;
+        -webkit-box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+        -webkit-transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,-webkit-box-shadow 0.15s ease-in-out;
+        transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,-webkit-box-shadow 0.15s ease-in-out;
+        transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+        transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out,-webkit-box-shadow 0.15s ease-in-out;
+        padding: 0rem .1rem !important;
+        font-size: 0.8rem !important;
+        margin-left: 6px;
+    }
+
+        .radioSelectContainer > label > span {
+            padding: 0em;
+            text-align: center;
+            display: block;
+        }
+
+        .radioSelectContainer > label > input {
+            position: absolute;
+            top: -20px;
+        }
+
+            .radioSelectContainer > label > input:checked + span {
+                color: black;
+                border: 2px solid #00c851 !important;
+                box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+            }
+
+    .radioSelectContainer > label {
+        border: 2px solid #4285f4 !important;
+        box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+    }
+
+    .btnAssingDownloadUsers {
+        font-weight: bold;
+        color: #00c851 !important;
+        background-color: transparent !important;
+        border-color: #00c851 !important;
+    }
+
+    .btn-warning {
+        background-color: #fb3 !important;
+        border-color: #fb3 !important;
+        color: black !important;
+    }
+

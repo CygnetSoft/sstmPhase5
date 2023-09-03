@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title"> </h3>
+            </div>
+            <div class="col-3 row" style="float: right;margin-left: 7px;">
+                <div class="col-12">
+                    @if (ViewBag.rolename == "CI")
+                    {
+                        <button type="button" onclick="OpenAddOrUpdateAssessmentModal(0);" class="btn btn-primary btn-sm float-right">
+                            <i class="fa fa-plus-square"></i>&nbsp;Add New
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-1 mt-2">
+                    Date :
+                </div>
+                <div class="col-3"><input type="text" id="selectdate" class="form-control input_date" readonly placeholder='YYYY-MM-DD' /></div>
+                <div class="col-3"><a onclick="GetAssessmentlist()" class="btn btn-primary">Filter by date</a></div>
+            </div>
+            <br />
+            <hr />
+
+            <table id="tblassesment" class="table">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Course Id</th>
+                        <th>Batch No</th>
+                        <th>Trainer Fin</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="AddOrEditAssessmentModal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div id="divAddOrEditAssessmentModal" class="modal-content">
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        window.onload = function () {
+            GetAssessmentlist();
+        }
+
+        $(function () {
+            $('.input_date').datepicker({
+                todayBtn: "linked",
+                autoclose: true,
+                todayHighlight: true,
+                format: "yyyy-mm-dd"
+            });
+        });
+        var currentlogin = '@ViewBag.rolename';
+
+        var getAssessmentUrl = '@Url.Action("GetAssessment", "AssessmentPaper")';
+        var getAssessmentListUrl = '@Url.Action("GetAssessmentList", "AssessmentPaper")';
+        var DeleteAssessmentPaperCourseDocumentUrl = '@Url.Action("DeleteAssessmentPaperCourseDocument", "AssessmentPaper")';
+    </script>
+    <script src="~/Scripts/AssessmentPaper/index.js"></script>
+}

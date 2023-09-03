@@ -1,0 +1,91 @@
+﻿@model SSTM.Models.TrainingCenter.TrainingCenterModel
+
+
+@using (Html.BeginForm("SaveTrainingCenter", "TrainingCenter", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmAddOrUpdateTC" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="modal-header">
+        @if (Model.Id > 0)
+        {
+            <h4 class="modal-title">Update Training Center</h4>
+        }
+        else
+        {
+            <h4 class="modal-title">New Training Center</h4>
+        }
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        @Html.CheckBoxFor(m => m.isActive, new { @class = "custom-control-input", @checked=true })
+                        <label for="isActive" class="custom-control-label">Active</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Name</label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", maxlength = "100" })
+                    @Html.ValidationMessageFor(m => m.Name, null, new { @class = "alert-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Physical Address</label>
+                    @Html.TextBoxFor(m => m.AddressLine1, new { @class = "form-control", placeholder = "Address line 1", maxlength = "250" })
+                    @Html.TextBoxFor(m => m.AddressLine2, new { @class = "form-control", placeholder = "Address line 2", maxlength = "250" })
+                    @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control", placeholder = "Postal Code", maxlength = "8" })
+                </div>
+
+                <div class="form-group">
+                    <label>Network / Public IP</label>
+                    @Html.TextBoxFor(m => m.NetworkIP, new { @class = "form-control", data_inputmask = "'alias': 'ip'", data_mask = "", im_insert = "true" })
+                    @Html.ValidationMessageFor(m => m.NetworkIP, null, new { @class = "alert-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="btnSaveTC" class="btn btn-success">Save</button>
+    </div>
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+
+@*<script src="~/Theme/plugins/mask/jquery.mask.min.js"></script>*@
+
+<script>
+    $(document).ready(function () {
+        $('#NetworkIP').mask('099.099.099.099');
+    });
+    
+    var saveTrainingCenterUrl = '@Url.Action("SaveTrainingCenter","TrainingCenter", new { area = "Administration" })';
+
+    $.validator.unobtrusive.parse("#frmAddOrUpdateTC");
+    $('#frmAddOrUpdateTC').on('submit', function (e) {
+        e.preventDefault();
+
+        if ($('#frmAddOrUpdateTC').valid()) {
+            Ajaxhelper.post(saveTrainingCenterUrl, $('#frmAddOrUpdateTC').serialize(), onSuccessSaveTC, null, null);
+
+            function onSuccessSaveTC(data) {
+                if (data.result) {
+                    GetTrainingCentersList();
+
+                    $('#AddOrEditTCModal').modal('hide');
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+    });
+</script>

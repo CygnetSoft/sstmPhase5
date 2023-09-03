@@ -1,0 +1,226 @@
+﻿
+@{
+    ViewBag.Title = "Student_assement_paper";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+
+    <link href="~/Scripts/pdfEdit/styles.css" rel="stylesheet" />
+
+    <link href="~/Scripts/pdfEdit/pdfannotate.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="col-12 ml-3">
+
+        <div class="row">
+            <div style="width: 65%;">
+                @if (ViewBag.filepath != "")
+                {
+                    <div class="toolbar" style="margin-top: 49px !important;width: 59%;margin-left: 7% !important; ">
+
+                        <div class="tool">
+                            <label for="">Brush size</label>
+                            <input type="number" class="form-control text-right" value="1" id="brush-size" max="50">
+                        </div>
+                        @*<div class="tool">
+                                <label for="">Font size</label>
+                                <select id="font-size" class="form-control">
+                                    <option value="10">10</option>
+                                    <option value="12">12</option>
+                                    <option value="16" selected>16</option>
+                                    <option value="18">18</option>
+                                    <option value="24">24</option>
+                                    <option value="32">32</option>
+                                    <option value="48">48</option>
+                                    <option value="64">64</option>
+                                    <option value="72">72</option>
+                                    <option value="108">108</option>
+                                </select>
+                            </div>*@
+                        <div class="tool">
+                            <button class="color-tool active" style="background-color: #212121;"></button>
+                            <button class="color-tool" style="background-color: red;"></button>
+                            @*<button class="color-tool" style="background-color: blue;"></button>*@
+                            @*<button class="color-tool" style="background-color: green;"></button>
+                                <button class="color-tool" style="background-color: yellow;"></button>*@
+                        </div>
+                        <div class="tool" style="margin-left: 150px !important;">
+                            <button class="tool-button active"><i class="fa fa-hand-paper-o" title="Free Hand" onclick="enableSelector(event)"></i></button>
+                        </div>
+                        <div class="tool">
+                            <button class="tool-button"><i class="fa fa-pencil" title="Pencil" onclick="enablePencil(event)"></i></button>
+                        </div>
+                        @*<div class="tool">
+                                <button class="tool-button"><i class="fa fa-font" title="Add Text" onclick="enableAddText(event)"></i></button>
+                            </div>*@
+                        <div class="tool">
+                            <button class="tool-button"><i class="fa fa-long-arrow-right" title="Add Arrow" onclick="enableAddArrow(event)"></i></button>
+                        </div>
+                        @*<div class="tool">
+                                <button class="tool-button"><i class="fa fa-square-o" title="Add rectangle" onclick="enableRectangle(event)"></i></button>
+                            </div>*@
+                        @*<div class="tool">
+                                <button class="tool-button"><i class="fa fa-picture-o" title="Add an Image" onclick="addImage(event)"></i></button>
+                            </div>*@
+                        <div class="tool">
+                            <button class="btn btn-danger btn-sm" onclick="deleteSelectedObject(event)">Mark Delete</button>
+                        </div>
+                        <div class="tool">
+                            <button class="btn btn-danger btn-sm" onclick="clearPage()">Clear Page</button>
+                        </div>
+
+                        <div class="tool">
+
+                        </div>
+                    </div>
+
+                    <div id="pdf-container"></div>
+                }
+                else
+                {
+                    <div class="alert alert-danger" role="alert" style=" text-align: center;margin-top: 10%; margin-left: 50%;">
+                        File Not Found <a href="/AssessmentPaper">Back</a>
+                    </div>
+                }
+                <div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="dataModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="dataModalLabel">Load PDF</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <pre class="prettyprint lang-json linenums">
+				                </pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 35%;">
+              
+                @*<a id="add" class="btn btn-sm btn-default" onclick=" savedata()">save</a>*@
+                @if (ViewBag.filepath != "")
+                {
+                    <a id="add" class="btn btn-sm btn-primary" onclick="add()">Add</a>
+                    <table class="table" id="tblstudentmark" style=" position: relative;background: lightblue;">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Division</th>
+                                <th>Marks</th>
+                                <th>Result</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button class="btn btn-light btn-sm savepdf" style="
+                                position: absolute;
+                                background: lightblue;
+                                color: black;
+                                font-size: 18px;
+                                float: right;
+                                font-weight: bold;
+                                display:none"
+                            onclick="savePDF()">
+                        <i class="fa fa-save"></i> Save
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" value="@ViewBag.filepath" id="filepath" />
+    <input type="hidden" value="@ViewBag.filename" id="filename" />
+    <input type="hidden" value="@ViewBag.courseid" id="courseid" />
+    <input type="hidden" value="@ViewBag.batchid" id="batchid" />
+    <input type="hidden" value="@ViewBag.fin" id="fin" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.3.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.umd.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+
+
+    <script>
+        var filepath = "";
+        $(function () {
+            $('body').addClass('sidebar-collapse');
+            filepath = $("#filepath").val();
+            var urlEncoded = encodeURI('https://cors-anywhere.herokuapp.com/' + $("#filepath").val());
+
+        });
+        var savepdf = '@Url.Action("Student_assement_paper_pdf_save", "AssessmentPaper")';
+        var url_assement_paper_list = '@Url.Action("Index", "AssessmentPaper")';
+        var count = 1;
+        function add() {
+            var html = "";
+            html += '<tr><td>' + count + '</td>';
+            html += '<td><input type="text" placeholder="Divistion" name="division' + count + '" id="division' + count + '" style="width: 54px;"/></td>';
+            html += ' <td><input type="text" placeholder="mark" onkeypress="return isnumber(this);" id="mark' + count + '" style="width:100px;"/></td>';
+            html += '<td><input type="text" placeholder="result" id="result' + count + '"  style="width:100px;"/></td></tr>';
+            count++;
+            $('#tblstudentmark > tbody').append(html);
+            $(".savepdf").show();
+        }
+        var finalResult = [];
+        function savedata() {
+            finalResult = [];
+            $('#tblstudentmark > tbody  > tr').each(function (index, tr) {
+                if ($(this).closest('tr').find('td:eq(1)').find('input[type="text"]').val() != "") {
+                    var d = {};
+                    if ($(this).closest('tr').find('td:eq(1)').find('input[type="text"]').val() == "") {
+                        alert("Division required !");
+                        return;
+                    }
+                    if ($(this).closest('tr').find('td:eq(2)').find('input[type="text"]').val() == "") {
+                        alert("Marks required !");
+                        return;
+                    }
+                    if ($(this).closest('tr').find('td:eq(1)').find('input[type="text"]').val() == "") {
+                        alert("Result required !");
+                        return;
+                    }
+                    d.division = $(this).closest('tr').find('td:eq(1)').find('input[type="text"]').val();
+                    d.marks = $(this).closest('tr').find('td:eq(2)').find('input[type="text"]').val();
+                    d.result = $(this).closest('tr').find('td:eq(3)').find('input[type="text"]').val();
+                    finalResult.push(d);
+                }
+                // alert( $(this).closest('tr').find('td:eq(1)').val());
+            });
+
+        }
+        function isnumber(e) {
+            var keyCode = (event.which) ? event.which : (window.event.keyCode) ? window.event.keyCode : -1;
+            var str = e.value;
+
+            if ((str.length == 0) && (event.keyCode == 46)) return false; // checking that length ==0 than not allow to enter '.'
+            if ((str.indexOf('.') >= 0) && (event.keyCode == 46)) return false; // checking that if user already entered '.' than not allow to enter '.'
+
+            if (keyCode != 46 && keyCode > 31
+              && (keyCode < 48 || keyCode > 57))
+                return false;
+
+            return true;
+        }
+    </script>
+    <script src="~/Scripts/pdfEdit/arrow.fabric.js"></script>
+
+    <script src="~/Scripts/pdfEdit/pdfannotate.js"></script>
+
+    <script src="~/Scripts/pdfEdit/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+﻿
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+<style>
+    .select2 .select2-container .select2-container--default {
+        width: 100% !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 40px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 6px !important;
+        right: 9px !important;
+        width: 26px !important;
+    }
+</style>
+@using (Html.BeginForm("SaveReminderCourse", "Course", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmnewSaveReminderCourse", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+
+    @*<input type="hidden" id="newcourseid" value="@ViewBag.newcourseid" />*@
+    <div class="modal-header">
+        <h4 class="modal-title">Set Renewal Reminder</h4>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label>Course Name</label>
+                        @Html.DropDownList("drpcourseName", new SelectList(TempData["courseName"] as SelectList, "Value", "Text"), new { @class = "form-control select2", required = "required" })
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Select Date</label>
+                <input type="text" id="ReminderDate" class="form-control input_date" required placeholder='yyyy/mm/dd' />
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Renew Reminder</label>
+                <select id="drprenewremider" required class="form-control">
+                    <option value="547" selected>After 1.5 year</option>
+                    <option value="182">After 6 months</option>
+                    <option value="2">2 days</option>
+                </select>
+            </div>
+            <div class="col-12 form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label>Select Developer Name</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input  roletype" type="radio"
+                                   name="roletype" id="Developer" value="Developer" checked />
+                            <label class="form-check-label" for="Developer">
+                                Developer
+                            </label>
+                        </div>
+
+                        <div class="form-check form-check-inline tabletyepedata">
+                            <input class="form-check-input roletype" type="radio"
+                                   name="roletype" id="Aassociate" value="Aassociate Developer" />
+                            <label class="form-check-label" for="Aassociate">
+                                Aassociate Developer
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <select id="txtDeveloperId" class="form-control" required></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+    </div>
+    @*<input type="hidden" id="courseid" value="@ViewBag.courseid" />*@
+    @*<input type="hidden" id="newcourseid" value="@ViewBag.newcourseid" />
+
+        <input type="hidden" id="courseid" value="@ViewBag.courseid" />*@
+    <input type="hidden" id="rolename" value="@ViewBag.rolename" />
+    <input type="hidden" id="DeveloperId" value="@ViewBag.DeveloperId" />
+    @*<input type="hidden" id="reminder" value="@ViewBag.reminder" />*@
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+
+<script>
+    var developerListUrl = '@Url.Action("developerList", "CourseReminder")';//developer list
+    var SaveReminderCourseUrl = '@Url.Action("SaveReminderCourse", "Course", new { area = "" })';
+    var getReminderCourseUrl = '@Url.Action("getReminderCourse", "Course", new { area = "" })';
+
+    $(function () {
+        $('.input_date').datepicker({
+            todayBtn: "linked",
+            autoclose: true,
+            todayHighlight: true,
+            format: "yyyy/mm/dd",
+        }).on('changeDate', function (ev) {
+            $("#drprenewremider").focus();
+        });
+    });
+
+
+    $(document).ready(function () {
+        $('#drpcourseName').select2({
+            dropdownAutoWidth: true,
+            width: 'auto'
+        });
+        LoadData($("#rolename").val());
+        $('input:radio[name=roletype]').change(function () {
+            LoadData($(this).val());
+        });
+        function LoadData(roletype) {
+            Ajaxhelper.post(developerListUrl, { "rolename": roletype }, onSuccessdeveloperList, null, null);
+        }
+        function onSuccessdeveloperList(data) {
+            $("#txtDeveloperId").children().remove();
+            $("#txtDeveloperId").append($("<option ></option>").val("").html("-- Select Developer--"));
+            $.each(data.result, function (key, item) {
+                $("#txtDeveloperId").append($("<option data-roleid=" + item.RoleId + "></option>").val(item.Id).html(item.FirstName));
+            });
+            $("#txtDeveloperId").val($("#DeveloperId").val());
+        }
+
+        //if ($("#newcourseid").val() == "")
+        //    $("#drpcourseName").val(0);
+        //else
+        //    $("#drpcourseName").val($("#newcourseid").val());
+
+        //if ($("#reminder").val() == "")
+        //    $("#drprenewremider").val(547);
+        //else
+        //    $("#drprenewremider").val($("#reminder").val());
+
+        //if ($("#rolename").val() != "") {
+        //    LoadData($("#rolename").val());
+        //    if ($("#rolename").val() == "Aassociate Developer")
+        //        $("#Aassociate").prop("checked", true);
+        //    else
+        //        $("#Developer").prop("checked", true);
+        //}
+
+
+
+
+        $.validator.unobtrusive.parse("#frmnewSaveReminderCourse");
+        $('#frmnewSaveReminderCourse').on('submit', function (e) {
+            e.preventDefault();
+
+            if ($('#frmnewSaveReminderCourse').valid()) {
+                Ajaxhelper.post(SaveReminderCourseUrl, {
+                    "courseid": $("#drpcourseName").val(),
+                    "renewremiderday": $("#drprenewremider").val(),
+                    "courseremindertext": $("#drprenewremider option:selected").text(),
+                    "developerid": $("#txtDeveloperId").val(),
+                    "reminderdate": $("#ReminderDate").val()
+                }, onSuccessSaveReminderCourse, null, null);
+
+                function onSuccessSaveReminderCourse(data) {
+                    try {
+                        if (data.result) {
+                            //GetNewCoursesList();
+                            $('#RenewalReminderModel').modal('hide');
+                            toastr.success(data.message);
+                            GetCoursesList(CourseType)
+                        }
+                        else
+                            toastr.error("Error added reminder...");
+                    } catch (e) {
+                        alert(e.message);
+                    }
+                }
+
+            }
+        });
+
+        $("#drpcourseName").on("change", function () {
+            if ($(this).val() == "") {
+                $("#ReminderDate").val("");
+                $("#drprenewremider").val(547);
+                $("#DeveloperId").val('');
+                this.LoadData("Developer");
+            }
+            Ajaxhelper.post(getReminderCourseUrl, {
+                "courseid": $(this).val()
+            }, onSuccessgetReminderCourse, null, null);
+
+            function onSuccessgetReminderCourse(data) {
+                try {
+
+                    if (data.result) {
+                        (data.entity.reminder_created_date) ? $("#ReminderDate").val(GetDateFromJsonDate(data.entity.reminder_created_date)) : $("#ReminderDate").val('');
+                        (data.entity.reminder_days) ? $("#drprenewremider").val(data.entity.reminder_days) : "";
+
+                        data.entity.DeveloperId ? $("#DeveloperId").val(data.entity.DeveloperId) : $("#DeveloperId").val("");
+                        // data.entity.DeveloperId ? LoadData($("#rolename").val()) : LoadData("Developer");
+                       
+                        if (data.rolename != "") {
+                            LoadData(data.rolename);
+                            if (data.rolename == "Aassociate Developer")
+                                $("#Aassociate").prop("checked", true);
+                            else
+                                $("#Developer").prop("checked", true);
+                        }
+                    }
+                    else
+                        toastr.error("Get Error get Reminder Course");
+                } catch (e) {
+                    alert(e.message);
+                }
+            }
+
+        });
+    });
+</script>

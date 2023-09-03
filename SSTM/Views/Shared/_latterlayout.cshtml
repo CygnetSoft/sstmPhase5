@@ -1,0 +1,111 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>@ViewBag.Title | SSTM (Secured System for Training Materials)</title>
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    @Styles.Render("~/Theme/cssMain")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @*@Scripts.Render("~/bundles/js")*@
+    <script src="https://kit.fontawesome.com/19ff9c8430.js" crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <style>
+        .btn:hover, .btn:focus, .btn:active {
+            outline: 0;
+            -webkit-box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+            box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+        }
+    </style>
+    <script>
+       $.fn.single_double_click = function (single_click_callback, double_click_callback, timeout) {
+           return this.each(function () {
+               var clicks = 0, self = this;
+               jQuery(this).click(function (event) {
+                   clicks++;
+                   if (clicks == 1) {
+                       setTimeout(function () {
+                           if (clicks == 1) {
+                               single_click_callback.call(self, event);
+                           } else {
+                               double_click_callback.call(self, event);
+                           }
+                           clicks = 0;
+                       }, timeout || 300);
+                   }
+               });
+           });
+       }
+    </script>
+</head>
+@*oncontextmenu="return false;"*@
+<body class="hold-transition sidebar-mini layout-fixed accent-danger">
+    <noscript>
+        <h2 style="text-align:center;">This site requires JavaScript. I will only be visible if you have it disabled.</h2>
+
+        <meta http-equiv="refresh" content="1;/index.html" />
+    </noscript>
+
+    <div class="dialog-background">
+        <div class="dialog-loading-wrapper text-center">
+            <div class="bounceball"></div>
+            <div class="text">LOADING</div>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <!-- Content Wrapper. Contains page content -->
+        <div class="">
+            @RenderBody()
+        </div>
+        <!-- /.content-wrapper -->
+
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2020 <a target="_blank" href="https://www.eversafe.com.sg/">Eversafe Academy</a>.</strong>
+            All rights reserved.
+        </footer>
+    </div>
+
+    @*<div id="timeout-dialog">
+            <p id="timeout-message">
+                You will be logged out in <span id="timeout-countdown">60</span> seconds. To extend session move your cursor on screen.
+            </p>
+            <p id="timeout-question"></p>
+        </div>*@
+
+
+    @Scripts.Render("~/bundles/jsMain")
+
+    @RenderSection("scripts", required: false)
+
+    <script>
+        var signOutUrl = '@Url.Action("Signout","Login", new { area="Administration"})';
+    </script>
+
+    <script src="~/Theme/dist/js/common.js"></script>
+    <script src="~/Scripts/ajaxHelper.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery.signalR-2.4.2.min.js")"></script>
+    <script src="~/signalr/hubs"></script>
+    @*<script src="~/Theme/dist/js/detectInactivity.js"></script>*@
+
+    <script>
+        var urlOpenDocumentStatusChange = '@Url.Action("resetUserDocumentStatus", "UserLogin")';
+        function closeAllOpenDocumment() {
+            Ajaxhelper.get(urlOpenDocumentStatusChange, null, onSuccessOpenDocumentStatusChange, null, null);
+            function onSuccessOpenDocumentStatusChange(data) { }
+        }
+
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+
+    </script>
+</body>
+</html>

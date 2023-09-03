@@ -1,0 +1,8 @@
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Debug\WebFormsDocumentViewer.dll
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Debug\WebFormsDocumentViewer.pdb
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Debug\WebFormsDocumentViewer.dll
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Debug\WebFormsDocumentViewer.pdb
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Debug\WebFormsDocumentViewer.dll
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Debug\WebFormsDocumentViewer.pdb
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Debug\WebFormsDocumentViewer.dll
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Debug\WebFormsDocumentViewer.pdb

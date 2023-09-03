@@ -1,0 +1,153 @@
+﻿
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 53% !important;
+    }
+</style>
+
+@using (Html.BeginForm("SaveReminderCourse", "Course", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmnewSaveReminderCourse", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" id="newcourseid" value="@ViewBag.newcourseid" />
+    <div class="modal-header">
+        <h4 class="modal-title">Set Renewal Reminder</h4>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label>Course Name</label>
+                        @Html.DropDownList("drpcourseName", new SelectList(TempData["courseName"] as SelectList, "Value", "Text"), new { @class = "form-control " })
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Renew Reminder</label>
+                <select id="drprenewremider" required class="form-control" resource="">
+                    <option value="547">After 1.5 year</option>
+                    <option value="182">After 6 months</option>
+                    <option value="2">2 days</option>
+                </select>
+            </div>
+            <div class="col-12 form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label>Select Developer Name</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input  roletype" type="radio"
+                                   name="roletype" id="Developer" value="Developer" checked />
+                            <label class="form-check-label" for="Developer">
+                                Developer
+                            </label>
+                        </div>
+
+                        <div class="form-check form-check-inline tabletyepedata">
+                            <input class="form-check-input roletype" type="radio"
+                                   name="roletype" id="Aassociate" value="Aassociate Developer" />
+                            <label class="form-check-label" for="Aassociate">
+                                Aassociate Developer
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <select id="txtDeveloperId" class="form-control" required></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+    </div>
+    <input type="hidden" id="courseid" value="@ViewBag.courseid" />
+    <input type="hidden" id="newcourseid" value="@ViewBag.newcourseid" />
+    <input type="hidden" id="DeveloperId" value="@ViewBag.DeveloperId" />
+    <input type="hidden" id="courseid" value="@ViewBag.courseid" />
+    <input type="hidden" id="rolename" value="@ViewBag.rolename" />
+    <input type="hidden" id="reminder" value="@ViewBag.reminder" />
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+
+<script>
+    var SaveReminderCourseUrl = '@Url.Action("SaveReminderCourse", "CourseReminder", new { area = "" })';
+    $(document).ready(function () {
+        LoadData("Developer");
+        $('input:radio[name=roletype]').change(function () {
+            LoadData($(this).val());
+        });
+        function LoadData(roletype) {
+            Ajaxhelper.post(developerListUrl, { "rolename": roletype }, onSuccessdeveloperList, null, null);
+        }
+        function onSuccessdeveloperList(data) {
+            $("#txtDeveloperId").children().remove();
+            $("#txtDeveloperId").append($("<option ></option>").val("").html("-- Select Developer--"));
+            $.each(data.result, function (key, item) {
+                $("#txtDeveloperId").append($("<option data-roleid=" + item.RoleId + "></option>").val(item.Id).html(item.FirstName));
+            });
+            $("#txtDeveloperId").val($("#DeveloperId").val());
+        }
+       
+        if ($("#newcourseid").val() == "")
+            $("#drpcourseName").val(0);
+        else
+            $("#drpcourseName").val($("#newcourseid").val());
+
+        if ($("#reminder").val() == "")
+            $("#drprenewremider").val(0);
+        else
+            $("#drprenewremider").val($("#reminder").val());
+
+        if ($("#rolename").val() != "") {
+            LoadData($("#rolename").val());
+            if($("#rolename").val()=="Aassociate Developer")
+                $("#Aassociate").prop("checked", true);
+            else
+                $("#Developer").prop("checked", true);
+        }
+
+    });
+    $.validator.unobtrusive.parse("#frmnewSaveReminderCourse");
+    $('#frmnewSaveReminderCourse').on('submit', function (e) {
+        e.preventDefault();
+
+        if ($('#frmnewSaveReminderCourse').valid()) {
+            Ajaxhelper.post(SaveReminderCourseUrl, {
+                "courseid": $("#newcourseid").val(),
+                "renewremiderday": $("#drprenewremider").val(),
+                "courseremindertext": $("#drprenewremider option:selected").text(),
+                "developerid": $("#txtDeveloperId").val()
+            }, onSuccessSaveReminderCourse, null, null);
+
+            function onSuccessSaveReminderCourse(data) {
+                try {
+                    if (data.result) {
+                        GetNewCoursesList();
+                        $('#AddOrEditReminderCourseModal').modal('hide');
+                        toastr.success(data.message);
+                    }
+                    else
+                        toastr.error(data.message);
+                } catch (e) {
+                    alert(e.message);
+                }
+            }
+
+        }
+    });
+
+</script>
+

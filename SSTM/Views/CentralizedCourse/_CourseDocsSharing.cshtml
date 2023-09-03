@@ -1,0 +1,237 @@
+﻿@model List<SSTM.Models.Centralized_Course.CentralDocumentsListModel>
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+@*<style>
+    table {
+
+}
+.tblCourseDocsSharing table td {
+  word-wrap: break-word;
+  max-width: 700px;
+}
+</style>*@
+<div class="modal-header">
+    <h4 id="h4CourseDocsSharingModal" class="modal-title">Share Central Documents</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form-group table-responsive">
+            <table id="tblCourseDocsSharing" class="table table-bordered table-condensed table-hover tblCourseDocsSharing">
+                <thead>
+                    <tr>
+                        <th>Documents Name</th>
+                        @*<th class="text-center" style="width:140px;">Status</th>*@
+                        <th class="text-center" style="width:100px;">
+                            <div class="icheck-success d-inline">
+                                <input type="checkbox" id="chkAllTraining">
+                                <label for="chkAllTraining">Training</label>
+                            </div>
+                        </th>
+                        <th class="text-center" style="width:100px;">
+                            <div class="icheck-success d-inline">
+                                <input type="checkbox" id="chkAllPrint">
+                                <label for="chkAllPrint">Print</label>
+                            </div>
+                        </th>
+                        <th class="text-center" style="width:100px;">
+                            <div class="icheck-success d-inline">
+                                <input type="checkbox" id="chkAllDeveloper">
+                                <label for="chkAllDeveloper">Developer</label>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr id="@item.DocId" course="@item.CentralDocId">
+                                <td>
+                                    <div class="icheck-success d-inline">
+                                        <input type="checkbox" id="chkfilereplace-@item.DocId" class="chkfilereplace ml-1">
+                                        <label for="chkfilereplace-@item.DocId"></label>
+                                    </div>
+                                    <strong>
+                                        <a href="javascript:void(0);" class="documentname" onclick="ViewCourseDoc(this, 'Course');">
+                                            @item.Document_File_Name
+                                        </a>
+                                    </strong>
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="icheck-success d-inline">
+                                        <input type="checkbox" id="chkChildTraining-@item.DocId" class="chkChildTraining" checked="@item.isTraining" onchange="SetCheckBoxStatus(this);">
+                                        <label for="chkChildTraining-@item.DocId"></label>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="icheck-success d-inline">
+                                        <input type="checkbox" id="chkChildPrint-@item.DocId" class="chkChildPrint" checked="@item.isPrinting" onchange="SetCheckBoxStatus(this);">
+                                        <label for="chkChildPrint-@item.DocId"></label>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="icheck-success d-inline">
+                                        <input type="checkbox" id="chkChildDeveloper-@item.DocId" class="chkChildDeveloper" checked="@item.isDeveloper" onchange="SetCheckBoxStatus(this);">
+                                        <label for="chkChildDeveloper-@item.DocId"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center no-data">No documents found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer" style="display:block;">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <div class="float-right">
+        <button type="button" class="btn btn-success" onclick="ShareCourse();">
+            Course Sharing
+        </button>
+    </div>
+</div>
+
+
+<script>
+
+    var shareCourseUrl = '@Url.Action("ShareCourse", "CentralizedCourse")';
+
+    $('#chkAllTraining').on('change', function (e) {
+        e.preventDefault();
+
+        $('.chkChildTraining').prop('checked', this.checked);
+    });
+
+    $('.chkChildTraining').on('change', function (e) {
+        e.preventDefault();
+
+        if ($('.chkChildTraining').length == $('.chkChildTraining:checked').length)
+            $('#chkAllTraining').prop('checked', true);
+        else
+            $('#chkAllTraining').prop('checked', false);
+    });
+
+    $('#chkAllPrint').on('change', function (e) {
+        e.preventDefault();
+
+        $('.chkChildPrint').prop('checked', this.checked);
+    });
+
+    $('.chkChildPrint').on('change', function (e) {
+        e.preventDefault();
+
+        if ($('.chkChildPrint').length == $('.chkChildPrint:checked').length)
+            $('#chkAllPrint').prop('checked', true);
+        else
+            $('#chkAllPrint').prop('checked', false);
+    });
+
+    $('#chkAllDeveloper').on('change', function (e) {
+        e.preventDefault();
+
+        $('.chkChildDeveloper').prop('checked', this.checked);
+    });
+
+    $('.chkChildDeveloper').on('change', function (e) {
+        e.preventDefault();
+
+        if ($('.chkChildDeveloper').length == $('.chkChildDeveloper:checked').length)
+            $('#chkAllDeveloper').prop('checked', true);
+        else
+            $('#chkAllDeveloper').prop('checked', false);
+    });
+
+
+    function ShareCourse() {
+        if ($('#tblCourseDocsSharing > tbody > tr').find('.chkChildTraining:checked').length == 0 &&
+            $('#tblCourseDocsSharing > tbody > tr').find('.chkChildPrint:checked').length == 0 &&
+             $('#tblCourseDocsSharing > tbody > tr').find('.chkChildDeveloper:checked').length == 0) {
+            toastr.error('Please select at least one or more documents for sharing.');
+
+            return false;
+        }
+
+        var sharingObject = new Array();
+
+        $('#tblCourseDocsSharing > tbody > tr').each(function () {
+            var row = $(this);
+
+            sharingObject.push({
+                DocId: row.attr('id'),
+                CentralDocId: row.attr('course'),
+                isTraining: row.find('.chkChildTraining').is(':checked'),
+                isPrinting: row.find('.chkChildPrint').is(':checked'),
+                isDeveloper: row.find('.chkChildDeveloper').is(':checked')
+            });
+        });
+
+        Ajaxhelper.post(shareCourseUrl, { paramsList: sharingObject }, onSuccessShareCourse, null, null);
+
+        function onSuccessShareCourse(data) {
+            if (data.result) {
+             
+                GetCoursesList();
+
+                toastr.success('Central documents are shared successfully as per the selected sharing options.');
+                $('#CourseDocsSharingModal').modal('hide');
+            }
+            else
+                toastr.error(data.message);
+        }
+    }
+
+    function SetCheckBoxStatus(row) {
+
+        var attr = $(row).attr('checked');
+
+        // For some browsers, `attr` is undefined; for others,
+        // `attr` is false.  Check for both.
+        if (typeof attr !== 'undefined' && attr !== false) {
+            $("#" + row.id).removeAttr('checked');
+        }
+        else {
+            $("#" + row.id).attr('checked', 'checked');
+        }
+    }
+
+    function ISCheckboxChecked() {
+        var count = 0;
+        var checkBoxes = document.getElementsByClassName('chkChildTraining');
+        var isChecked = false;
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                count++;
+                isChecked = true;
+            };
+        };
+        if (count != 1) {
+            toastr.warning('Select only one in training for document replace');
+            return false;
+        }
+        else if (count == 0) {
+            toastr.warning('Select at lease one checkbox checked in training');
+            return false;
+        }
+        else if (count == 1) {
+            return true;
+        }
+        return true;
+    }
+
+
+</script>

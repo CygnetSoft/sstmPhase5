@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "viewZoho";
+    Layout = null;
+}
+@Styles.Render("~/Theme/cssMain")
+<style>
+    .ifame-doc-preview {
+        position: relative;
+        top: 0px;
+        text-align: center;
+        height: 100%;
+        width: 100%;
+        left: 0px;
+        margin: 0px auto;
+        z-index: 10000;
+        background: rgba(0, 0, 0, 0.7) none repeat scroll 0% 0%;
+    }
+
+    /*video::-internal-media-controls-download-button {
+        display: none;
+    }
+
+    video::-webkit-media-controls-enclosure {
+        overflow: hidden;
+    }
+
+    video::-webkit-media-controls-panel {
+        width: calc(100% + 30px); /* Adjust as needed */
+    }*/
+
+    .zohobody {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .zohobody {
+        height: auto;
+        min-height: 100%;
+        border-radius: 0;
+    }
+</style>
+<div  style="text-align: center;">
+    <h4 id="editorCenterTitle">SSTM Centralize Document View</h4>
+    <button id="btnback" onclick="window.history.back()" class="btn btn-sm btn-primary">Back</button>
+</div>
+<div class="zohobody">
+    <div class="form-group row" style="height: 600px;width: 100%;margin-left: 0px;">
+        @if (!String.IsNullOrEmpty(ViewBag.ZohoError))
+        {
+            <h3>  <span style="color:red">@ViewBag.ZohoError</span></h3>
+        }
+        @if (!String.IsNullOrEmpty(ViewBag.zohoOpenUrl))
+        {
+            <iframe src="@ViewBag.zohoOpenUrl" class="ifame-doc-preview"></iframe>
+        }
+        @if (!String.IsNullOrEmpty(ViewBag.VideoPath))
+        {
+            @*<iframe  style="margin-left: 25%;" width="700" src="@ViewBag.VideoPath?autoplay=1" controlsList="nodownload" frameborder="0" allow="autoplay"  allowfullscreen></iframe>*@
+            <div class="video-frame" style="margin-left: 25%;">
+                <video width="700" controls controlsList="nodownload">
+                    <source src="@ViewBag.VideoPath" type="video/@ViewBag.videofomat" />
+                </video>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $("#closezohomodel").click(function () {
+
+        $(".modal-backdrop").remove();
+        $("#ZohoOffice").hide();
+    })
+</script>

@@ -1,0 +1,8 @@
+E:\cygnet\sstm\phase-5\SSTM.Core\bin\Release\SSTM.Core.dll
+E:\cygnet\sstm\phase-5\SSTM.Core\bin\Release\SSTM.Core.pdb
+E:\cygnet\sstm\phase-5\SSTM.Core\obj\Release\SSTM.Core.dll
+E:\cygnet\sstm\phase-5\SSTM.Core\obj\Release\SSTM.Core.pdb
+D:\cygnet\sstm\phase-5\SSTM.Core\bin\Release\SSTM.Core.dll
+D:\cygnet\sstm\phase-5\SSTM.Core\bin\Release\SSTM.Core.pdb
+D:\cygnet\sstm\phase-5\SSTM.Core\obj\Release\SSTM.Core.dll
+D:\cygnet\sstm\phase-5\SSTM.Core\obj\Release\SSTM.Core.pdb

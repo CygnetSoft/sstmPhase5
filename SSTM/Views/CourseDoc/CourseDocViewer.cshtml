@@ -1,0 +1,232 @@
+﻿@using GleamTech.AspNet.Mvc
+@using GleamTech.DocumentUltimate
+@using GleamTech.DocumentUltimate.AspNet
+@using GleamTech.DocumentUltimate.AspNet.UI
+@{ 
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .loading-indicator {
+        font-size: 8pt;
+        background-image: url(../images/loading/loading.gif);
+        background-repeat: no-repeat;
+        background-position: top left;
+        padding-left: 20px;
+        height: 18px;
+        text-align: left;
+    }
+
+    #loading {
+        position: absolute;
+        left: 45%;
+        top: 40%;
+        border: 3px solid #B2D0F7;
+        background: white url(/Theme/images/loading.gif) repeat-x;
+        padding: 10px;
+        font: bold 14px verdana,tahoma,helvetica;
+        color: #003366;
+        width: 180px;
+        text-align: center;
+    }
+    .toolbarViewerRight{
+        display:none !important;
+    }
+</style>
+
+
+
+@*@{
+        ViewBag.Title = "Course document viewer";
+        ViewBag.Url = Request.Url;
+        Layout = null;
+
+        var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+
+        var documentViewer = new DocumentViewer
+        {
+            Width = 100,
+            Height = 600,
+            Document = ViewBag.DocName,
+            ClientEvents = new DocumentViewerClientEvents { Printed = "documentViewerPrinted" }
+        };
+
+        if (currentSession.UserRole == "Print Incharge")
+        {
+            documentViewer.DeniedPermissions = DocumentViewerPermissions.SelectText | DocumentViewerPermissions.Download | DocumentViewerPermissions.DownloadAsPdf;
+        }
+        else
+        {
+            documentViewer.DeniedPermissions = DocumentViewerPermissions.SelectText | DocumentViewerPermissions.Download | DocumentViewerPermissions.DownloadAsPdf | DocumentViewerPermissions.Print;
+        }
+    } @*old*@
+
+
+    @*<style>
+            #documentViewer {
+                width: 100% !important;
+                height: 100% !important;
+            }
+        </style>*@ @*old*@
+
+        <style>
+            #viewer {
+                width: 100% !important;
+                height: 700px !important;
+            }
+        </style> @*new*@
+
+        <html>
+        <head>
+            <title>Course document viewer | SSTM (Secured System for Training Materials)</title>
+
+            @*@this.RenderHead(documentViewer)*@ @*old*@
+        </head>
+        <body>
+            <div style="text-align:center; padding:0 10px 10px 10px;">
+                <a onclick="goBack()" href="#">Back to Courses </a><a style="color:blue" href="JavaScript: location.reload(true);">Refresh page</a>
+            </div>
+            <div id="loading">
+                @*new*@
+                <div class="loading-indicator">
+                    Page wait first time File loading...
+                </div>
+            </div>
+            @if (!String.IsNullOrEmpty(ViewBag.pdffullpath))
+            {
+                <iframe id="viewer" onload="closeProgressIndicator()" src="~/DocViewer/DocumentViewer.aspx?path=@ViewBag.pdffullpath" frameborder='0'>
+
+                    <p>Your browser does not support iframes.</p>
+                </iframe>
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(ViewBag.VideoPath))
+                {
+                    <div class="video-frame" style="margin-left: 25%;">
+                        <video width="700" controls controlsList="nodownload" autoplay="autoplay">
+                            <source src="@ViewBag.VideoPath" type="video/@ViewBag.videofomat" />
+                            Your browser does not support the video tag or the file format of this video.
+                        </video>
+                    </div>
+                }
+                else
+                {
+                    <div id="rwswpinfo" style="padding: 10px;
+  background-color: #2196F3;
+  color: white; display:none;">
+                        <strong>Info!</strong> Hello, Please submit Risk Assessment & Safe Work Procedure declaration form.<a href="@Url.Action("riskassessment", "intro", new { requesttype = "all",area = "" })" style="background-color: white;
+  color: blue;
+  padding: 15px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;">Click here to submit</a>
+                    </div>
+
+                    <iframe id="viewer" onload="closeProgressIndicator()" src="~/DocViewer/DocumentViewer.aspx?path=@ViewBag.fullpath" frameborder='0'>
+                        <p>Your browser does not support iframes.</p>
+                    </iframe>
+                }
+            }
+            @*@this.RenderBody(documentViewer)*@ @*old*@
+
+            <div style="text-align:center; padding:10px 10px 0 10px;">
+                <a onclick="goBack()" href="#">Back to Courses</a>
+                @*href="@Url.Action("Index", "Course", new { area = "" })"*@
+
+
+
+            </div>
+
+            @Scripts.Render("~/bundles/jquery")
+
+            <script>
+
+
+                var userRole = '@currentSession.UserRole';
+                localStorage.setItem("userRole",userRole);
+                var documentPrintedUrl = '@Url.Action("DocumentPrinted","CourseDoc")';
+
+                function documentViewerPrinted(sender, e) {
+                    var documentViewer = sender;
+
+                    var params = { courseId: @ViewBag.CourseId, docId: @ViewBag.DocId, printedPages: e.totalPages };
+
+                    Ajaxhelper.post(documentPrintedUrl, params, onSuccessDocumentPrint, null,null);
+                }
+
+                function onSuccessDocumentPrint(data) { }
+
+                function goBack() {
+                    window.history.back();
+                }
+                $(document).ready(function(){
+                    if('@ViewBag.VideoPath'!='')
+                    {
+                        closeProgressIndicator();
+                    }
+
+                    //var iframe = $("#viewer");
+
+                    //if ($(iframe).scrollTop() + $(iframe).height() == $(iframe.document).innerHeight()) {
+                    //    alert("Reached bottom!");
+                    //}
+
+                    //window.onbeforeunload = function (e) {
+                    //    //$(".modal").modal('toggle');
+                    //    localStorage.setItem('raswp', "1");
+                    //    e.preventDefault();
+                    //    return false;
+                    //};
+
+
+                    //if (localStorage.getItem("raswp") !== null) {
+
+                    //    var raswpValue = localStorage.getItem('raswp', "1");
+
+                    //    if (raswpValue != '1') {}
+
+                    //    localStorage.removeItem("raswp");
+                    //}
+
+
+                    var raswpfile = "";
+
+                    var pdffullpath = '@ViewBag.pdffullpath';
+
+                    var fullpath = '@ViewBag.fullpath';
+
+                    if (pdffullpath != "" && pdffullpath != null) {
+                        raswpfile = pdffullpath;
+                    }
+                    else if (fullpath != "" && fullpath != null) {
+                        raswpfile = fullpath;
+                    }
+
+                    if (raswpfile != "") {
+                        if (raswpfile.includes('-RA-') || raswpfile.includes('-SWP-')) {
+                            if (localStorage.getItem("raswp") !== null) {
+
+                                var raswpValue = localStorage.getItem("raswp");
+
+                                localStorage.setItem('raswp', raswpValue);
+
+                                if (raswpValue == '1') {
+                                    $("#rwswpinfo").show();
+                                }
+
+                            }
+                            else {
+                                localStorage.setItem('raswp', "1");
+                                $("#rwswpinfo").show();
+                                //$('.toast').toast({ delay: 10000 });
+                                //$('.toast').toast('show');
+                            }
+                        }
+                    }
+                });
+                function closeProgressIndicator() {
+                    $("#loading").hide();
+                } //new
+            </script>
+        </body>
+    </html>

@@ -1,0 +1,275 @@
+﻿@model SSTM.Models.Course_Reminder.CourseReminderModel
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 53% !important;
+    }
+</style>
+
+@using (Html.BeginForm("SaveCourse", "Course", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmnewAddOrUpdateCourse", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" id="newcourseid" value="@Model.Id" />
+    <div class="modal-header">
+        @if (Model.Id > 0)
+        {
+            <h4 class="modal-title">Update New Course</h4>
+        }
+        else
+        {
+            <h4 class="modal-title">New Course</h4>
+        }
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <label>Select Course Name</label>
+                    <input type="text" id="txtcoursename" value="@Model.course_name" name="txtcoursename" class="form-control" required />
+                    @*@Html.DropDownList("txtcoursename", new SelectList(TempData["CourseName"] as SelectList, "Value", "Text"), new { @class = "form-control txtcoursename", required = "required" })*@
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label>Course Type</label>
+                        @*<select id="drprcoursetype" class="form-control" required></select>*@
+                        @Html.DropDownList("drprcoursetype", new SelectList(TempData["courselevel"] as SelectList, "Value", "Text"), new { @class = "form-control " })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Course Level </label>
+                        @*<select id="drpcourselevel" class="form-control" required></select>*@
+                        @Html.DropDownList("drpcourselevel", new SelectList(TempData["coursetype"] as SelectList, "Value", "Text"), new { @class = "form-control"})
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label>Renew Reminder</label>
+                        <select id="drprenewremider" required class="form-control">
+                            <option value="547">After 1.5 year</option>
+                            <option value="182">After 6 months</option>
+                            <option value="2">2 days</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Enter Course Duration</label>
+                        <input type="text" id="txtcourseduration" required value="@Model.course_duration" class="form-control" placeholder="Enter Course Duration" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Remarks</label>
+                <input type="text" id="txtremark" class="form-control" placeholder="Remarks" value="@Model.remark" />
+            </div>
+            <div class="col-12 form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label>Select Developer Name</label>
+                        <div class="form-check form-check-inline tabletyepedata">
+                            <input class="form-check-input roletype" type="radio"
+                                   name="roletype" id="Aassociate" value="Aassociate Developer" />
+                            <label class="form-check-label" for="Aassociate">
+                                Associate Developer
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input  roletype" type="radio"
+                                   name="roletype" id="Developer" value="Developer" checked />
+                            <label class="form-check-label" for="Developer">
+                                Developer
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <select id="txtDeveloperId" class="form-control" required></select>
+                        @*@Html.DropDownList("txtDeveloperId", new SelectList(TempData["DeveloperName"] as SelectList, "Value", "Text"), new { @class = "form-control", required = "required" })*@
+                    </div>
+                    </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Refence Document</label>
+                <input type="file" id="refdoc" class="form-control-file" />
+                @if (!string.IsNullOrEmpty(Model.doc_file))
+                {
+                    <label><a href="@Model.doc_file" target="_parent">View File</a> </label>
+                }
+                else
+                {
+                    <label>No refence file</label>
+                }
+                @*<a id="li_ref_doc" href="#" target="_blank">Li Refence File</a>*@
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        @if (Model.Id > 0)
+        {
+            <button type="submit" id="btnSaveCourse" class="btn btn-success">Update</button>
+        }
+        else
+        {
+            <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+        }
+    </div>
+}
+<input type="hidden" id="id" value="@Model.Id" />
+<input type="hidden" id="courseid" value="@ViewBag.courseid" />
+<input type="hidden" id="newcourseid" value="@ViewBag.newcourseid" />
+<input type="hidden" id="DeveloperId" value="@ViewBag.DeveloperId" />
+<input type="hidden" id="courseid" value="@ViewBag.courseid" />
+<input type="hidden" id="rolename" value="@ViewBag.rolename" />
+<input type="hidden" id="reminder" value="@ViewBag.reminder" />
+
+@Scripts.Render("~/bundles/jqueryval")
+
+<script>
+    function EditData() {
+        //alert('@Model.course_level_name');
+        if ('@Model.course_type_name' == "")
+            $("#drprcoursetype").val(0)
+        else
+            $("#drprcoursetype").val('@Model.course_level_name')
+
+        @*if ('@Model.course_name' == "")
+            $("#txtcoursename").val('')
+        else {
+            $("#txtcoursename").val('@Model.course_name')
+            //  course_select('@Model.li_course_id');
+        }*@
+
+        if ('@Model.course_level_name' == "")
+            $("#drpcourselevel").val(0)
+        else
+            $("#drpcourselevel").val('@Model.course_type_name')
+
+        if ('@Model.reminder_days' == "")
+            $("#drprenewremider").val("547")
+        else
+            $("#drprenewremider").val('@Model.reminder_days')
+
+        if ('@Model.DeveloperId' == "")
+            $("#txtDeveloperId").val("")
+        else
+            $("#txtDeveloperId").val('@Model.DeveloperId');
+    }
+
+    $(document).ready(function () {
+        var developerid = '@Model.DeveloperId';
+
+        LoadData("Developer");
+        $('input:radio[name=roletype]').change(function () {
+            LoadData($(this).val());
+        });
+        function LoadData(roletype) {
+            Ajaxhelper.post(developerListUrl, { "rolename": roletype }, onSuccessdeveloperList, null, null);
+        }
+        function onSuccessdeveloperList(data) {
+            $("#txtDeveloperId").children().remove();
+            $("#txtDeveloperId").append($("<option></option>").val("").html("-- Select --"));
+            $.each(data.result, function (key, item) {
+                $("#txtDeveloperId").append($("<option data-roleid=" + item.RoleId + "></option>").val(item.Id).html(item.FirstName));
+            });
+            if (developerid == "" || developerid == 0)
+                $("#txtDeveloperId").val("");
+            else
+                $("#txtDeveloperId").val(developerid);
+        }
+        EditData();
+        if ($("#rolename").val() != "") {
+            LoadData($("#rolename").val());
+            if ($("#rolename").val() == "Aassociate Developer")
+                $("#Aassociate").prop("checked", true);
+            else
+                $("#Developer").prop("checked", true);
+        }
+    });
+
+
+
+    $.validator.unobtrusive.parse("#frmnewAddOrUpdateCourse");
+    $('#frmnewAddOrUpdateCourse').on('submit', function (e) {
+        e.preventDefault();
+
+        if ($('#frmnewAddOrUpdateCourse').valid()) {
+
+            if (window.FormData !== undefined) {
+
+                var fileUpload = $('input[type="file"]').get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object
+                var fileData = new FormData();
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+                }
+
+                var CourseReminderModel = {};
+                CourseReminderModel.Id = $("#newcourseid").val();
+                CourseReminderModel.course_type = $("#drprcoursetype option:selected").val();
+                CourseReminderModel.course_level = $("#drpcourselevel option:selected").val();
+                CourseReminderModel.course_type_name = $("#drprcoursetype option:selected").text();
+                CourseReminderModel.course_level_name = $("#drpcourselevel option:selected").text();
+                CourseReminderModel.renewal_reminder = $("#drprenewremider option:selected").text();
+                CourseReminderModel.reminder_days = $("#drprenewremider").val();
+                CourseReminderModel.course_name = $("#txtcoursename").val();
+                CourseReminderModel.li_course_id = 0;
+                CourseReminderModel.course_duration = $("#txtcourseduration").val();
+                CourseReminderModel.remark = $("#txtremark").val();
+                CourseReminderModel.DeveloperId = $("#txtDeveloperId").val();
+                CourseReminderModel.MasterCourse = MasterCourse;
+                CourseReminderModel.MasterCoursId = MasterCourseId;
+
+                fileData.append('data', JSON.stringify(CourseReminderModel));
+
+                $.ajax({
+                    url: saveNewCourseUrl,
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data  ,
+                    data: fileData,
+                    success: function (data) {
+                        try {
+                            if (data.result) {
+                                GetNewCoursesList();
+                                $('#AddOrEditNewCourseModal').modal('hide');
+                                toastr.success(data.message);
+                            }
+                            else
+                                toastr.error(data.message);
+                        } catch (e) {
+                            alert(e.message);
+                        }
+                    },
+
+                    error: function (err) {
+                        toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                    }
+                }).done(function () {
+
+                });
+            }
+            else
+                toastr.error("FormData is not supported.");
+        }
+    });
+
+    //$(".txtcoursename").on("change", function () {
+    //    course_select($(this).val());
+    //});
+</script>

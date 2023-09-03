@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewBag.Title = "Confidential Document";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+@Styles.Render("~/Theme/datatables")
+<style>
+    hr{
+        color:black;
+    }
+</style>
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-12 row">
+                <div class="col-8">
+                    <h3 class="card-title"><i class="fa fa-file"></i> Confidential Document  
+                        @if (ViewBag.MasterDoc == "False")
+                        {<span>-</span> @ViewBag.DocumentName}</h3>
+                    </h3>
+                </div>
+                <div class="col-4">
+                    @if (currentSession.UserRole == "Director" || currentSession.UserRole == "DirectorStaffs")
+                    {
+                        <button type="button" onclick="OpenAddCommonDocumentModal(3);" class="btn btn-primary btn-sm float-right">
+                            <i class="fa fa-plus-square"></i>&nbsp;Add New
+                        </button>
+                    }
+                    &nbsp;&nbsp;
+                    @if (ViewBag.MasterDoc == "False")
+                    {
+                        <input action="action" class="btn btn-warning btn-sm pull-right"
+                               onclick="window.history.go(-1);"
+                               type="submit"
+                               value="<< Back" style="margin-left: 50%;" />
+                    }
+                </div>
+
+            </div>
+        </div>
+           
+        <div class="card-body">
+            <div class="col-md-12 form-group table-responsive mt-3">
+                <table id="tblDocuments" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Documents Name</th>
+                            <th style="width: 25%;">Files</th>
+                            <th style="width: 25%;">Sub Document</th>
+                            <th style="width: 10%;text-align:center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (currentSession.UserRole == "Director" || currentSession.UserRole == "DirectorStaffs")
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <label>@item.DocumentName</label>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" title="Common document" onclick="ViewCourseDoc('@item.DocumentPath');">@item.DocumentPath</a>
+                                    </td>
+                                    <td>
+                                        <button type='button' onclick="docsubfolder(@item.Id,'@item.DocumentName')" title='Sub Course' class='btn btn-warning btn-sm btnSubDoc'>
+                                            Sub Course
+                                        </button>
+                                    </td>
+                                    <td>
+                                        @*<a href="@Url.Action("DownoadDocFile", "TrainerUploadDocument" , new { filename=item.DocumentPath,status=2})" class="btn btn-info btn-sm Download">
+                                            Download
+                                        </a>*@
+                                        @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director" || currentSession.UserRole == "DirectorStaffs")
+                                        {
+                                            <a href="javascript:void(0)" id="btndelete" class="btn btn-danger btn-sm delete" onclick="deletedoc(@item.Id)">
+                                                Delete
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="CommonDocumentModal" style="display: none" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" style="max-width:50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="h4CourseDocsModal" class="modal-title">Upload Confidential Document</h4>
+                <input type="hidden" id="status" value="3" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="text-left">
+                        <h6> <span style="color:blue">Note :</span> <span style="color:red"> Upload Document File Extention (Doc,ppt or Xlxs,pdf Files)</span></h6>
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                        <div class="col-12">
+                            <label> File Name :</label>
+                            <input type="text" class="form-control" id="DocFilename" style="width:30%" />
+                            <div class="col-md-12 form-group mt-2 ">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" value="false" id="ismainfolder" /> Is Main Folder
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3"  id="fileupload">
+                            <input type="file" id="Docfile" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                <button type="button" id="btnSubmitDocs" class="btn btn-success">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" value="@ViewBag.MasterDoc" id="MasterDoc" />
+<input type="hidden" value="@ViewBag.MasterDocId" id="MasterDocId" />
+<script src="~/Scripts/trainerDocument/TrainerDocument.js"></script>
+
+
+
+@Scripts.Render("~/Theme/datatablesjs")
+<script>
+    var saveTrainerDocumentUrl = '@Url.Action("SaveDocument", "TrainerUploadDocument")';
+    var DeleteTrainerDocumentUrl = '@Url.Action("DeleteCourseDocument", "TrainerUploadDocument")';
+
+    var loadCourseDocumentUrl = '@Url.Action("LoadCommonDocument", "CourseDoc")';
+    var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+    var GotoDocUrl = '@Url.Action("ConnfidentialDocument", "TrainerUploadDocument")';
+
+    $(document).ready(function () {
+        $("#tblDocuments").DataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+    });
+
+    function ViewCourseDoc(fileName) {
+
+        var courseId = "ConfindentialDocument";
+        var docId = 0;
+
+        Ajaxhelper.post(loadCourseDocumentUrl, { path: "ConfindentialDocument", filename: fileName }, onSuccessLoadDocument, null, null);
+
+        function onSuccessLoadDocument(data) {
+            if (data.result)
+                window.location = courseDocViewerUrl + data.fs;
+            else
+                toastr.error(data.message);
+        }
+    }
+    const checkbox = document.getElementById('ismainfolder')
+
+    checkbox.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            $("#ismainfolder").val("true");
+            $("#fileupload").hide();
+        } else {
+
+            $("#fileupload").show();
+            $("#ismainfolder").val("false");
+        }
+    })
+</script>

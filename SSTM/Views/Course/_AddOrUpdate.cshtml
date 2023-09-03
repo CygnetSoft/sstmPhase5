@@ -1,0 +1,271 @@
+﻿@model SSTM.Models.Course.CourseModel
+
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .select2-container--default .select2-selection--single {
+    height: 53% !important;
+}
+</style>
+
+@using (Html.BeginForm("SaveCourse", "Course", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmAddOrUpdateCourse", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="modal-header">
+        @if (Model.Id > 0)
+        {
+            <h4 class="modal-title">Update Course</h4>
+        }
+        else
+        {
+            <h4 class="modal-title">New Course</h4>
+        }
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 form-group row">
+                <div class="custom-control custom-checkbox col-md-6">
+                    @Html.CheckBoxFor(m => m.isActive, new { @class = "custom-control-input" })
+                    <label for="isActive" class="custom-control-label">Active</label>
+                </div>
+                <div class="custom-control custom-checkbox col-md-6">
+                    @if (Model.Id > 0)
+                    {
+                        @Html.CheckBoxFor(m => m.Reassign, new { @class = "custom-control-input" })
+                        <label for="Reassign" class="custom-control-label"> Is reassign</label><br>
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-12 form-group">
+                <label>Course Name</label>
+                @Html.TextBoxFor(m => m.CourseName, new { @class = "form-control", maxlength = "100" })
+                @Html.ValidationMessageFor(m => m.CourseName, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-12 form-group">
+                <div class="col-md-12">
+                    <label>Li Course :</label>
+                </div>
+                @Html.DropDownList("AirLineCourseId", new SelectList(TempData["AirlineCourse"] as SelectList, "Value", "Text"), new { @class = "airlinecourse" })
+            </div>
+              
+            @if (Model.Id > 0 && Model.CourseType == "other")
+            {
+                if (Model.MasterCoursId != 0)
+                {
+                    <div class="col-md-12 form-group">
+                        <label>Main Course</label>
+                        <select id="drpMainCourseId" class="dropdown form-control" name="drpMainCourseId" style="width: 100%;">
+                            @if (ViewBag.MainCourseList != null)
+                        {
+                                <option value="">-- Select Main Course --</option>
+                                foreach (var item in ViewBag.MainCourseList)
+                                {
+                                    if (item.Text != null)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <label>Sub Course 1</label>
+                        <select id="drpSubCourseId" class="dropdown form-control" name="drpSubCourseId" style="width: 100%;">
+                            <option value=""> -- Select Sub Course --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <label>Sub Course 2</label>
+                        <select id="drpSubCourseId1" class="dropdown form-control" name="drpSubCourseId" style="width: 100%;">
+                            <option value=""> -- Select Sub Course --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <label>Sub Course 3</label>
+                        <select id="drpSubCourseId2" class="dropdown form-control" name="drpSubCourseId" style="width: 100%;">
+                            <option value=""> -- Select Sub Course --</option>
+                        </select>
+                    </div>
+                }
+
+            }
+
+            <div class="col-md-12 form-group AssignStaff" id="AssignStaff" style="display:none">
+                <label>Course Assign Staff</label>
+                <select id="ddlStaff" class="select2" multiple="multiple" required=required name="ddlStaff" style="width: 100%;">
+                    @if (ViewBag.StaffList != null)
+                    {
+                        foreach (var item in ViewBag.StaffList)
+                        {
+                            if (item.Text != null)
+                            {
+                                <option value="@item.Value">
+                                    @item.Text
+                                </option>
+                            }
+                        }
+                    }
+                </select>
+                <span class="alert-danger field-validation-error staffvalidation" style="display:none" data-valmsg-for="staffvalidation" data-valmsg-replace="true"><span for="staffvalidation" class="">Staff select cannot be blank.</span></span>
+            </div>
+
+            <div class="col-md-12 form-group AssignStaff" id="AssignStaff" style="display:none">
+                <label>Select HR</label>
+                @Html.DropDownList("HRId", new SelectList(TempData["HrList"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+            </div>
+            <div class="col-md-12 form-group AssignStaff" id="AssignStaff" style="display:none">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="btnSaveCourse" class="btn btn-success">Save</button>
+
+        @Html.HiddenFor(m => m.CourseType, new { @class = "form-control", maxlength = "100" })
+        @Html.HiddenFor(m => m.StaffId, new { @class = "form-control", maxlength = "100" })
+        @Html.HiddenFor(m => m.MasterCourse, new { @class = "form-control", maxlength = "100" })
+        @Html.HiddenFor(m => m.MasterCoursId, new { @class = "form-control", maxlength = "100" })
+        @Html.HiddenFor(m => m.Id, new { @class = "form-control", maxlength = "100" })
+
+    </div>
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+
+<script>
+    var saveCourseUrl = '@Url.Action("SaveCourse","Course", new { area = "" })';
+    var getdrpSubCoursListUrl = '@Url.Action("GetSubCouseList", "Course", new { area = "" })';
+    $("#CourseType").val(CourseType);
+   
+    $.validator.unobtrusive.parse("#frmAddOrUpdateCourse");
+    $('#frmAddOrUpdateCourse').on('submit', function (e) {
+        e.preventDefault();
+        if (CourseType == "staff") {
+            if ($("#StaffId").val().length == 0) {
+                $(".staffvalidation").show();
+                $("#ddlStaff").focus();
+                return;
+            }
+        }
+        //if ($("#drpMainCourseId").val() != "") {
+        //        if ($("#drpSubCourseId").val() == "" && $("#drpSubCourseId1").val() == "" && $("#drpSubCourseId2").val() == "") {
+        //            alert("At Least one sub course select");
+        //            return;
+        //        }
+        //}
+
+        if ($('#frmAddOrUpdateCourse').valid()) {
+            Ajaxhelper.post(saveCourseUrl, $('#frmAddOrUpdateCourse').serialize(), onSuccessSaveCourse, null, null);
+
+            function onSuccessSaveCourse(data) {
+                if (data.result) {
+                    GetCoursesList(CourseType);
+                    $('#AddOrEditCourseModal').modal('hide');
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+    });
+    var lastselectedSubCourseId = 0;
+    $(function () {
+        lastselectedSubCourseId = 0;
+        if (CourseType == "staff") {
+            $(".AssignStaff").show();
+        }
+
+        $('.select2').select2();
+        $('.airlinecourse').select2();
+
+        $('.select2').val($("#StaffId").val().split(',')).trigger('change');
+        $('.airlinecourse').val($("#AirLineCourseId").val().split(',')).trigger('change');
+
+        $('.select2').on('change', function () {
+            $(".staffvalidation").hide();
+            $("#StaffId").val($(this).val());
+        });
+
+        $("#drpMainCourseId").change(function () {
+            //lastselectedSubCourseId = this.value;
+            $("#MasterCoursId").val(this.value)
+            Ajaxhelper.get(getdrpSubCoursListUrl, {
+                CourseType: CourseType,
+                MasterCourseId: this.value,
+                selectedSubCourse: $("#Id").val()
+            }, onSuccessdrpSubCoursListList, null, null);
+
+            function onSuccessdrpSubCoursListList(data) {
+                $("#drpSubCourseId").html("");
+                if (data)
+                    $("#drpSubCourseId").html(data);
+                else
+                    toastr.error(data.message);
+            }
+        });
+
+        $("#drpSubCourseId").change(function () {
+            lastselectedSubCourseId = this.value;
+            $("#MasterCoursId").val(this.value)
+            Ajaxhelper.get(getdrpSubCoursListUrl, {
+                CourseType: CourseType,
+                MasterCourseId: this.value,
+                selectedSubCourse: $("#Id").val()
+            }, onSuccessdrpSubCoursListList, null, null);
+
+            function onSuccessdrpSubCoursListList(data) {
+                $("#drpSubCourseId1").html("");
+                if (data)
+                    $("#drpSubCourseId1").html(data);
+                else
+                    toastr.error(data.message);
+            }
+        });
+        $("#drpSubCourseId1").change(function () {
+            $("#MasterCoursId").val(this.value)
+            Ajaxhelper.get(getdrpSubCoursListUrl, {
+                CourseType: CourseType,
+                MasterCourseId: this.value,
+                selectedSubCourse: $("#Id").val()
+            }, onSuccessdrpSubCoursListList, null, null);
+
+            function onSuccessdrpSubCoursListList(data) {
+                $("#drpSubCourseId2").html("");
+                if (data)
+                    $("#drpSubCourseId2").html(data);
+                else
+                    toastr.error(data.message);
+            }
+        });
+        $("#drpSubCourseId2").change(function () {
+            $("#MasterCoursId").val(this.value)
+            Ajaxhelper.get(getdrpSubCoursListUrl, {
+                CourseType: CourseType,
+                MasterCourseId: this.value
+            }, onSuccessdrpSubCoursListList, null, null);
+
+            function onSuccessdrpSubCoursListList(data) {
+                $("#drpSubCourseId3").html("");
+                if (data)
+                    $("#drpSubCourseId3").html(data);
+                else
+                    toastr.error(data.message);
+            }
+        });
+        $("#drpSubCourseId").change(function () {
+            MainCourseId = this.value;
+        });
+    });
+
+  
+
+</script>

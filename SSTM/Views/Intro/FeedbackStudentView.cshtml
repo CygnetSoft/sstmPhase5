@@ -1,0 +1,162 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="form-row mt-2 col-md-12">
+            <div class="col-md-6">
+                <button type="button" onclick="instantFeedback()" class="btn btn-warning btn-block"><i class="fa-solid fa-comment"></i>Click here to Send Feedback Notification to All students</button>
+            </div>
+            <div class="col-md-6">
+                <a  href="@Url.Action("viewstudentmcq", "intro")" class="btn btn-warning btn-block"><i class="fa-solid fa-arrow-left"></i>Back to Previous Page</a>
+            </div>            
+        </div>      
+        <div class="card card-outline card-success trainerDetails">
+            <div class="card-body text-center">
+                <div class="card card-outline card-danger col-md-6">
+                    <p align="center">
+                        TOTAL STUDENTS : <span class="badge badge-primary" id="totalStudent"></span><br />
+                        FEEDBACK COMPLETED : <span class="badge badge-primary" id="feedbackCompleted"></span><br />
+                        FEEDBACK PENDING : <span class="badge badge-primary" id="feedbackPending"></span><br />
+                    </p>
+                    <div class="form-row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <a class="thumb fa fa-thumbs-up" style="color: #28a745 !important"></a>
+                                <span class="badge badge-primary" id="rating3"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <a class="thumb fa fa-thumbs-up fa-rotate-180 thumb-left"></a>
+                                <span class="badge badge-primary" id="rating2"></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="javascript:void(0)" onclick="sentpoorfeedbacktoTrainer()">
+                                <div class="form-group">
+                                    <span class="thumb fa fa-thumbs-down" style="color: #dc3545 !important"></span>
+                                    <span class="badge badge-primary" id="rating1"></span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/sstm_js_enc/_sstm_enc.js")"></script>
+
+<script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        openView()
+    });
+
+    function sentpoorfeedbacktoTrainer() {
+        $.ajax({
+            url: "@Url.Action("TrainerSentPoorFeedbackEmail", "IntroStudent")",
+            method: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                $(".loadingDiv").show();
+            },
+            success: function (data, xhr) {
+                if (data.status == true)
+                    toastr.success("Successfully sent mail.");
+                else
+                    toastr.success("Mail sent issue");
+                $(".loadingDiv").hide();
+            }
+        });
+    }
+
+    function feedbacksendnotify() {
+        var data =
+		{
+		    CourseId: '@TempData["courseId"]',
+		    BatchId: '@TempData["batchId"]',
+		    DateString: '@TempData["date"]',
+		}
+
+        var data = $.sstm_encrypt(JSON.stringify(data))
+
+        $.ajax({
+            url: "@Url.Action("FeedbackSendNotify", "Intro")?windowLocation=" + window.location.origin + "&classDet=" + data,
+            method: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                $(".loadingDiv").show();
+            },
+            success: function (data, xhr) {
+                //debugger;
+                toastr.success(data);
+            }
+        });
+    }
+
+    function instantFeedback() {
+        $.ajax({
+            url: "@Url.Action("InstantFeedbackNotification", "Intro")?windowLocation=" + window.location.origin,
+            method: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                $(".loadingDiv").show();
+            },
+            success: function (data, xhr) {
+                //debugger;
+                toastr.success(data);
+            }
+        });
+    }
+
+    //signalr connection
+    $(function () {
+        var chat = $.connection.webSocketHub;
+        $.connection.hub.logging = true;
+        chat.client.SendPushNotifyToClient = function (name, v) {
+            if (name == 'feedback') {
+                openView()
+            }
+            //console.log(name, message)
+        };
+        chat.client.SstmClientConnection = function (name, connectionId) {
+            //debugger;
+            console.log(name + " : " + connectionId);
+        };
+        $.connection.hub.start().done(function (dt) {
+            //debugger
+            chat.server.onConnect();
+        });
+    });
+
+    function openView() {
+        //debugger;
+        $.ajax({
+            url: "@Url.Action("GetAllFeedback", "Intro")?courseId=" + '@TempData["courseId"]' + '&batchId=' + '@TempData["batchId"]' + '&date=' + '@TempData["date"]',
+            method: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                $(".loadingDiv").show();
+            },
+            success: function (data, xhr) {
+                //debugger;
+                $('#totalStudent').text(data.FeedbackView.TotalStudent);
+                $('#feedbackCompleted').text(data.FeedbackView.FeedbackCompletedStudent);
+                $('#feedbackPending').text(data.FeedbackView.FeedbackPendingStudent);
+                $('#rating1').text(data.FeedbackView.Rating1);
+                $('#rating2').text(data.FeedbackView.Rating2);
+                $('#rating3').text(data.FeedbackView.Rating3);
+
+            },
+            error: function (err) {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            }
+        });
+    }
+</script>

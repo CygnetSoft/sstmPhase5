@@ -1,0 +1,215 @@
+﻿@model SSTM.Models.User.UserModel
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+@using (Html.BeginForm("SaveUser", "User", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmAddOrUpdateUser", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="modal-header">
+        @if (Model.Id > 0)
+        {
+            <h4 class="modal-title">Update User</h4>
+        }
+        else
+        {
+            <h4 class="modal-title">New User</h4>
+        }
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 form-group">
+                <div class="custom-control custom-checkbox">
+                    @Html.CheckBoxFor(m => m.isActive, new { @class = "custom-control-input" })
+                    <label for="isActive" class="custom-control-label">Active</label>
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Role</label>
+                @Html.DropDownListFor(m => m.RoleId, new SelectList(TempData["UserRoles"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.RoleId, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Mac Address</label>
+                @Html.TextBoxFor(m => m.MacAddress, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.MacAddress, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Mac Address 1</label>
+                @Html.TextBoxFor(m => m.MacAddress1, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.MacAddress1, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-6 form-group">
+                <label>First Name</label>
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", maxlength = "100" })
+                @Html.ValidationMessageFor(m => m.FirstName, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Last Name</label>
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", maxlength = "50" })
+                @Html.ValidationMessageFor(m => m.LastName, null, new { @class = "alert-danger" })
+            </div>
+            @*<div class="col-md-6 form-group">
+                    <label>Training Center</label>
+                    @Html.DropDownListFor(m => m.TrainingCenterId, new SelectList(TempData["TrainingCenters"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.TrainingCenterId, null, new { @class = "alert-danger" })
+                </div>*@
+            <div class="col-md-12 form-group">
+                <label>Email</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", name = "Email", autocomplete = "off", maxlength = "150" })
+                @Html.ValidationMessageFor(m => m.Email, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Password</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.Password, new { @class = "form-control", type = "password", name = "Password", autocomplete = "off", maxlength = "50" })
+                    <div class="input-group-append">
+                        <button type="button" id="btnHideShowPwd" class="btn btn-default">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(m => m.Password, null, new { @class = "alert-danger" })
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Mobile</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">+65</span>
+                    </div>
+                    @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", maxlength = "12" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Mobile, null, new { @class = "alert-danger" })
+            </div>
+            @*<div class="col-md-6 form-group">
+                <label>Is Trainer Blocked</label>
+                <div class="input-group">
+                    <select id="istrainerblocked" class="form-control" onchange="isTrainerblock()">
+                        @if (@Model.istrainerblocked == true)
+                        {
+                            <option value="false">No</option>
+                            <option value="true" selected>Yes</option>
+                        }
+                        else
+                        {
+                            <option value="false" selected>No</option>
+                            <option value="true">Yes</option>
+                        }
+                    </select>
+                </div>
+            </div>*@
+            <div class="col-md-6 form-group Trainer_AirLine_id" style="display:none">
+                <label>Trainer Id</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.Trainer_AirLine_id, new { @class = "form-control", maxlength = "12", value = "0" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="btnSaveUser" class="btn btn-success">Save</button>
+    </div>
+}
+@Scripts.Render("~/bundles/jqueryval")
+<script>
+    var role = '@currentSession.UserRole';
+    var userid = '@Model.Id';
+
+    var saveUserUrl = '@Url.Action("SaveUser","User", new { area = "Administration" })';
+
+    //$('#frmAddOrUpdateUser').find('#MachineIP').mask('099.099.099.099');
+
+    $('#frmAddOrUpdateUser').find('#Mobile').inputFilter(function (value) {
+        return /^\d*$/.test(value);    // Allow digits only, using a RegExp
+    });
+    $(document).ready(function () {
+        //$("#RoleId").children("option[value^=1]").show();
+        if (role == 'Administration') {
+            $("#RoleId option[value='2']").hide();
+            $("#RoleId option[value='4']").hide();
+            $("#RoleId option[value='10']").hide();
+        }
+
+        if (userid != "") {
+            if ($("#RoleId").val() == '6') {
+                $(".Trainer_AirLine_id").show();
+            }
+        }
+
+    });
+
+    //$('#istrainerblocked').on('change', function (e) {
+    //    if (this.value == "true") {
+    //        localStorage.setItem("IPRStatus", "1");
+    //    }
+    //    else {
+    //        localStorage.setItem("IPRStatus", "0");
+    //    }
+    //});
+
+    $.validator.unobtrusive.parse("#frmAddOrUpdateUser");
+    $('#frmAddOrUpdateUser').on('submit', function (e) {
+        e.preventDefault();
+
+        if ($('#frmAddOrUpdateUser').valid()) {
+            Ajaxhelper.post(saveUserUrl, $('#frmAddOrUpdateUser').serialize(), onSuccessSaveUser, null, null);
+
+            function onSuccessSaveUser(data) {
+                if (data.result) {
+                    GetUsersList();
+
+                    $('#AddOrEditUserModal').modal('hide');
+                }
+                else if (data.validation) {
+                    if (data.isEmailExists) {
+                        $('#frmAddOrUpdateUser').find('#Email').next('span').removeClass('field-validation-valid').addClass('field-validation-error');
+                        $('#frmAddOrUpdateUser').find('#Email').next('span').html('<span for="Email" class="">Email address is already exists with another user.</span>');
+                    }
+
+                    if (data.isMobileExists) {
+                        $('#frmAddOrUpdateUser').find('#Mobile').closest('div.input-group').next('span').removeClass('field-validation-valid').addClass('field-validation-error');
+                        $('#frmAddOrUpdateUser').find('#Mobile').closest('div.input-group').next('span').html('<span for="Mobile" class="">Mobile number is already exists with another user.</span>');
+                    }
+
+                    //if (data.isPasswordExists) {
+                    //    $('#frmAddOrUpdateUser').find('#Password').closest('div.input-group').next('span').removeClass('field-validation-valid').addClass('field-validation-error');
+                    //    $('#frmAddOrUpdateUser').find('#Password').closest('div.input-group').next('span').html('<span for="Password" class="">Password is already exists with another user.</span>');
+                    //}
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+    });
+
+    $('#btnHideShowPwd').on('click', function (e) {
+        e.preventDefault();
+
+        if ($(this).find('i').hasClass('fa-eye')) {
+            $('#frmAddOrUpdateUser').find('#Password').prop('type', 'text');
+            $(this).html('<i class="fa fa-eye-slash"></i>');
+        }
+        else {
+            $('#frmAddOrUpdateUser').find('#Password').prop('type', 'password');
+            $(this).html('<i class="fa fa-eye"></i>');
+        }
+    });
+    $("#RoleId").on("change", function () {
+        $("#Trainer_AirLine_id").val("");
+        if ($(this).val() == '6' || $(this).val() == '2' || $(this).val() == '15') {
+            $(".Trainer_AirLine_id").show();
+            $("#Trainer_AirLine_id").val(0);
+        }
+        else {
+            $(".Trainer_AirLine_id").hide();
+            $("#Trainer_AirLine_id").val(0);
+        }
+    });
+</script>

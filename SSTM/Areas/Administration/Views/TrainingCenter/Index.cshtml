@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Manage Training Centers";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Areas/Administration/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Training Centers</h3>
+
+            <button type="button" id="btnAddTC" class="btn btn-primary btn-sm float-right">
+                <i class="fa fa-plus-square"></i>&nbsp;Add New
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                        <input class="custom-control-input" type="radio" id="rdbAllTCs" value="2" name="rdbTCStatusFilter">
+                        <label for="rdbAllTCs" class="custom-control-label">All</label>
+                    </div>
+
+                    <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                        <input class="custom-control-input" type="radio" id="rdbAllActiveTCs" value="1" name="rdbTCStatusFilter" checked>
+                        <label for="rdbAllActiveTCs" class="custom-control-label">Active</label>
+                    </div>
+
+                    <div class="custom-control custom-radio" style="display:inline;">
+                        <input class="custom-control-input" type="radio" id="rdbAllInactiveTCs" value="0" name="rdbTCStatusFilter">
+                        <label for="rdbAllInactiveTCs" class="custom-control-label">Inactive</label>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <table id="tblTrainingCenter" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th data-priority="1">Name</th>
+                                <th>Phisical Address</th>
+                                <th>Postal Code</th>
+                                <th data-priority="2" class="text-center" style="width:8%">Status</th>
+                                <th data-priority="3" class="text-center" style="width:10%">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="AddOrEditTCModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAddOrEditTCModalContent" class="modal-content">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script src="~/Theme/plugins/mask/jquery.mask.min.js"></script>
+
+    <script>
+        var getTrainingCentersListUrl = '@Url.Action("GetTrainingCentersList", "TrainingCenter", new { area = "Administration" })';
+        var getTrainingCenterByIdUrl = '@Url.Action("GetTrainingCenterById", "TrainingCenter", new { area = "Administration" })';
+
+        var deleteTrainingCenterUrl = '@Url.Action("DeleteTrainingCenter", "TrainingCenter", new { area = "Administration" })';
+    </script>
+
+    <script src="~/Scripts/administration/trainingCenter/index.js"></script>
+}

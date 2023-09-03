@@ -1,0 +1,252 @@
+﻿
+@{
+    ViewBag.Title = "Centralized course ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <div class="card col-md-12 mb-5">
+        <div class="card-header row">
+            <div class="col-10">
+                <h3 class="card-title" id="Title">Add Centralized Course</h3>
+            </div>
+            <div class="col-2">
+                <a href="@Url.Action("central_list", "CentralizedCourse", new { area = "" })" class="btn btn-sm btn-primary">
+                    <i class="nav-icon fa fa-list"></i>&nbsp; List
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="step1">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="col-md-12">
+                            <label>Central Document Name</label>
+                        </div>
+                        <input type="text" id="CentralDocumentName" class="form-control" placeholder="Enter Document Name" />
+                    </div>
+                    <div class="col-md-3">
+                        <div class="col-md-8">
+                            <label>Choose Type :</label>
+                        </div>
+                        <select id="ddlchoosetype" class="form-control">
+                            <option value="Worker">Worker</option>
+                            <option value="Supervisor">Supervisor </option>
+                            <option value="Manage">Manager  </option>
+                            <option value="Professional">Professional   </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="col-md-8">
+                            <label>Choose docs :</label>
+                        </div>
+                        @Html.DropDownList("ddlCoursetype", new SelectList(TempData["type"] as SelectList, "Value", "Text"), new { @class = "form-control select2", multiple = "true", placeholder = "Select Course Type" })
+                        <input type="checkbox" id="checkbox">Select All
+                    </div>
+                    <div class="col-md-3">
+                        <div class="col-md-12">
+                            <label>Choose Language:</label>
+                        </div>
+                        <select id="ddllanguage" class="form-control">
+                            <option value="english">English</option>
+                            <option value="tamil">Tamil</option>
+                            <option value="mandarin">Mandarin </option>
+                        </select>
+                    </div>
+                </div>
+                <a id="submitppt" href="javascript:void(0)" class="btn btn-primary mt-3"><i class=" fa fa-save"></i> Submit</a>
+            </div>
+            <div class="step2" style="display:none">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="pull-left">
+                            <h5 class="mb-2">Image / Text Configuration</h5>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div style="float:right">
+                            <a id="savemandatoryback" class="btn btn-danger" style="display:none"><i class=" fa fa-backward"></i> Back</a>
+                            <a id="savemandatory1" class="btn btn-primary" style="display:none"><i class=" fa fa-save"></i> Save</a>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                @Html.Partial("_mandatory1")
+
+            </div>
+            <div class="step3" style="display:none">
+                @*@Html.Partial("_mandatory2")*@
+                @Html.Partial("PPT")
+            </div>
+            <div class="step4" style="display:none">
+                @Html.Partial("remininig_document")
+            </div>
+            @*<div class="step5" style="display:none">
+
+                </div>*@
+            <div class="lp" style="display:none">
+                @Html.Partial("lp_document")
+            </div>
+
+        </div>
+    </div>
+
+    <input type="hidden" id="master_id" value="0"  />
+
+</section>
+@section scripts{
+    <script src="~/Scripts/course/CentralizeCourse.js"></script>
+    <script>
+        var CentralizePPTGenerateUrl = '@Url.Action("CentralizePPTGenerate", "CentralizedCourse")';
+
+        var FileUpload_folderUrl = '@Url.Action("FileUpload_folder", "CentralizedCourse")';
+        var Master_centeral_doc_saveURL = '@Url.Action("Master_centeral_doc_save", "CentralizedCourse")';
+        var Centralized_Course_saveURL = '@Url.Action("Centralized_Course_save", "CentralizedCourse")';
+        var get_Central_edit_dataURL = '@Url.Action("Get_Centrail_data", "CentralizedCourse")';
+
+        var Central_CourseDocViewerURL = '@Url.Action("Central_CourseDocViewer", "CourseDoc")';
+
+        @*var LP_documentUrl = '@Url.Action("LP_document", "CentralizedCourse")';
+        var FG_documentUrl = '@Url.Action("FG_document", "CentralizedCourse")';*@
+
+        var General_document_GenerateUrl = '@Url.Action("General_document_Generate", "CentralizedCourse")';
+
+        var coursetype = "";
+        var coursedoc = "";
+        var courselang = "";
+        var magatory1Array = [];
+        var magatory2Array = [];
+
+        $(document).ready(function () {
+            $('#ddlCoursetype').select2();
+            $("body").addClass("sidebar-collapse");
+            $("#checkbox").click(function () {
+                if ($("#checkbox").is(':checked')) {
+                    $("#ddlCoursetype > option").prop("selected", "selected");
+                    $("#ddlCoursetype").trigger("change");
+                } else {
+                    $("#ddlCoursetype > option").removeAttr("selected");
+                    $("#ddlCoursetype").trigger("change");
+                }
+            });
+
+            if (localStorage.getItem('master_centeral_doc_id') != 0) {
+                $("#master_id").val(localStorage.getItem('master_centeral_doc_id'));
+
+                if ($("#master_id").val() != 0) {
+                    get_Central_edit_data();
+                    $("#Title").text("Update Centralized Course");
+                }
+
+            }
+            else
+                localStorage.setItem("master_centeral_doc_id", 0);
+        });
+
+        function master_dataArray() {
+
+            var data = {};
+            data.document_type = $("#ddlCoursetype").val().toString();
+            data.choose_type = $("#ddlchoosetype").val();
+            data.language = $("#ddllanguage").val();
+            data.id = $("#master_id").val();
+            data.CentralDocumentName = $("#CentralDocumentName").val();
+            return data;
+        }
+        $("#submitppt").click(function () {
+
+            coursedoc = $("#ddlCoursetype").val();
+            coursetype = $("#ddlchoosetype").val();
+            courselang = $("#ddllanguage").val();
+            CentralDocumentName = $("#CentralDocumentName").val();
+
+            if (CentralDocumentName == null) {
+                toastr.error("Central Document Name required.");
+                return;
+            }
+            if (coursedoc == null) {
+                toastr.error("choose document selection required.");
+                return;
+            }
+
+            Ajaxhelper.post(Master_centeral_doc_saveURL,
+                { data: JSON.stringify(master_dataArray()) },
+                onSuccessMaster_centeral_doc_save, null, null);
+
+            function onSuccessMaster_centeral_doc_save(data) {
+                if (data.result) {
+                    localStorage.setItem("master_centeral_doc_id", data.masterid);
+                    $("#master_id").val(data.masterid);
+                    // localStorage.getItem("master_centeral_doc_id");
+                    $(".step1").hide();
+                    $(".step2").show();
+                }
+                else
+                    toastr.error("something went to wrong please contact to admininstrator");
+            }
+
+
+            //   alert(coursedoc);
+            var stringArray = coursedoc;
+            $("#remininig_documentlist").empty();
+            var lilist = "";
+
+            for (i = 0; i < coursedoc.length; i++) {
+                var counter = i + 1;
+                // alert(coursedoc[i]);
+
+                lilist += "<li style='margin: 10px;'> <button class='btn btn-primary btn-sm' onClick='generate(" + counter + ")' type='submit' value=" + coursedoc[i] + ">" + coursedoc[i] + "</button>"
+               
+                lilist += "</li>";
+            }
+            $("#remininig_documentlist").append(lilist);
+
+        });
+
+        function generate(type) {
+            if ($("#master_id").val() == 0) {
+                toastr.error("Master id not exist so,try create new one document");
+                return;
+            }
+            // Create FormData object
+            var fileData = new FormData();
+            fileData.append('data', JSON.stringify(magatory1Array));
+            fileData.append('master_id', $("#master_id").val());
+            fileData.append('type', type);
+
+            $.ajax({
+                url: General_document_GenerateUrl,
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data  ,
+                data: fileData,
+                success: function (data) {
+                    try {
+                        if (data.result == true) {
+                            toastr.success(data.message);
+                            //List_of_doc();
+                        }
+                        else
+                            toastr.error(data.message);
+                    } catch (e) {
+                        toastr.error(e.message);
+                    }
+                },
+                error: function (err) {
+                    toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                }
+            }).done(function (data) {
+                // toastr.success(data.message);
+            });
+        }
+
+
+
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+}

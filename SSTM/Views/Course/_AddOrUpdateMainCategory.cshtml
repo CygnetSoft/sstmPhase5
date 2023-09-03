@@ -1,0 +1,74 @@
+﻿@model SSTM.Models.MainCourseModel.MainCourseModel
+
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+@using (Html.BeginForm("SaveMainCourse", "Course", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmAddOrUpdateMainCourse", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="modal-header">
+        @if (Model.Id > 0)
+        {
+            <h4 class="modal-title">Update Course</h4>
+        }
+        else
+        {
+            <h4 class="modal-title">New Course</h4>
+        }
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 form-group row">
+                <div class="custom-control custom-checkbox col-md-6">
+                    @Html.CheckBoxFor(m => m.isActive, new { @class = "custom-control-input" })
+                    <label for="isActive" class="custom-control-label">Active</label>
+                </div>
+            </div>
+
+            <div class="col-md-12 form-group">
+                <label>Course Name</label>
+                @Html.TextBoxFor(m => m.CourseName, new { @class = "form-control", maxlength = "100" })
+                @Html.ValidationMessageFor(m => m.CourseName, null, new { @class = "alert-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" id="btnSaveMainCourse" class="btn btn-success">Save</button>
+        @Html.HiddenFor(m => m.CourseType, new { @class = "form-control", maxlength = "100" })
+    </div>
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+
+<script>
+    var saveMainCourseUrl = '@Url.Action("SaveMainCourse", "Course", new { area = "" })';
+    $("#CourseType").val(CourseType);
+    
+    $.validator.unobtrusive.parse("#frmAddOrUpdateMainCourse");
+    $('#frmAddOrUpdateMainCourse').on('submit', function (e) {
+        e.preventDefault();
+        if ($('#frmAddOrUpdateMainCourse').valid()) {
+            Ajaxhelper.post(saveMainCourseUrl, $('#frmAddOrUpdateMainCourse').serialize(), onSuccessSaveMainCourse, null, null);
+
+            function onSuccessSaveMainCourse(data) {
+                if (data.result) {
+                    GetMainCoursesList(CourseType);
+                    $('#AddOrEditMainCourseModal').modal('hide');
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+    });
+   
+
+</script>

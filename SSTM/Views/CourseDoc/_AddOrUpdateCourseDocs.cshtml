@@ -1,0 +1,237 @@
+﻿@model IEnumerable<SSTM.Models.CourseDocument.CourseDocumentsListModel>
+
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+<div class="modal-header">
+    <h4 id="h4CourseDocsModal" class="modal-title">Manage Course Documents</h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="text-left">
+            <h6> <span style="color:blue">Note :</span> <span style="color:red">Please don't upload password based document (doc,ppt or xlxs files) Editor can't support</span></h6>
+        </div>
+        <div class="col-md-12 form-group text-right">
+            <button type="button" id="btnAddNewCourseDoc" class="btn btn-primary btn-sm">
+                <i class="fa fa-plus-square"></i>&nbsp;New Document
+            </button>
+        </div>
+
+        <div class="col-md-12 form-group table-responsive">
+            <table id="tblCourseDocuments" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">Documents Name</th>
+                        <th style="width: 20%;">Files</th>
+                        <th class="text-center" style="width: 10%;">Status</th>
+                        <th class="text-center" style="width: 19%;">Actions</th>
+                        @if (currentSession.UserRole == "Director" || currentSession.UserRole == "Manager")
+                        {
+                            if (Model != null && Model.Count() > 0)
+                            {
+                                <th class="text-center" style="width: 19%;">Move Document</th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            var disabled = item.isDeleted || item.isCompleted || item.isApproved || item.isReassigned ? "disabled" : "";
+
+                            <tr id="@item.Id" course="@item.CourseId">
+                                <td><input type="text" value="@item.DocName" class="form-control" @disabled>
+                                    <input type="text" id="verion" class="form-control " placeholder="Version" value="@item.Version" @disabled/>
+                                    <input type="text" id="verionDate" class="form-control input_date" readonly  value="@item.VersionDate" placeholder='DD/MM/YYYY' @disabled/>
+                                </td>
+                                <td width=20%>
+                                    <input type="file" style="display:none; padding-bottom:10px;" value='@item.Filename' @disabled />
+                                    
+                                    @*<a href="@Url.Action(" GetCourseDocFile", "CourseDoc" , new { d=item.Id, s=1 })" target="_blank">
+                                    *@
+                                    <strong>
+                                        @if (currentSession.UserRole == "DownloadLogin")
+                                        {
+                                            @item.Filename
+                                        }
+                                        else
+                                        {
+                                        <a onclick="editCourseDocument(@item.Id,1)" style="color:#dc3545;cursor:pointer">
+                                            @item.Filename
+                                        </a>
+                                        }
+                                    </strong>
+                                    @*
+                                        </a>*@
+                                </td>
+                                <td class="text-center">
+                                    @if (item.isDeleted)
+                                    {
+                                        <label class="badge badge-secondary">Skipped</label>
+                                    }
+                                    else if (item.isReassigned)
+                                    {
+                                        <label class="badge badge-warning">Reassign</label>
+                                    }
+                                    else if (item.isApproved)
+                                    {
+                                        <label class="badge badge-success">Approved</label>
+                                    }
+                                    else if (item.isCompleted)
+                                    {
+                                        <label class="badge badge-info">Complete</label>
+                                    }
+                                    else
+                                    {
+                                        <label class="badge badge-danger">Incomplete</label>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.isCompleted && item.DocName == "N/A")
+                                    {
+                                        <input type="button" class="btn btn-warning btn-sm ml-1" value="Reattach" onclick="ReattachCourseDoc(this);" />
+                                    }
+                                    else
+                                    {
+                                        <input type="button" class="btn btn-info btn-sm ml-1 docview" title="View course document" value="View" onclick="ViewCourseDoc(this,'Course');" />
+
+                                        if (currentSession.UserRole == "Director" ||currentSession.UserRole == "Administration" || currentSession.UserRole == "DownloadLogin" ||  currentSession.UserRole == "Developer")
+                                        {
+                                            <a href="@Url.Action("DownoadCourseDocFile", "CourseDoc" , new { d=item.Id, s=1 })" class="btn btn-info btn-sm Download">
+                                                Download
+                                            </a>
+                                        }
+
+                                        <input type="button" class="btn btn-primary btn-sm ml-1 btnChangeDocument" id="btnChangeDocument" title="Change course document" value="Change" onclick="ChangeCourseDoc(this);" />
+                                        <input type="button" class="btn btn-default btn-sm ml-1 btnSkipDocument" title="Skip course document" value="Skip" onclick="SkipCourseDoc(this);" />
+
+                                        if (currentSession.UserRole == "Director")
+                                        {
+                                            <input type="button" class="btn btn-danger btn-sm ml-1" title="Delete course document" value="Delete" onclick="DeleteCourseDoc(this);" />
+                                        }
+                                        if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Developer" || currentSession.UserRole == "Director")
+                                        {
+                                            <input type="button" class="btn btn-danger btn-sm ml-1" title="Move Old course document" value="Move To Old" onclick="MoveCourseToOldDoc(this);" />
+                                        }
+                                    }
+                                </td>
+
+                                @if (currentSession.UserRole == "Director" || currentSession.UserRole == "Manager")
+                                {
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <select id="MainCourseId" class="form-control MainCourseId btn-sm" name="MainCourseId">
+                                                    @if (ViewBag.MainCourseList != null)
+                                                    {
+                                                        <option value="">--Select Main Course</option>
+                                                        foreach (var item1 in ViewBag.MainCourseList)
+                                                        {
+                                                            if (item1.Text != null)
+                                                            {
+                                                                <option value="@item1.Value">@item1.Text</option>
+                                                            }
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <select id="drpSubCourseId" class="dropdown form-control drpSubCourseId" name="drpSubCourseId" style="width: 100%;">
+                                                    <option value=""> -- Select Sub Course 1 --</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <select id="drpSubCourseId1" class="dropdown form-control drpSubCourseId1" name="drpSubCourseId1" style="width: 100%;">
+                                                    <option value=""> -- Select Sub Course 2 --</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <select id="drpSubCourseId2" class="dropdown form-control drpSubCourseId2" name="drpSubCourseId2" style="width: 100%;">
+                                                    <option value=""> -- Select Sub Course 3 --</option>
+                                                </select>
+                                            </div>
+                                            @*<div class="col-12">
+                                                <select id="Subcourseid" name="Subcourseid" class="form-control Subcourseid btn-sm">
+                                                    <option value=""> -- Manage Course  --</option>
+                                                </select>
+                                            </div>*@
+                                        </div>
+
+                                        <div class="col-12 divbtnmovecourse">
+                                            <input type="button" id="btnmovecourse" class="btn btn-success btn-sm btn-block btnmovecourse mt-1" value="Document Move">
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center no-data">No documents found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="currentcoursestatus"/>
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+    <button type="button" id="btnSubmitCourseDocs" class="btn btn-success" disabled>
+        Submit Documents
+    </button>
+</div>
+
+<script>
+    $(function () {
+        $('.input_date').datepicker({
+            todayBtn: "linked",
+            autoclose: true,
+            todayHighlight: true,
+            format: "dd/mm/yyyy"
+        });
+    });
+    var loadCourseDocumentUrl = '@Url.Action("LoadCourseDocument", "CourseDoc")';
+    var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+
+    var saveCourseDocumentUrl = '@Url.Action("SaveCourseDocument","CourseDoc")';
+    var skipCourseDocumentUrl = '@Url.Action("SkipCourseDocument", "CourseDoc")';
+    var deleteCourseDocumentUrl = '@Url.Action("DeleteCourseDocument", "CourseDoc")';
+    var reattachCourseDocumentUrl = '@Url.Action("ReattachCourseDocument", "CourseDoc")';
+    var MoveOldCourseDocumentUrl = '@Url.Action("MoveOldCourseDocument", "CourseDoc")';
+
+    var submitCourseDocumentsUrl = '@Url.Action("SubmitCourseDocuments", "CourseDoc")';
+
+    var LoadEditor = '@Url.Action("GetCourseDocFile", "CourseDoc")';
+
+    //var getMainCourseToCoursesListUrl = '@Url.Action("GetCouseList", "CourseDoc")';
+
+    var MoveDocumentOtherCourse = '@Url.Action("UpdateCourseAndDocument", "CourseDoc")';
+
+    var getdrpSubCoursListUrl = '@Url.Action("GetSubCouseList", "Course", new { area = "" })';
+
+    var userRole = '@currentSession.UserRole';
+
+    $(document).ready(function() {
+        $("#currentcoursestatus").val($("#ddlCourseStatus").val());
+    })
+
+</script>
+
+<script src="~/Scripts/courseDoc/_addOrUpdateCourseDocs.js"></script>

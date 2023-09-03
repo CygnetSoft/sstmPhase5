@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "Course Import";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+
+}
+<style>
+    .select2-container .select2-selection--single {
+        height: 40px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 6px !important;
+        right: 9px !important;
+        width: 26px !important;
+    }
+
+    .modal-open .ui-datepicker {
+        z-index: 20000 !important;
+    }
+</style>
+<link href="http://code.jquery.com/ui/1.9.1/themes/flick/jquery-ui.css" rel="stylesheet">
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Import Course Document</h3>
+        </div>
+
+        <div class="card-body">
+            <h3>
+                Master selection
+            </h3>
+            <select id="mst_Coursetype"  class="dropdown form-control">
+                <option value="other">Course</option>
+                <option value="staff">Staff</option>
+                <option value="isoedu">ISO EDU</option>
+                <option value="NewCourse">New Course</option>
+            </select>
+            <hr />
+            <div class="row">
+                @*<div class="col-md-4 form-group">
+                        <label>Course</label>
+                        @Html.DropDownList("ddlCourses", new SelectList(TempData["CoursesList"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+
+                    </div>*@
+                <div class="col-3">
+                    <label>Course</label>
+                    @Html.DropDownList("ddlCourses", new SelectList(TempData["CoursesList"] as SelectList, "Value", "Text"), new { @class = "form-control ddlCourses" })
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 1</label>
+                    <select id="drpSubCourseId" class="dropdown form-control drpSubCourseId" name="drpSubCourseId" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 1 --</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 2</label>
+                    <select id="drpSubCourseId1" class="dropdown form-control drpSubCourseId1" name="drpSubCourseId1" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 2 --</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 3</label>
+                    <select id="drpSubCourseId2" class="dropdown form-control drpSubCourseId2" name="drpSubCourseId2" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 3 --</option>
+                    </select>
+                </div>
+                @*<div class="col-md-3 form-group">
+                    <label>Document Name</label>
+                    <input type="text" class="form-control docnamedata" placeholder="Document Name">
+                  
+                </div>*@
+                <div class="col-md-3 form-group">
+                    <label>Version </label>
+                    <input type="text" id="verion" class="form-control" placeholder="Version">
+                  
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Version Date</label>
+                    <input type="text" id="verionDate" class="form-control  masking" readonly="" placeholder="DD/MM/YYYY">
+                   
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Import Multiple Documents</label>
+                   <input type="file" id="uploadFile" class="form-control"   multiple="multiple"/>
+                </div>
+                <table class="table" id="FilesList" style="visibility:hidden">
+                    <tr>
+                        <th>
+                            Attachment(s)
+                        </th>
+                    </tr>
+                </table> 
+                <div class=" col-md-12 modal-footer pull-right">
+                    <a  id="btnImportCourseDocs" class="btn btn-success" >
+                        Upload Documents
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<input type="hidden" id="CourseType" class="current_CourseType" />
+@section scripts{
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var userRole = '@currentSession.UserRole';
+
+        var getCourseDocumentsUrl = '@Url.Action("GetCourseDocuments","CourseDocVersion")';
+        var getCourseDocVersionsUrl = '@Url.Action("GetCourseDocVersions", "CourseDocVersion")';
+
+        var loadCourseDocumentUrl = '@Url.Action("LoadCourseDocument", "CourseDoc")';
+        var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+
+        var getdrpSubCoursListUrl = '@Url.Action("GetSubCouseList", "Course", new { area = "" })';
+        var saveCourseDocumentUrl = '@Url.Action("SaveCourseDocument","CourseDoc")';
+
+        var Getmst_CoursesListwithjsonUrl = '@Url.Action("Getmst_CoursesListwithjson", "BulkImportExport")';
+        var Get_sub_courseUrl = '@Url.Action("Get_CourseAndSubCourse_json", "Course")';
+
+        var lastDrpValue=0,mainvalue=0;
+        $(document).ready(function () {
+
+            $("#uploadFile").on("change", function () {
+                var fileInput = document.getElementById('uploadFile');
+                //Iterating through each files selected in fileInput
+                for (i = 0; i < fileInput.files.length; i++) {
+
+                    var sfilename = fileInput.files[i].name;
+                    let srandomid = Math.random().toString(36).substring(7);
+
+                    // formdata.append(sfilename, fileInput.files[i]);
+                  
+                    var fname = "", fnamewithoutExtension = "";
+                    if (sfilename != "") {
+                        fname = sfilename.split(".");
+                        fnamewithoutExtension = fname[0].replace("_", "-");
+                    }
+
+                    var markup = "<tr id='" + srandomid + "'><td><input type='text' class='form-control docnamedata" + i + "' placeholder='Document Name' value='" + fnamewithoutExtension + "'></td><td>" + sfilename + "</td></tr>"; // Binding the file name
+                    $("#FilesList tbody").append(markup);
+
+                }
+                chkatchtbl();
+
+            });
+        });
+
+        $("#mst_Coursetype").on("change", function () {
+
+            var fileData = new FormData();
+            fileData.append('type', this.value);
+            $.ajax({
+                url: Getmst_CoursesListwithjsonUrl,
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data  ,
+                data: fileData,
+                success: function (data) {
+                    if (data.result) {
+                        $("#ddlCourses").html('');
+                        $("#drpSubCourseId").html('');
+                        $("#drpSubCourseId1").html('');
+                        $("#drpSubCourseId2").html('');
+
+                        $("#ddlCourses").append($("<option></option>").val("").html("-- Select Course --"));
+                        $("#drpSubCourseId").append($("<option></option>").val("").html("-- Select Sub Course --"));
+                        $("#drpSubCourseId1").append($("<option></option>").val("").html("-- Select Sub Course --"));
+                        $("#drpSubCourseId2").append($("<option></option>").val("").html("-- Select Sub Course --"));
+
+                        $.each(data.content, function (key, item) {
+                            $("#ddlCourses").append($("<option></option>").val(item.Id).html(item.CourseName));
+                        });
+                    }
+                },
+                error: function (err) {
+                    toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                }
+            })
+        });
+
+        
+        function drpSubCourseId(sub_course_id,type,sub_course)
+        {
+            
+            var fileData = new FormData();
+            
+            fileData.append('CourseType', type);
+            fileData.append('MasterCourse', false);
+            fileData.append('MasterCoursId', sub_course_id);
+            $.ajax({
+                url: Get_sub_courseUrl,
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data  ,
+                data: fileData,
+                success: function (data) {
+                    if (data.result) {
+                        if (sub_course == 0) {
+                            $("#drpSubCourseId").html('');
+                            $("#drpSubCourseId").append($("<option></option>").val("").html("-- Select Sub Course --"));
+                            $.each(data.content, function (key, item) {
+                                $("#drpSubCourseId").append($("<option></option>").val(item.Id).html(item.CourseName));
+                            });
+                        }
+
+                        if (sub_course == 1) {
+                            $("#drpSubCourseId1").html('');
+                            $("#drpSubCourseId1").append($("<option></option>").val("").html("-- Select Sub Course --"));
+                            $.each(data.content, function (key, item) {
+                                $("#drpSubCourseId1").append($("<option></option>").val(item.Id).html(item.CourseName));
+                            });
+                        }
+
+                        if (sub_course == 2) {
+                            $("#drpSubCourseId2").html('');
+                            $("#drpSubCourseId2").append($("<option></option>").val("").html("-- Select Sub Course --"));
+                            $.each(data.content, function (key, item) {
+                                $("#drpSubCourseId2").append($("<option></option>").val(item.Id).html(item.CourseName));
+                            });
+                        }
+                    }
+                },
+                error: function (err) {
+                    toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                }
+            })
+        }
+
+        function chkatchtbl() {
+            if ($('#FilesList tr').length > 1) {
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#FilesList").css("visibility", "hidden");
+            }
+        }
+        if (userRole == "Staff") {
+            var CourseType = "staff";
+            $(".current_CourseType").val(CourseType);
+        }
+        else {
+            var CourseType = "other";
+            $(".current_CourseType").val(CourseType);
+        }
+
+
+
+        $("#ddlCourses").change(function () {
+            lastDrpValue = this.value;
+            
+            drpSubCourseId(lastDrpValue, $("#mst_Coursetype").val(),0);
+        });
+        $("#drpSubCourseId").change(function () {
+            lastDrpValue = this.value;
+            mainvalue = 0;
+            drpSubCourseId(lastDrpValue, $("#mst_Coursetype").val(),1);
+            
+        });
+        $("#drpSubCourseId1").change(function () {
+            lastDrpValue = this.value;
+            mainvalue = 0;
+            drpSubCourseId(lastDrpValue, $("#mst_Coursetype").val(),2);
+        });
+        $("#drpSubCourseId2").change(function () {
+            lastDrpValue = this.value;
+            mainvalue = 0;
+            drpSubCourseId(lastDrpValue, $("#mst_Coursetype").val(),3);
+        });
+        $(function () {
+            $('.masking').datepicker({
+                todayBtn: "linked",
+                autoclose: true,
+                todayHighlight: true,
+                format: "dd/mm/yyyy"
+            });
+        });
+    </script>
+
+    <script src="~/Scripts/course/BulkImport.js"></script>
+}

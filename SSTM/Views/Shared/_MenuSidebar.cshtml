@@ -1,0 +1,810 @@
+﻿@model SSTM.Helpers.App.AppSession
+<a href="#" class="brand-link navbar-light text-center">
+    <img src="~/Theme/images/eversafe-logo-.png" alt="SSTM" class="brand-image" style="opacity: .8">
+</a>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <!-- Sidebar Menu -->
+    <nav class="mt-1 mb-5">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+            @if (Model.UserRole == "Director" || Model.UserRole == "Developer" || Model.UserRole == "Administration" || Model.UserRole == "SME" || Model.UserRole == "AEB")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Dashboard", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-dashboard"></i>
+                        <p>
+                            Dashboard
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Director" || Model.UserRole == "Manager" || Model.UserRole == "Administration")
+            {
+
+                if (Model.UserRole != "Manager")
+                {
+
+                    if (Request.Url != null && Path.GetFileName(Request.Url.AbsoluteUri) == "User")
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "User", new { area = "Administration" })" class="nav-link " onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fa fa-users"></i>
+                                <p>
+                                    Users
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if (Model.UserRole == "Director" || Model.UserRole == "Administration")
+                            {
+                                <a href="@Url.Action("OuterUserList", "User",new { area = "Administration" })" class="nav-link " onclick="newmenusetvalue('course')">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Outer Register Users
+                                    </p>
+                                </a>
+                            }
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fa fa-book"></i>
+                                <p>
+                                    Courses
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("ISOEdutrust", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fa fa-book-reader"></i>
+                                <p>
+                                    ISO & Edu trust
+                                </p>
+                            </a>
+                        </li>
+
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "User", new { area = "Administration" })" class="nav-link ">
+                                <i class="nav-icon fa fa-users"></i>
+                                <p>
+                                    Users
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if (Model.UserRole == "Director" || Model.UserRole == "Administration")
+                            {
+                                <a href="@Url.Action("OuterUserList", "User",new { area = "Administration" })" class="nav-link ">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Outer Register Users
+                                    </p>
+                                </a>
+                            }
+                        </li>
+                        //if (Model.UserRole == "Administration")
+                        //{
+                        <li class="nav-item">
+                            <a href="@Url.Action("index", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fa fa-book"></i>
+                                <p>
+                                    Courses
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("ISOEdutrust", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fa fa-book-reader"></i>
+                                <p>
+                                    ISO & Edu trust
+                                </p>
+                            </a>
+                        </li>
+                        // }
+
+                    }
+
+                }
+            }
+
+
+            @if (Model.UserRole == "SME")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("index", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-book"></i>
+                        <p>
+                            Courses
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Print Incharge")
+            {
+                if (Request.Url != null && (Path.GetFileName(Request.Url.AbsoluteUri) == "Course" ||
+                Request.Url.AbsoluteUri.Contains("/Course/index") || Request.Url.AbsoluteUri.Contains("/Course/index")))
+                {
+                    @*<a href="@Url.Action("SharedCoursesList", "Course", new { area = "" })" class="nav-link">*@
+                    <li class="nav-item">
+                        <a href="@Url.Action("index", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-book"></i>
+                            <p>
+                                Courses
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ISOEdutrust", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-book-reader"></i>
+                            <p>
+                                ISO & Edu trust
+                            </p>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a href="@Url.Action("SharedCoursesList", "Course", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-book"></i>
+                            <p>
+                                Courses
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ISOEdutrust", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-book-reader"></i>
+                            <p>
+                                ISO & Edu trust
+                            </p>
+                        </a>
+                    </li>
+                }
+            }
+            else
+            {
+                if (Request.Url != null && (Path.GetFileName(Request.Url.AbsoluteUri) == "Course/index"))
+                {
+                    if (Model.UserRole == "Administration")
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "User", new { area = "Administration" })" class="nav-link ">
+                                <i class="nav-icon fa fa-users"></i>
+                                <p>
+                                    Users
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if (Model.UserRole == "Director" || Model.UserRole == "Administration")
+                            {
+                                <a href="@Url.Action("OuterUserList", "User",new { area = "Administration" })" class="nav-link ">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>
+                                        Outer Register Users
+                                    </p>
+                                </a>
+                            }
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-book"></i>
+                            <p>
+                                Courses
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ISOEdutrust", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-book-reader"></i>
+                            <p>
+                                ISO & Edu trust
+                            </p>
+                        </a>
+                    </li>
+
+                    @*<a href="@Url.Action("MainCourse", "Course", new { area = "" })" class="nav-link active">
+                            <i class="nav-icon fa fa-book"></i>
+                            <p>
+                                Courses
+                            </p>
+                        </a>*@
+                }
+                else
+                {
+                    if (Model.UserRole == "Developer")
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "Course", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fa fa-book"></i>
+                                <p>
+                                    Courses
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("ISOEdutrust", "Course", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fa fa-book-reader"></i>
+                                <p>
+                                    ISO & Edu trust
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "CourseDocVersion", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                                <p>
+                                    Master list
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("DocumentRecentlyUpdated", "CourseDocVersion", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                                <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                                <p>
+                                    Recent Updated
+                                </p>
+                            </a>
+                        </li>
+                    }
+
+
+                }
+            }
+
+
+            @if (Model.UserRole == "Director" || Model.UserRole == "Manager" || Model.UserRole == "Administration")
+            {
+                <li class="nav-item">
+                    @if (Request.Url != null && Path.GetFileName(Request.Url.AbsoluteUri) == "CourseDocVersion")
+                    {
+                        <a href="@Url.Action("Index", "CourseDocVersion", new { area = "" })" class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                            <p>
+                                Course Docs Versions
+                            </p>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", "CourseDocVersion", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                            <p>
+                                Course Docs Versions
+                            </p>
+                        </a>
+                    }
+                </li>
+
+                <li class="nav-item">
+                    @if (Request.Url != null && Path.GetFileName(Request.Url.AbsoluteUri) == "ActivityLog")
+                    {
+                        <a href="@Url.Action("Index", "ActivityLog", new { area = "Administration" })" clas class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-clipboard-check"></i>
+                            <p>
+                                Activity Logs
+                            </p>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", "ActivityLog", new { area = "Administration" })" clas class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-clipboard-check"></i>
+                            <p>
+                                Activity Logs
+                            </p>
+                        </a>
+                    }
+                </li>
+
+                <li class="nav-item">
+                    @if (Request.Url != null && Path.GetFileName(Request.Url.AbsoluteUri) == "Config")
+                    {
+                        <a href="@Url.Action("Index", "Config", new { area = "Administration" })" clas class="nav-link " onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p>
+                                Settings
+                            </p>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", "Config", new { area = "Administration" })" clas class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p>
+                                Settings
+                            </p>
+                        </a>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (Request.Url != null && Path.GetFileName(Request.Url.AbsoluteUri) == "StaffIndex")
+                    {
+                        <a href="@Url.Action("StaffIndex", "Course", new { area = "" })" clas class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-book-open"></i>
+                            <p>
+                                Other Documents
+                            </p>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("StaffIndex", "Course", new { area = "" })" clas class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fas fa-book-open"></i>
+                            <p>
+                                Other Documents
+                            </p>
+                        </a>
+                    }
+                </li>
+            }
+            @if (Model.UserRole == "Administration")
+            {
+                @*<li class="nav-item">
+                        <a href="@Url.Action("Index", "User", new { area = "Administration" })" class="nav-link ">
+                            <i class="nav-icon fa fa-users"></i>
+                            <p>
+                                Users
+                            </p>
+                        </a>
+                        <a href="@Url.Action("Index", "Course", new { area = "" })" class="nav-link ">
+                            <i class="nav-icon fa fa-book"></i>
+                            <p>
+                                Courses
+                            </p>
+                        </a>
+                    </li>*@
+            }
+            @if (Model.UserRole == "Aassociate Developer" || Model.UserRole == "AEB" || Model.UserRole == "SME" || Model.UserRole == "Developer"
+                    || Model.UserRole == "Director")
+            {
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-archive" style="color:Highlight"></i>
+                        <p>
+                            New Course
+                            <i class="fas fa-angle-left right"></i>
+
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+
+                        <li class="nav-item">
+                            <a href="@Url.Action("index", "CourseReminder", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-folder-o"></i>
+                                <p>
+                                    New Course
+                                </p>
+                            </a>
+                        </li>
+                        @if (Model.UserRole == "Director")
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("latter_of_undertaking", "CourseReminder", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                    <i class="nav-icon fa fa-envelope"></i>
+                                    <p>
+                                        Latter Undertaking
+                                    </p>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+            }
+            @if (Model.UserRole == "Director")
+            {
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-download" style="color:blueviolet;"></i>
+                        <p>
+                            Document downloads
+                            <i class="fas fa-angle-left right"></i>
+
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+
+                        <li class="nav-item">
+                            <a href="@Url.Action("LetterofundertakingList", "CourseReminderDownload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-folder-o"></i>
+                                <p>
+                                    Letter of undertaking List
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("AebApproved", "CourseReminderDownload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-folder-o"></i>
+                                <p>
+                                    AEB Member List
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("CourseProposalDownload", "CourseReminderDownload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-folder-o"></i>
+                                <p>
+                                    Course Proposal
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("NeedAnalysisDownload", "CourseReminderDownload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-folder-o"></i>
+                                <p>
+                                    Need Analysis
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("CourseReviewlist", "CourseReminderDownload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-folder-o"></i>
+                                <p>
+                                    Course Review
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("DesignChangeRequestlist", "CourseReminderDownload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-folder-o"></i>
+                                <p>
+                                    Design Change Request
+                                </p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+            }
+            @if (Model.UserRole == "AEB")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "QPRequest", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            QP Request
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Administration" || Model.UserRole == "Developer" || Model.UserRole == "Director")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("OldDocuments", "CourseDoc", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            Old Docs
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "DownloadLogin")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "CourseDownload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fas fa-download"></i>
+                        <p>
+                            Download
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Developer")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("SharedCoursesList", "Course", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-book"></i>
+                        <p>
+                            Shared Courses
+                        </p>
+                    </a>
+                </li>
+               
+            }
+            @if (Model.UserRole == "Trainer")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "TodayClassDocs")" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-file"></i>
+                        <p>
+                            Today Class Docs
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("CommonDocument", "TrainerUploadDocument")" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-download"></i>
+                        <p>
+                            Common Class Documents
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("VideoFiles", "TrainerUploadDocument")" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-download"></i>
+                        <p>
+                            Common class video
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "TrainerUploadDocument", new { area = ""})" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-upload"></i>
+                        <p>
+                            Upload Docs
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Memorandom")" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-file"></i>
+                        <p>
+                            Memorandom
+                        </p>
+                    </a>
+                </li>
+
+            }
+            @if (Model.UserRole == "Director" || Model.UserRole == "Administration")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "TrainerUploadDocument")" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-upload"></i>
+                        <p>
+                            Docs for trainer review
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("CommonDocument", "TrainerUploadDocument")" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-upload"></i>
+                        <p>
+                            Common Class Documents
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("VideoFiles", "TrainerUploadDocument")" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-upload"></i>
+                        <p>
+                            Common class video
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("DocumentRecentlyUpdated", "CourseDocVersion", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                        <p>
+                            Recent Updated
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "TrainerQPUpload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                        <p>
+                            Trainer QP
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("QP_Approval_Level", "TrainerQPUpload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                        <p>
+                            QP Approval Level
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "AEB")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "TrainerQPUpload", new { area = "" })" class="nav-link">
+                        <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                        <p>
+                            Trainer QP
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Director" || Model.UserRole == "DirectorStaffs")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("ConnfidentialDocument", "TrainerUploadDocument", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fas fa-sort-numeric-up-alt"></i>
+                        <p>
+                            Confidential Document
+                        </p>
+                    </a>
+                </li>
+
+            }
+            @if (Model.UserRole == "QP_Approval_Level1" || Model.UserRole == "QP_Approval_Level2" || Model.UserRole == "QP_Approval_Level3")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("QP_Approval_Level", "TrainerQPUpload", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>
+                            QP Approval List
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Trainer" || Model.UserRole == "Developer" || Model.UserRole == "Director" || Model.UserRole == "Administration")
+            {
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-copy"></i>
+                        <p>
+                            Intro Pages
+                            <i class="fas fa-angle-left right"></i>
+
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        @if (Model.UserRole == "Developer" || Model.UserRole == "Director" || Model.UserRole == "Administration")
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("createstudentmcq", "intro", new { area = "" })" onclick="newmenusetvalue('course')" class="nav-link">
+                                    <i class="nav-icon fa fa-cloud-upload"></i>
+                                    <p>Create Instant Question</p>
+                                </a>
+                            </li>
+                        }
+                        @if (Model.UserRole == "Trainer" || Model.UserRole == "Director" || Model.UserRole == "Administration")
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("index", "intro", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                                    <i class="nav-icon fa fa-user-circle-o"></i>
+                                    <p>Intro Page</p>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+
+            }
+            @if (Model.UserRole == "Trainer" || Model.UserRole == "Director" || Model.UserRole == "Administration")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("viewstudentmcq", "intro", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                        <i class="nav-icon fa fa-question"></i>
+                        <p title="Question/Answer/Feedback">Question/Answer/Feedback</p>
+                    </a>
+                </li>
+                @*<li class="nav-item">
+                        <a href="@Url.Action("ViewAnswerSheet", "intro", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-book-reader"></i>
+                            <p>Instant Qus. Answer Paper</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("StudentOverallMarkSummary", "intro", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-info-circle"></i>
+                            <p>Instant Student Summary</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("feedbackstudentview", "intro", new { area = "" })" class="nav-link" onclick="newmenusetvalue('course')">
+                            <i class="nav-icon fa fa-user-friends"></i>
+                            <p>Instant Feedback Student View</p>
+                        </a>
+                    </li>*@
+
+            }
+            @if (Model.UserRole == "Trainer" || Model.UserRole == "Administration")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("ViewBlendedLearning", "intro")" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                        <i class="nav-icon fa fa-chalkboard-user"></i>
+                        <p>
+                            Blended Learning
+                        </p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Trainer")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("riskassessment", "intro", new {requesttype = "all"})" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                        <i class="nav-icon fa fa-exclamation-triangle"></i>
+                        <p title="Risk Assessment & Safe Work Procedure">RA and SWP</p>
+                    </a>
+                </li>
+            }
+            @if (Model.UserRole == "Director" || Model.UserRole == "Administration")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("RiskAssessment", "intro", new {requesttype = "report"})" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                        <i class="nav-icon fa fa-exclamation-triangle"></i>
+                        <p title="Risk Assessment & Safe Work Procedure Report">RA and SWP Report</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+
+
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-copy"></i>
+                        <p>
+                            Import Documents
+                            <i class="fas fa-angle-left right"></i>
+
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "BulkImportExport",new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-file-import"></i>
+                                <p> Course Upload</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("uploadVideoFiles", "BulkImportExport",new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                                <i class="nav-icon fa fa-file-import"></i>
+                                <p> Upload Video Import</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="@Url.Action("ExportCourse", "BulkImportExport", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                        <i class="nav-icon fa fa-file-export"></i>
+                        <p>Export Documets</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="@Url.Action("DeveloperMonitorList", "AssessmentPaper", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                        <i class="nav-icon fa fa-clock"></i>
+                        <p>Developer Monitoring</p>
+                    </a>
+                </li>
+
+            }
+           
+            @if (Model.UserRole == "CI" || Model.UserRole == "Trainer")
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "AssessmentPaper", new { area = "" })" class="nav-link" onclick="newmenusetvalue('newcouse')">
+                        <i class="nav-icon fa fa-paper-plane"></i>
+                        <p title="Assessment Paper">Send <br /> (Assessment Paper)</p>
+                    </a>
+                </li>
+            }
+
+            <li>
+                <img src="/Theme/images/eversafe-logo-New.png" alt="SSTM" class="mt-4" style="opacity: .8;background: white;" width="250" height="200">
+
+            </li>
+        </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+</div>
+
+<!-- /.sidebar -->
+<script>
+
+    $(document).ready(function () {
+
+        function newmenusetvalue(value) {
+
+            if (value == "newcouse")
+                localStorage.setItem('menu', "Newcourse");
+            else
+                localStorage.setItem('menu', "course");
+
+
+        }
+    });
+</script>

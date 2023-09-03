@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B141196A-9153-4BDF-A9D7-2419310682A7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SSTM.Core</RootNamespace>
+    <AssemblyName>SSTM.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActivityLog\ActivityLog.cs" />
+    <Compile Include="Assessment_Paper\AssessmentPaper.cs" />
+    <Compile Include="BaseEntity.cs" />
+    <Compile Include="Centralized_Course\Centralized_Course.cs" />
+    <Compile Include="Centralized_Course\Centralized_Document_files.cs" />
+    <Compile Include="Centralized_Course\Centralized_History.cs" />
+    <Compile Include="Centralized_Course\Centralized_Master.cs" />
+    <Compile Include="Central_CourseSharing\Central_CourseSharing.cs" />
+    <Compile Include="Config\Config.cs" />
+    <Compile Include="CourseAssignment\CourseAssignment.cs" />
+    <Compile Include="CourseDocRemarks\CourseDocRemarks.cs" />
+    <Compile Include="CourseDocument\CourseDocument.cs" />
+    <Compile Include="CourseDocVersion\CourseDocVersion.cs" />
+    <Compile Include="CourseDownload\CourseDownloadUser.cs" />
+    <Compile Include="CourseSharing\CourseSharing.cs" />
+    <Compile Include="CourseStatus\CourseStatus.cs" />
+    <Compile Include="CourseTrackers\CourseTrackers.cs" />
+    <Compile Include="CourseTrackers\NewCourseTrackingData.cs" />
+    <Compile Include="Course\Course.cs" />
+    <Compile Include="Course_Reminder\CourseReminder.cs" />
+    <Compile Include="Course_Reminder\CourseRenewal.cs" />
+    <Compile Include="Course_Reminder\Course_Reminder_Latter_Undertaking.cs" />
+    <Compile Include="DeveloperMonitorTimer\DeveloperMonitorTimer.cs" />
+    <Compile Include="ExceptionLog\ExceptionLog.cs" />
+    <Compile Include="IntroPage\StudentFeedback.cs" />
+    <Compile Include="IntroPage\StudentIntroPage.cs" />
+    <Compile Include="IntroPage\StudentNotification.cs" />
+    <Compile Include="IntroPage\StudentQP.cs" />
+    <Compile Include="MainCourse\MainCourse.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QPRequest.cs" />
+    <Compile Include="Report\Report.cs" />
+    <Compile Include="Role\Role.cs" />
+    <Compile Include="SubCourse\SubCourse.cs" />
+    <Compile Include="TrainerQPUpload\TrainerQPUpload.cs" />
+    <Compile Include="TrainerQPUpload\TrainerQP_Level_Approval.cs" />
+    <Compile Include="TrainerQPUpload\TrainerQP_Shared_Student.cs" />
+    <Compile Include="TrainerUploadDocument\TrainerUploadDocument.cs" />
+    <Compile Include="TrainingCenter\TrainingCenter.cs" />
+    <Compile Include="TrainnerMacAddress\TrainnerMacAddress.cs" />
+    <Compile Include="User\User.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "Letter of Undertaking Download";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="content" style="padding-top:10px;">
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Latter Of Undertaking</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <input type="button" id="export" class="btn btn-warning col-12" value="Export PDF" />
+                <button class="btn btn-primary loader  col-12" type="button" disabled style="display:none">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Loading...
+                </button>
+                <div id="dataexport">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <textarea id="editor">@ViewBag.latter</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-3 ml-5" id="singnature">
+                        <div class="col-md-12 mt-3">
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-6">
+                                    <div class="col-6"><b>Attach Sign:</b> &nbsp;</div>
+                                    <div class="col-9">
+
+                                        <img src="@Model.latter_signature" alt="No Trainer singnature" style="height:100px;width:100px" />
+                                        <img src="@Model.director_latter_signature" alt="No Authorized singnature" style="height:100px;width:100px" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+    <script>
+        var GeneratePdfUrl = '@Url.Action("GeneratePdf", "CourseReminderDownload")';
+        $(document).ready(function () {
+            $('#editor').summernote({ height: 1100, toolbar: false });
+            $('#editor').next().find(".note-editable").attr("contenteditable", false);
+        });
+
+        $("#export").on('click', function () {
+
+            setTimeout(function () {
+                $(".loader").show();
+                $('#export').hide();
+            }, 500);
+            var data = $('#editor').summernote('code');
+            var singnature = $("#singnature").html();
+            $.ajax(GeneratePdfUrl, {
+                type: "POST",
+                dataType: "json",
+                cache: false,
+                data: { element: data, singnature: singnature }
+            }).done(function (data, statusText, xhdr) {
+                try {
+                    setTimeout(function () {
+                        $('#export').show();
+                        $(".loader").hide();
+                    }, 3000);
+                    window.location.href = '@Url.Action("Download", "CourseReminderDownload")?filepath=' + JSON.stringify(data.FileName);
+                }
+                catch (e) {
+                    setTimeout(function () {
+                        $('#export').show();
+                        $(".loader").hide();
+                    }, 3000);
+                }
+            }).fail(function (xhdr, statusText, errorText) {
+                alert('error');
+                setTimeout(function () {
+                    $('#export').show();
+                    $(".loader").hide();
+                }, 3000);
+            });
+
+        });
+    </script>
+    <!-- include summernote css/js -->
+    <link href="~/Scripts/summernote/summernote.min.css" rel="stylesheet" />
+    <script src="~/Scripts/summernote/summernote.min.js"></script>
+}

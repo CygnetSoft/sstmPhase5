@@ -1,0 +1,71 @@
+﻿@model SSTM.Helpers.App.AppSession
+@{
+    ViewBag.Title = "QP Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@Styles.Render("~/Theme/datatables")
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">QP Request List </h3>
+            </div>
+
+            <button type="button" onclick="OpenAddOrUpdateQPModal(0);" class="btn btn-primary btn-sm float-right">
+                <i class="fa fa-plus-square"></i>&nbsp;Add New Course
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblQPRequest" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Course Code</th>
+                                <th>Enter Footer</th>
+                                <th>Developer Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="AddOrEditQPRequestModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAddOrEditQPRequestModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var QPRequestListUrl = '@Url.Action("QPRequestList", "QPRequest")';
+        var GetQPRequestByIdUrl = '@Url.Action("GetQPRequestById", "QPRequest")';
+        var DeleteQPRequestUrl = '@Url.Action("DeleteQPRequest", "QPRequest")';
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            GetQPRequestList();
+        });
+    </script>
+    <script src="~/Scripts/QPRequest/index.js"></script>
+
+}
+
+
+

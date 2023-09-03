@@ -1,0 +1,601 @@
+﻿@{
+    ViewBag.Title = "View Student MCQ's";
+    Layout = null;
+}
+@Html.AntiForgeryToken()
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Answer MCQ's</title>
+    <link href="@Url.Content("~/Content/intro-page/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2/css/select2.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/fontawesome-free/css/all.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/toastr/toastr.min.css")" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #eeecec !important
+        }
+
+        .select2-selection__rendered {
+            line-height: 35px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 35px !important;
+        }
+
+        hr.double_border_style {
+            border-top: 4px double black;
+        }
+
+            hr.double_border_style:after {
+                content: '';
+                display: inline-block;
+                position: relative;
+                top: -15px;
+                left: 40px;
+                padding: 0 10px;
+                background: #f0f0f0;
+                color: #8c8b8b;
+                font-size: 18px;
+            }
+
+        .is-invalid + .select2-container--default .select2-selection--single {
+            border: 1px solid #f44336;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 2rem center;
+            background-size: calc(3 em + 0.375 rem ) calc(3em + 0.375 rem );
+        }
+
+        .chart-gauge {
+            width: 400px;
+            margin: 10px auto;
+        }
+
+
+        .chart-color4 {
+            fill: #28a745;
+        }
+
+        .chart-color3 {
+            fill: #ffc107;
+        }
+
+        .chart-color2 {
+            fill: #fd7e14;
+        }
+
+        .chart-color1 {
+            fill: #e92213;
+        }
+
+        .needle,
+        .needle-center {
+            fill: #ccda46 !important;
+        }
+
+        .prose {
+            text-align: center;
+            font-family: sans-serif;
+            color: #ababab;
+        }
+
+        .checked {
+            color: orange;
+        }
+
+
+        body {
+            background: rgba(0,0,0,0.6);
+        }
+
+        .lds-dual-ring.hidden {
+            display: none;
+        }
+
+        .lds-dual-ring {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+        }
+
+            .lds-dual-ring:after {
+                content: " ";
+                display: block;
+                width: 64px;
+                height: 64px;
+                margin: 20% auto;
+                border-radius: 50%;
+                border: 6px solid #fff;
+                border-color: #fff transparent #fff transparent;
+                animation: lds-dual-ring 1.2s linear infinite;
+            }
+
+        @@keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,.8);
+            z-index: 999;
+            opacity: 1;
+            transition: all 0.5s;
+        }
+
+        .fa-star:not(.checked) {
+            color: #ababab !important
+        }
+
+    </style>
+</head>
+<body>
+    <div id="loader" class="lds-dual-ring hidden overlay"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <img src="~/Theme/images/eversafe-logo-.png" width="150" height="50" />
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-3" id="qs__section_display">
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-outline card-success">
+                        <div class="card-header bg-white">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="font-weight-bolder">Question Sheet</span>
+                                </div>
+                                <div class="col-md-6 ml-auto">
+                                    <h4 class="float-right" id="studentNo">@TempData["studentId"]</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p><b>Note :</b></p>
+                            <div class="form-row">
+                                <ol>
+                                    <li class="font-weight-bold">Don't reload your browser.</li>
+                                    <li class="font-weight-bold">Reload your browser, it will automatically submitted.</li>
+                                </ol>
+                            </div>
+                            <div class="form-row">
+                                <div class="ml-auto text-right mt-3 font-weight-bolder">
+                                    <span>Total Marks : 100</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 mb-3">
+                                <hr class="double_border_style" />
+                            </div>
+                            <div class="form-row">
+                                <div class="container-fluid ml-3">
+                                    <ol class="num list-group mcq-list">
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white" id="footer-btn" hidden>
+                            <div class="text-center">
+                                <button class="btn btn-success btn-sm" id="saveQuestions" type="button"><i class="fa fa-server"></i>&nbsp;Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @{
+        var partial = Html.Partial("CongratulationStudents");
+    }   
+    <div class="container-fluid py-4" id="gauge__display" hidden>
+        @*<div class="alert alert-success" role="alert">
+                Congratulations for your examination result.
+            </div>*@
+        <div class="card">
+            <div class="card-body">
+                <div class="chart-gauge"></div>
+                <div class="mt-3">
+                    <div class="stud___start_rating text-center">
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                    </div>
+                </div>
+                <div class="partialView mt-5">@partial</div>
+            </div>
+        </div>
+    </div>
+    <input hidden id="courseId" value="@TempData["courseId"]" />
+    <input hidden id="chapterId" value="@TempData["chapterId"]" />
+    <input hidden id="batchId" value="@TempData["batchId"]" />
+
+    
+</body>
+</html>
+<script src="@Url.Content("//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")"></script>
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js")"></script>
+<script src="@Url.Content("~/Theme/plugins/select2/js/select2.min.js")"></script>
+<script src="@Url.Content("//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Scripts/sstm_js_enc/_sstm_enc.js")"></script>
+<script src="~/Theme/plugins/toastr/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+    window.onbeforeunload = function (e) {
+        $.loadFuntion();
+        e.preventDefault();
+        return false
+    };
+    window.addEventListener("popstate", function (event) {
+        if (typeof event.state == "object"
+            && event.state.obsolete !== true) {
+            history.replaceState({ "obsolete": true }, "");
+            history.pushState(event.state, "");
+        }
+        if (typeof event.state == "object"
+            && event.state.obsolete === true) {
+            history.back()
+        }
+    }, false);
+    $(window).on('keydown', function (e) {
+        if (e.which == 116 || (e.keyCode === 116 && e.ctrlKey)) { // New action for F5
+            e.preventDefault();
+            $.loadFuntion();
+            return false;
+        }
+    });
+    $.loadFuntion = function () {
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'Refresh your browser ,it will automatically close your browser.!!!',
+            type: 'red',
+            typeAnimated: true,
+            animation: 'news',
+            closeAnimation: 'news',
+            buttons: {
+                tryAgain: {
+                    text: 'Refresh',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        window.open('', '_self', ''); window.close();
+                    }
+                },
+                close: function () {
+
+                }
+            }
+        });
+    }
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    $(".fa-star").click(function () {
+        $(this).parents().find('.fa-star').removeClass('checked')
+        $(this).prevAll().addClass('checked');
+        $(this).addClass('checked');
+    });
+    var i = 0;
+    $(document).ready(function () {
+        chapterList();
+        chart_gauge(0);
+    });
+	function chapterList() {
+		let courseId = $('#courseId').val();
+		let chapterId = $('#chapterId').val();
+		let batchId = $('#batchId').val();
+		if (courseId != 0 && chapterId != 0) {
+            $.ajax({
+                url: "@Url.Action("GetStudentMcqBasedOnCourse", "IntroStudent")?courseId=" + courseId + '&chapterId=' + chapterId  + '&batchId=' + batchId,
+                method: "Get",
+                dataType: "json",
+                beforeSend: (() => { $('#loader').removeClass('hidden') }),
+                success: ((data) => {
+                    $('.mcq-list').empty().removeClass('badge badge-success');
+                    $(data.AnswerSheet).map((i, v) => {
+                        var index = i;
+                        var choice_a_id = "choice-a" + i;
+                        var choice_b_id = "choice-b" + i;
+                        var choice_c_id = "choice-c" + i;
+                        var choice_d_id = "choice-d" + i;
+                        var mcq_choice = "mcq_choice" + i;
+                        var $id = "mcq" + i;
+                        
+                        var choice_a_url_path = v.Is_Url_Choice_A ? v.Choice_A_Url : '';
+                        var choice_b_url_path = v.Is_Url_Choice_B ? v.Choice_B_Url : '';
+                        var choice_c_url_path = v.Is_Url_Choice_C ? v.Choice_C_Url : '';
+                        var choice_d_url_path = v.Is_Url_Choice_D ? v.Choice_D_Url : '';
+
+
+                        var content = ' <li class="mb-2 mcq-qs-list">' +
+                           '    <input hidden id="studentQpId' + i + '" value="' + v.StudentQpId + '" />';
+                        if (v.IsQp === true) {
+                            content += '<div class="col-md-12"> <img src ="' + v.Qp_Doc_Name + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_qs_' + i + '" class="pre_qs" /><span class="ml-auto mr-5">(' + v.PerQuestionMark + ')</span></div>';
+                        }
+                        else {
+                            content += '<span type="text" class="col-form-label-sm font-weight-bold mcq" style="color: #653FEE!important" id="' + $id + '">' + v.Question + '</span>&nbsp;&nbsp;<span class="ml-auto mr-5">(' + v.PerQuestionMark + ')</span>';
+                        }
+                        content += '<ul class="alpha_letter mt-2">' +
+                          '           <li class="mt-2 d-flex icon-a-' + index + '">' +
+                          '             <div class="form-check">' +
+                          '               <input class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_a_id + '" value="a">';
+                        if (!v.Is_Url_Choice_A) {
+                            content += '<label class="form-check-label" for="' + choice_a_id + '">' + v.Choice_A + '</label>';
+                        }
+                        else if (v.Is_Url_Choice_A) {
+                            content += '<div class="col-md-12">' +
+                                    '<img src ="' + choice_a_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_a" />' +
+                                    '</div>';
+                        }
+                        content += ' </div>' +
+                        '           </li>' +
+                        '           <li class="mt-2 d-flex icon-b-' + index + '">' +
+                        '             <div class="form-check">' +
+                        '               <input class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_b_id + '" value="b">';
+                        if (!v.Is_Url_Choice_B) {
+                            content += '<label class="form-check-label" for="' + choice_b_id + '">' + v.Choice_B + '</label>';
+                        }
+                        else if (v.Is_Url_Choice_B) {
+                            content += '<div class="col-md-12">' +
+                                  '<img src ="' + choice_b_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_b" />' +
+                              + '</div>';
+                        }
+                        content += '</div>' +
+                            '       </li>' +
+                            '           <li class="mt-2 d-flex icon-c-' + index + '">' +
+                            '             <div class="form-check">' +
+                            '               <input class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_c_id + '" value="c">';
+                        if (!v.Is_Url_Choice_C) {
+                            content += '<label class="form-check-label" for="' + choice_c_id + '">' + v.Choice_C + '</label>';
+                        }
+                        else if (v.Is_Url_Choice_C) {
+                            content += '<div class="col-md-12">' +
+                                  '<img src ="' + choice_c_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_c" />' +
+                                  '</div>';
+                        }
+                        content += '             </div>' +
+                        '           </li>' +
+                        '           <li class="mt-2 d-flex icon-d-' + index + '">' +
+                        '             <div class="form-check">' +
+                        '               <input class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_d_id + '" value="d">';
+                        if (!v.Is_Url_Choice_D) {
+                            content += '<label class="form-check-label" for="' + choice_d_id + '">' + v.Choice_D + '</label>';
+                        }
+                        else if (v.Is_Url_Choice_D) {
+                            content += '<div class="col-md-12">' +
+                                  '<img src ="' + choice_d_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_d" />' +
+                                  '</div>';
+                        }
+                        content += '             </div>' +
+                        '           </li>' +
+                        '        </ul>' +
+                        ' </li>';
+                        $('.mcq-list').append(content);
+                        //$('.icon-' + v.Correct_Choice + '-' + index).append('&nbsp;&nbsp;<i class="fas fa-check-circle fa-2x mt-1 mr-1" style="color:green!important"></i>');
+
+                    });
+                    $('#footer-btn').removeAttr('hidden');
+                }),
+                error: ((err) => {
+                    toastr.error('Something went wrong! Please refresh the page and try again.');
+                    console.warn(err);
+                }),
+                complete: function () {
+                    $('#loader').addClass('hidden')
+                }
+            });
+        }
+        else {
+            toastr.error('Please choose course and then select chapter.');
+        }
+	}
+    $('#saveQuestions').click(function () {
+        var token = $('input[name="__RequestVerificationToken"]').val()
+        let question_arr = new Array();
+        $('.mcq-list .mcq-qs-list').map((i, v) => {
+            let data = {};
+            data.QuestionNo = i + 1;
+            data.StudentQpId = $('#studentQpId' + i + '').val();
+            data.CourseId = @TempData["courseId"];
+            data.BatchId = @TempData["batchId"];
+            data.ChapterId = @TempData["chapterId"];
+            data.StudentNo = @TempData["studentId"];
+            data.Choice = $('input[name="mcq_choice' + i + '"]:checked').val();
+            data.IsActive = true;
+            if (data.Choice === '' || data.Choice === undefined || data.Choice === null) {
+                toastr.error('Attained all the answers.');
+                return false
+            }
+            question_arr.push(data);
+        });
+        var data = $.sstm_encrypt(JSON.stringify(question_arr))
+        $.ajax({
+            url: "@Url.Action("SaveStudentMcq", "IntroStudent", null)",
+            method: "POST",
+        beforeSend: (() => { $('#loader').removeClass('hidden') }),
+        dataType: "json",
+        data: { query : data, __RequestVerificationToken: token },
+        success: function (data, xhr) {
+            if (data.status == true) {
+                $('#qs__section_display').hide();
+                $('#gauge__display').removeAttr('hidden');
+                chart_gauge(data.response);
+            }
+            else
+            {
+                toastr.error(data.response);
+            }
+        },
+        error: function (err) {
+            toastr.error('Something went wrong! Please refresh the page and try again.');
+            console.warn(err);
+        }, complete: function () {
+            $('#loader').addClass('hidden')
+        }
+    });
+    });
+    var chart_gauge = function (prt) {
+        $('.chart-gauge').empty();
+        var Needle, arc, arcEndRad, arcStartRad, barWidth, chart, chartInset, degToRad, el, endPadRad, height, i, margin, needle, numSections, padRad, percToDeg, percToRad, percent, radius, ref, sectionIndx, sectionPerc, startPadRad, svg, totalPercent, width;
+        let per = Math.round(prt) / 100;
+        percent = (per < 1 && per != 0) ? "." + parseFloat(per).toString().split('.')[1] : per;
+        barWidth = 80;
+        numSections = 4;
+        sectionPerc = 1 / numSections / 2;
+        padRad = 0.05;
+        chartInset = 10;
+        totalPercent = .75;
+        el = d3.select('.chart-gauge');
+        margin = {
+            top: 20,
+            right: 20,
+            bottom: 30,
+            left: 20
+        };
+        width = el[0][0].offsetWidth - margin.left - margin.right;
+        height = width;
+        radius = Math.min(width, height) / 2;
+        percToDeg = function (perc) {
+            return perc * 360;
+        };
+        percToRad = function (perc) {
+            return degToRad(percToDeg(perc));
+        };
+        degToRad = function (deg) {
+            return deg * Math.PI / 180;
+        };
+        svg = el.append('svg').attr('width', width + margin.left + margin.right).attr('height', 230 /*height + margin.top + margin.bottom*/);
+
+        for (sectionIndx = i = 1, ref = numSections; (1 <= ref ? i <= ref : i >= ref); sectionIndx = 1 <= ref ? ++i : --i) {
+            chart = svg.append('g').attr('transform', `translate(${(width + margin.left) / 2}, ${(height + margin.top) / 2})`);
+            arcStartRad = percToRad(totalPercent);
+            arcEndRad = arcStartRad + percToRad(sectionPerc);
+            totalPercent += sectionPerc;
+            startPadRad = 0//sectionIndx === 0 ? 0 : padRad / 2;
+            endPadRad = 0//sectionIndx === numSections ? 0 : padRad / 2;
+            arc = d3.svg.arc().outerRadius(radius - chartInset).innerRadius(radius - chartInset - barWidth).startAngle(arcStartRad + startPadRad).endAngle(arcEndRad - endPadRad);
+            chart.append('path').attr('class', `arc chart-color${sectionIndx}`).attr('d', arc).attr('id', 'path_label_' + sectionIndx);
+            let svg_label = document.querySelector('#path_label_' + sectionIndx);
+            let svg_text = sectionIndx === 1 ? 'Poor' : sectionIndx === 2 ? 'Fair' : sectionIndx === 3 ? 'Good' : 'Excellent';
+            addLabelText(svg_label, svg_text)
+        }
+        Needle = class Needle {
+            constructor(len, radius1) {
+                this.len = 150;
+                this.radius = radius1;
+            }
+            drawOn(el, perc) {
+                el.append('circle').attr('class', 'needle-center').attr('cx', 0).attr('cy', 0).attr('r', this.radius);
+                return el.append('path').attr('class', 'needle').attr('d', this.mkCmd(perc));
+            }
+
+            animateOn(el, perc) {
+                var self;
+                self = this;
+                return el.transition().delay(500).ease('elastic').duration(3000).selectAll('.needle').tween('progress', function () {
+                    return function (percentOfPercent) {
+                        var progress;
+                        progress = percentOfPercent * perc;
+                        return d3.select(this).attr('d', self.mkCmd(progress));
+                    };
+                });
+            }
+
+            mkCmd(perc) {
+                var centerX, centerY, leftX, leftY, rightX, rightY, thetaRad, topX, topY;
+                thetaRad = percToRad(perc / 2); // half circle
+                centerX = 0;
+                centerY = 0;
+                topX = centerX - this.len * Math.cos(thetaRad);
+                topY = centerY - this.len * Math.sin(thetaRad);
+                leftX = centerX - this.radius * Math.cos(thetaRad - Math.PI / 2);
+                leftY = centerY - this.radius * Math.sin(thetaRad - Math.PI / 2);
+                rightX = centerX - this.radius * Math.cos(thetaRad + Math.PI / 2);
+                rightY = centerY - this.radius * Math.sin(thetaRad + Math.PI / 2);
+                return `M ${leftX} ${leftY} L ${topX} ${topY} L ${rightX} ${rightY}`;
+            }
+
+        };
+
+        needle = new Needle(90, 15);
+
+        needle.drawOn(chart, 0);
+
+        needle.animateOn(chart, percent);
+    }
+
+    function addLabelText(bgPath, labelText) {
+        let bbox = bgPath.getBBox();
+        let x = bbox.x + bbox.width / 2;
+        let y = bbox.y + bbox.height / 2;
+        let textElem = document.createElementNS(bgPath.namespaceURI, "text");
+        textElem.setAttribute("fill", 'white');
+        textElem.setAttribute("x", x);
+        textElem.setAttribute("y", y);
+        textElem.setAttribute("text-anchor", "middle");
+        textElem.classList.add("label-text");
+        textElem.textContent = labelText;
+        bgPath.after(textElem);
+    }
+    //disable possible inspect
+    jQuery(document).ready(function () {
+        function disableSelection(e) {
+            if (typeof e.onselectstart != "undefined") e.onselectstart = function () {
+                return false
+            };
+            else if (typeof e.style.MozUserSelect != "undefined") e.style.MozUserSelect = "none";
+            else e.onmousedown = function () {
+                return false
+            };
+            e.style.cursor = "default"
+        }
+        window.onload = function () {
+            disableSelection(document.body)
+        };
+
+        window.addEventListener("keydown", function (e) {
+            if (e.ctrlKey && (e.which == 65 || e.which == 66 || e.which == 67 || e.which == 70 || e.which == 73 || e.which == 80 || e.which == 83 || e.which == 85 || e.which == 86)) {
+                e.preventDefault()
+            }
+        });
+        document.keypress = function (e) {
+            if (e.ctrlKey && (e.which == 65 || e.which == 66 || e.which == 70 || e.which == 67 || e.which == 73 || e.which == 80 || e.which == 83 || e.which == 85 || e.which == 86)) { }
+            return false
+        };
+
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            if (e.keyCode == 123 || e.keyCode == 18) {
+                return false
+            }
+        };
+
+        document.oncontextmenu = function (e) {
+            var t = e || window.event;
+            var n = t.target || t.srcElement;
+            if (n.nodeName != "A") return false
+        };
+        document.ondragstart = function () {
+            return false
+        };
+    });
+</script>

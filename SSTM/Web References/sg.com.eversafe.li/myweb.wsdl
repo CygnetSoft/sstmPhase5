@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="HelloWorld">
+        <s:complexType />
+      </s:element>
+      <s:element name="HelloWorldResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HelloWorldResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTodayStartCourses">
+        <s:complexType />
+      </s:element>
+      <s:element name="ShowTodayStartCoursesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ShowTodayStartCoursesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTodayExamCourses">
+        <s:complexType />
+      </s:element>
+      <s:element name="ShowTodayExamCoursesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ShowTodayExamCoursesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStudentdetailsTodayCourseandBatchid">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="courseid" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="batchid" type="s:float" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStudentdetailsTodayCourseandBatchidResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStudentdetailsTodayCourseandBatchidResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTrainerLogin">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UsernameFin" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTrainerLoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTrainerLoginResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTodayclassTrainer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="courseid" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="batchid" type="s:float" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTodayclassTrainerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTodayclassTrainerResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendSMS">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mobileno" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendSMSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SendSMSResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SentmailtoCustomer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Subject" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ToMyemailid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Mailcc" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SentmailtoCustomerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SentmailtoCustomerResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+      <s:element name="DataSet" nillable="true">
+        <s:complexType>
+          <s:sequence>
+            <s:element ref="s:schema" />
+            <s:any />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="int" type="s:int" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="HelloWorldSoapIn">
+    <wsdl:part name="parameters" element="tns:HelloWorld" />
+  </wsdl:message>
+  <wsdl:message name="HelloWorldSoapOut">
+    <wsdl:part name="parameters" element="tns:HelloWorldResponse" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayStartCoursesSoapIn">
+    <wsdl:part name="parameters" element="tns:ShowTodayStartCourses" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayStartCoursesSoapOut">
+    <wsdl:part name="parameters" element="tns:ShowTodayStartCoursesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayExamCoursesSoapIn">
+    <wsdl:part name="parameters" element="tns:ShowTodayExamCourses" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayExamCoursesSoapOut">
+    <wsdl:part name="parameters" element="tns:ShowTodayExamCoursesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStudentdetailsTodayCourseandBatchidSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStudentdetailsTodayCourseandBatchid" />
+  </wsdl:message>
+  <wsdl:message name="GetStudentdetailsTodayCourseandBatchidSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStudentdetailsTodayCourseandBatchidResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTrainerLoginSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTrainerLogin" />
+  </wsdl:message>
+  <wsdl:message name="GetTrainerLoginSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTrainerLoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTodayclassTrainerSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTodayclassTrainer" />
+  </wsdl:message>
+  <wsdl:message name="GetTodayclassTrainerSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTodayclassTrainerResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSSoapIn">
+    <wsdl:part name="parameters" element="tns:SendSMS" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSSoapOut">
+    <wsdl:part name="parameters" element="tns:SendSMSResponse" />
+  </wsdl:message>
+  <wsdl:message name="SentmailtoCustomerSoapIn">
+    <wsdl:part name="parameters" element="tns:SentmailtoCustomer" />
+  </wsdl:message>
+  <wsdl:message name="SentmailtoCustomerSoapOut">
+    <wsdl:part name="parameters" element="tns:SentmailtoCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="HelloWorldHttpGetIn" />
+  <wsdl:message name="HelloWorldHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayStartCoursesHttpGetIn" />
+  <wsdl:message name="ShowTodayStartCoursesHttpGetOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayExamCoursesHttpGetIn" />
+  <wsdl:message name="ShowTodayExamCoursesHttpGetOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="GetStudentdetailsTodayCourseandBatchidHttpGetIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetStudentdetailsTodayCourseandBatchidHttpGetOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="GetTrainerLoginHttpGetIn">
+    <wsdl:part name="UsernameFin" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetTrainerLoginHttpGetOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="GetTodayclassTrainerHttpGetIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetTodayclassTrainerHttpGetOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSHttpGetIn">
+    <wsdl:part name="Mobileno" type="s:string" />
+    <wsdl:part name="Message" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSHttpGetOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:message name="SentmailtoCustomerHttpGetIn">
+    <wsdl:part name="Message" type="s:string" />
+    <wsdl:part name="Subject" type="s:string" />
+    <wsdl:part name="ToMyemailid" type="s:string" />
+    <wsdl:part name="Mailcc" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SentmailtoCustomerHttpGetOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:message name="HelloWorldHttpPostIn" />
+  <wsdl:message name="HelloWorldHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayStartCoursesHttpPostIn" />
+  <wsdl:message name="ShowTodayStartCoursesHttpPostOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="ShowTodayExamCoursesHttpPostIn" />
+  <wsdl:message name="ShowTodayExamCoursesHttpPostOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="GetStudentdetailsTodayCourseandBatchidHttpPostIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetStudentdetailsTodayCourseandBatchidHttpPostOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="GetTrainerLoginHttpPostIn">
+    <wsdl:part name="UsernameFin" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetTrainerLoginHttpPostOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="GetTodayclassTrainerHttpPostIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetTodayclassTrainerHttpPostOut">
+    <wsdl:part name="Body" element="tns:DataSet" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSHttpPostIn">
+    <wsdl:part name="Mobileno" type="s:string" />
+    <wsdl:part name="Message" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSHttpPostOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:message name="SentmailtoCustomerHttpPostIn">
+    <wsdl:part name="Message" type="s:string" />
+    <wsdl:part name="Subject" type="s:string" />
+    <wsdl:part name="ToMyemailid" type="s:string" />
+    <wsdl:part name="Mailcc" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SentmailtoCustomerHttpPostOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:portType name="MyWebSoap">
+    <wsdl:operation name="HelloWorld">
+      <wsdl:input message="tns:HelloWorldSoapIn" />
+      <wsdl:output message="tns:HelloWorldSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayStartCourses">
+      <wsdl:input message="tns:ShowTodayStartCoursesSoapIn" />
+      <wsdl:output message="tns:ShowTodayStartCoursesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayExamCourses">
+      <wsdl:input message="tns:ShowTodayExamCoursesSoapIn" />
+      <wsdl:output message="tns:ShowTodayExamCoursesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStudentdetailsTodayCourseandBatchid">
+      <wsdl:input message="tns:GetStudentdetailsTodayCourseandBatchidSoapIn" />
+      <wsdl:output message="tns:GetStudentdetailsTodayCourseandBatchidSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTrainerLogin">
+      <wsdl:input message="tns:GetTrainerLoginSoapIn" />
+      <wsdl:output message="tns:GetTrainerLoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTodayclassTrainer">
+      <wsdl:input message="tns:GetTodayclassTrainerSoapIn" />
+      <wsdl:output message="tns:GetTodayclassTrainerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS">
+      <wsdl:input message="tns:SendSMSSoapIn" />
+      <wsdl:output message="tns:SendSMSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SentmailtoCustomer">
+      <wsdl:input message="tns:SentmailtoCustomerSoapIn" />
+      <wsdl:output message="tns:SentmailtoCustomerSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="MyWebHttpGet">
+    <wsdl:operation name="HelloWorld">
+      <wsdl:input message="tns:HelloWorldHttpGetIn" />
+      <wsdl:output message="tns:HelloWorldHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayStartCourses">
+      <wsdl:input message="tns:ShowTodayStartCoursesHttpGetIn" />
+      <wsdl:output message="tns:ShowTodayStartCoursesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayExamCourses">
+      <wsdl:input message="tns:ShowTodayExamCoursesHttpGetIn" />
+      <wsdl:output message="tns:ShowTodayExamCoursesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStudentdetailsTodayCourseandBatchid">
+      <wsdl:input message="tns:GetStudentdetailsTodayCourseandBatchidHttpGetIn" />
+      <wsdl:output message="tns:GetStudentdetailsTodayCourseandBatchidHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTrainerLogin">
+      <wsdl:input message="tns:GetTrainerLoginHttpGetIn" />
+      <wsdl:output message="tns:GetTrainerLoginHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTodayclassTrainer">
+      <wsdl:input message="tns:GetTodayclassTrainerHttpGetIn" />
+      <wsdl:output message="tns:GetTodayclassTrainerHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS">
+      <wsdl:input message="tns:SendSMSHttpGetIn" />
+      <wsdl:output message="tns:SendSMSHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SentmailtoCustomer">
+      <wsdl:input message="tns:SentmailtoCustomerHttpGetIn" />
+      <wsdl:output message="tns:SentmailtoCustomerHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="MyWebHttpPost">
+    <wsdl:operation name="HelloWorld">
+      <wsdl:input message="tns:HelloWorldHttpPostIn" />
+      <wsdl:output message="tns:HelloWorldHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayStartCourses">
+      <wsdl:input message="tns:ShowTodayStartCoursesHttpPostIn" />
+      <wsdl:output message="tns:ShowTodayStartCoursesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayExamCourses">
+      <wsdl:input message="tns:ShowTodayExamCoursesHttpPostIn" />
+      <wsdl:output message="tns:ShowTodayExamCoursesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStudentdetailsTodayCourseandBatchid">
+      <wsdl:input message="tns:GetStudentdetailsTodayCourseandBatchidHttpPostIn" />
+      <wsdl:output message="tns:GetStudentdetailsTodayCourseandBatchidHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTrainerLogin">
+      <wsdl:input message="tns:GetTrainerLoginHttpPostIn" />
+      <wsdl:output message="tns:GetTrainerLoginHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTodayclassTrainer">
+      <wsdl:input message="tns:GetTodayclassTrainerHttpPostIn" />
+      <wsdl:output message="tns:GetTodayclassTrainerHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS">
+      <wsdl:input message="tns:SendSMSHttpPostIn" />
+      <wsdl:output message="tns:SendSMSHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SentmailtoCustomer">
+      <wsdl:input message="tns:SentmailtoCustomerHttpPostIn" />
+      <wsdl:output message="tns:SentmailtoCustomerHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MyWebSoap" type="tns:MyWebSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HelloWorld">
+      <soap:operation soapAction="http://tempuri.org/HelloWorld" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayStartCourses">
+      <soap:operation soapAction="http://tempuri.org/ShowTodayStartCourses" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayExamCourses">
+      <soap:operation soapAction="http://tempuri.org/ShowTodayExamCourses" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStudentdetailsTodayCourseandBatchid">
+      <soap:operation soapAction="http://tempuri.org/GetStudentdetailsTodayCourseandBatchid" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrainerLogin">
+      <soap:operation soapAction="http://tempuri.org/GetTrainerLogin" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTodayclassTrainer">
+      <soap:operation soapAction="http://tempuri.org/GetTodayclassTrainer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS">
+      <soap:operation soapAction="http://tempuri.org/SendSMS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SentmailtoCustomer">
+      <soap:operation soapAction="http://tempuri.org/SentmailtoCustomer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MyWebSoap12" type="tns:MyWebSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HelloWorld">
+      <soap12:operation soapAction="http://tempuri.org/HelloWorld" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayStartCourses">
+      <soap12:operation soapAction="http://tempuri.org/ShowTodayStartCourses" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayExamCourses">
+      <soap12:operation soapAction="http://tempuri.org/ShowTodayExamCourses" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStudentdetailsTodayCourseandBatchid">
+      <soap12:operation soapAction="http://tempuri.org/GetStudentdetailsTodayCourseandBatchid" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrainerLogin">
+      <soap12:operation soapAction="http://tempuri.org/GetTrainerLogin" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTodayclassTrainer">
+      <soap12:operation soapAction="http://tempuri.org/GetTodayclassTrainer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS">
+      <soap12:operation soapAction="http://tempuri.org/SendSMS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SentmailtoCustomer">
+      <soap12:operation soapAction="http://tempuri.org/SentmailtoCustomer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MyWebHttpGet" type="tns:MyWebHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="HelloWorld">
+      <http:operation location="/HelloWorld" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayStartCourses">
+      <http:operation location="/ShowTodayStartCourses" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayExamCourses">
+      <http:operation location="/ShowTodayExamCourses" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStudentdetailsTodayCourseandBatchid">
+      <http:operation location="/GetStudentdetailsTodayCourseandBatchid" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrainerLogin">
+      <http:operation location="/GetTrainerLogin" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTodayclassTrainer">
+      <http:operation location="/GetTodayclassTrainer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS">
+      <http:operation location="/SendSMS" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SentmailtoCustomer">
+      <http:operation location="/SentmailtoCustomer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MyWebHttpPost" type="tns:MyWebHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="HelloWorld">
+      <http:operation location="/HelloWorld" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayStartCourses">
+      <http:operation location="/ShowTodayStartCourses" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTodayExamCourses">
+      <http:operation location="/ShowTodayExamCourses" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStudentdetailsTodayCourseandBatchid">
+      <http:operation location="/GetStudentdetailsTodayCourseandBatchid" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrainerLogin">
+      <http:operation location="/GetTrainerLogin" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTodayclassTrainer">
+      <http:operation location="/GetTodayclassTrainer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS">
+      <http:operation location="/SendSMS" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SentmailtoCustomer">
+      <http:operation location="/SentmailtoCustomer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MyWeb">
+    <wsdl:port name="MyWebSoap" binding="tns:MyWebSoap">
+      <soap:address location="http://li.eversafe.com.sg/services/myweb.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MyWebSoap12" binding="tns:MyWebSoap12">
+      <soap12:address location="http://li.eversafe.com.sg/services/myweb.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MyWebHttpGet" binding="tns:MyWebHttpGet">
+      <http:address location="http://li.eversafe.com.sg/services/myweb.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MyWebHttpPost" binding="tns:MyWebHttpPost">
+      <http:address location="http://li.eversafe.com.sg/services/myweb.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

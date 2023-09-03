@@ -1,0 +1,114 @@
+﻿@model SSTM.Helpers.App.AppSession
+
+@{
+    ViewBag.Title = "Verify you login";
+    Layout = "~/Areas/Administration/Views/Shared/_LoginLayout.cshtml";
+}
+
+<style>
+    .txtOTP {
+        margin: 0 4px;
+        text-align: center;
+        line-height: 40px;
+        font-size: 50px;
+        border: solid 1px #ccc;
+        box-shadow: 0 0 5px #ccc inset;
+        outline: none;
+        width: 12%;
+        -webkit-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        border-radius: 3px;
+    }
+
+        .txtOTP:focus {
+            border-color: #28A745;
+            box-shadow: 0 0 5px #28A745 inset;
+        }
+
+        .txtOTP::-moz-selection {
+            background: transparent;
+        }
+
+        .txtOTP::selection {
+            background: transparent;
+        }
+
+    #btnResendOTP {
+        display: none;
+    }
+
+    .login-box {
+        width: 450px;
+    }
+</style>
+
+<!-- /.login-logo -->
+<div class="card">
+    <div class="card-header">
+        <div class="login-logo">
+            <img class="img-responsive" src="~/Theme/images/eversafe-logo-.png" />
+        </div>
+    </div>
+
+    <div class="card-body login-card-body">
+        <p class="login-box-msg">
+            Verify your login
+        </p>
+
+        <h3>
+            Please enter the 6-digit verification code we sent via SMS on *****@System.Text.RegularExpressions.Regex.Match(ViewBag.UserMobile, @"(.{3})\s*$"):
+        </h3>
+
+        <p class="text-center">
+            <small>(we want to make sure it's you before we contact our movers)</small>
+        </p>
+
+        <div id="divOTPControl" class="text-center form-group">
+            <input type="password" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="txtOTP" />
+            <input type="password" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="txtOTP" />
+            <input type="password" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="txtOTP" />
+            <input type="password" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="txtOTP" />
+            <input type="password" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="txtOTP" />
+            <input type="password" id="lastdigit" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="txtOTP" />
+        </div>
+
+        <div class="text-center form-group">
+            <div id="timerid" style="text-align: center;font-size:16px;margin-bottom: 10px;">Code expires in: <span id="timer"></span> seconds</div>
+        </div>
+
+        <div class="form-group">
+            <button type="button" id="btnVerifyOTP" class="btn btn-success btn-block">Verify</button>
+            <button type="button" id="btnResendOTP" class="btn btn-primary btn-block">Resend</button>
+        </div>
+
+        <div class="form-group text-center">
+            <p class="mb-1">
+                <a href="@Url.Action("Index", "Login", new { area = "Administration" })">Back to Login</a>
+            </p>
+        </div>
+    </div>
+    <!-- /.login-card-body -->
+</div>
+
+@section scripts{
+    <script>
+        var expiredOTPMessage = '@SSTM.Helpers.Common.AppMessages.ExpiredOTPMessage';
+        var invalidOTPMessage = '@SSTM.Helpers.Common.AppMessages.InvalidOTPMessage';
+        var exceptionMessage = '@SSTM.Helpers.Common.AppMessages.Exception';
+
+        var otpExpiredUrl = '@Url.Action("OTPExpired","Login", new { area="Administration", Id = Model.UserId })';
+        var resendOTPUrl = '@Url.Action("ResendOTP", "Login", new { area = "Administration"})';
+        var verifyOTPUrl = '@Url.Action("VerifyOTP", "Login", new { area = "Administration" })';
+        var successUrl = '@Url.Action("Index", "AdminHome", new { area = "Administration" })';
+
+        let timerOn = true;
+        var encryptedId = '@Model.EncryptedUserId';
+
+        if (localStorage.getItem("raswp") !== null) {
+            localStorage.removeItem("raswp");
+        }
+
+    </script>
+
+    <script src="~/Scripts/administration/login/verifyLogin.js"></script>
+}

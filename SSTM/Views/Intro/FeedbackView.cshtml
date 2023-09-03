@@ -1,0 +1,267 @@
+﻿@{
+	//Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = null;
+}
+<link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+<div class="form-row">
+	<div class="col-md-12">		
+		<div class="card card-outline card-success trainerDetails">
+			<div class="card-body text-center">
+				<div class="card card-outline card-danger col-md-6">
+					<p align="center">
+						TOTAL STUDENTS : <span class="badge badge-primary" id="totalStudent"></span><br />
+						FEEDBACK COMPLETED : <span class="badge badge-primary" id="feedbackCompleted"></span><br />
+						FEEDBACK PENDING : <span class="badge badge-primary" id="feedbackPending"></span><br />
+					</p>
+					<div class="form-row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<a class="thumb fa fa-thumbs-up" style="color: #28a745 !important"></a>
+								<span class="badge badge-primary" id="rating3"></span>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<a class="thumb fa fa-thumbs-up fa-rotate-180 thumb-left"></a>
+								<span class="badge badge-primary" id="rating2"></span>
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<a class="thumb fa fa-thumbs-down" style="color: #dc3545 !important"></a>
+								<span class="badge badge-primary" id="rating1"></span>
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-row speech studentDetails" id="studentDetails">
+					@*@for (var i = 0; i <= 6; i++)
+					{
+						string bg_path = string.Empty;
+						string user_path = string.Empty;
+						if (i % 2 == 0)
+						{
+							bg_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-2.svg";
+							user_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/avatars/014-girl-7.svg";
+						}
+						else
+						{
+							bg_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-4.svg";
+							user_path = "https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/avatars/004-boy-1.svg";
+						}
+						<div class="col-sm-4">
+							<div class="card card-outline card-warning" style="background-repeat:no-repeat; background-position: right top; background-size: 40% auto; background-image: url(@Url.Content(bg_path))">
+								<div class="card-body">
+									<div class="center mt-2">
+										<a href="#" target="_blank" class="thumb fa fa-thumbs-up" style="color: #28a745 !important"></a>
+										<div class="circle-wrap">
+											<div class="circle-lg"></div>
+										</div>
+										<div class="dots-wrap">
+											<div class="dot dot--t"></div>
+											<div class="dot dot--tr"></div>
+											<div class="dot dot--br"></div>
+											<div class="dot dot--b"></div>
+											<div class="dot dot--bl"></div>
+											<div class="dot dot--tl"></div>
+										</div>
+									</div>
+									<div class="form-row form-group">
+										<div class="col-md-5">
+											<span class="col-form-label-sm font-weight-bold">Student's Name</span>
+										</div>
+										<div class="col-md-7">
+											<span class="col-form-label-sm font-weight-normal">Kalidas</span>
+										</div>
+									</div>
+									<div class="form-row form-group">
+										<div class="col-md-5">
+											<span class="col-form-label-sm font-weight-bold">Company's Name</span>
+										</div>
+										<div class="col-md-7">
+											<span class="col-form-label-sm font-weight-normal">Bees buzz</span>
+										</div>
+									</div>
+									<div class="form-row form-group">
+										<div class="col-md-5">
+											<span class="col-form-label-sm font-weight-bold">Industry Type</span>
+										</div>
+										<div class="col-md-7">
+											<span class="col-form-label-sm font-weight-normal">Information Technology</span>
+										</div>
+									</div>
+									<div class="form-row form-group">
+										<div class="col-md-5">
+											<span class="col-form-label-sm font-weight-bold">Qualification</span>
+										</div>
+										<div class="col-md-7">
+											<span class="col-form-label-sm font-weight-normal">B.sc, MCA</span>
+										</div>
+									</div>
+									<div class="form-row form-group">
+										<div class="col-md-5">
+											<span class="col-form-label-sm font-weight-bold">Purchase of Study</span>
+										</div>
+										<div class="col-md-7">
+											<span class="col-form-label-sm font-weight-normal">To get promotion.</span>
+										</div>
+									</div>
+								</div>
+								<img src="@user_path" alt="" class="align-self-end h-100px" width="70" height="70">
+							</div>
+						</div>
+					}*@
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        openView()
+    });
+
+    function instantFeedback() {
+        $.ajax({
+            url: "@Url.Action("InstantFeedbackNotification", "Intro")?windowLocation=" + window.location.origin,
+            method: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                $(".loadingDiv").show();
+            },
+            success: function (data, xhr) {
+                debugger;
+				toastr.success(data);
+            }
+        });
+    }
+    function openView() {
+        $.ajax({
+			url: "@Url.Action("GetAllFeedback", "Intro")?courseId=" + '@TempData["courseId"]' + '&batchId=' + '@TempData["batchId"]' + '&date=' +  '@TempData["date"]',
+            method: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                $(".loadingDiv").show();
+            },
+            success: function (data, xhr) {
+                debugger;
+                $('#totalStudent').text(data.FeedbackView.TotalStudent);
+                $('#feedbackCompleted').text(data.FeedbackView.FeedbackCompletedStudent);
+                $('#feedbackPending').text(data.FeedbackView.FeedbackPendingStudent);
+                $('#rating1').text(data.FeedbackView.Rating1);
+                $('#rating2').text(data.FeedbackView.Rating2);
+                $('#rating3').text(data.FeedbackView.Rating3);
+                $('#studentDetails').empty();
+                $.map(data.StudentFeedback, function (v, i) {
+                    var rating;
+                    if (v.Rating == "3") {
+                        rating = '<div class="center mt-2">\n' +
+                            '                                        <a  class="thumb fa fa-thumbs-up" style="color: #28a745 !important"></a>\n' +
+                            '                                        <div class="circle-wrap">\n' +
+                            '                                            <div class="circle-lg"></div>\n' +
+                            '                                        </div>\n' +
+                            '                                        <div class="dots-wrap">\n' +
+                            '                                            <div class="dot dot--t"></div>\n' +
+                            '                                            <div class="dot dot--tr"></div>\n' +
+                            '                                            <div class="dot dot--br"></div>\n' +
+                            '                                            <div class="dot dot--b"></div>\n' +
+                            '                                            <div class="dot dot--bl"></div>\n' +
+                            '                                            <div class="dot dot--tl"></div>\n' +
+                            '                                        </div>\n' +
+                            '                                    </div>\n'
+                    }
+                    else if (v.Rating == "2") {
+                        rating = '<div class="center mt-2">\n' +
+                            '                                        <a  class="thumb fa fa-thumbs-up fa-rotate-180 thumb-left"></a>\n' +
+                            '                                        <div class="circle-wrap">\n' +
+                            '                                            <div class="circle-lg"></div>\n' +
+                            '                                        </div>\n' +
+                            '                                        <div class="dots-wrap">\n' +
+                            '                                            <div class="dot dot--t"></div>\n' +
+                            '                                            <div class="dot dot--tr"></div>\n' +
+                            '                                            <div class="dot dot--br"></div>\n' +
+                            '                                            <div class="dot dot--b"></div>\n' +
+                            '                                            <div class="dot dot--bl"></div>\n' +
+                            '                                            <div class="dot dot--tl"></div>\n' +
+                            '                                        </div>\n' +
+                            '                                    </div>\n'
+                    }
+                    else if (v.Rating == "1") {
+                        rating = '<div class="center mt-2">\n' +
+                            '                                        <a class="thumb fa fa-thumbs-down" style="color: #dc3545 !important"></a>\n' +
+                            '                                        <div class="circle-wrap">\n' +
+                            '                                            <div class="circle-lg"></div>\n' +
+                            '                                        </div>\n' +
+                            '                                        <div class="dots-wrap">\n' +
+                            '                                            <div class="dot dot--t"></div>\n' +
+                            '                                            <div class="dot dot--tr"></div>\n' +
+                            '                                            <div class="dot dot--br"></div>\n' +
+                            '                                            <div class="dot dot--b"></div>\n' +
+                            '                                            <div class="dot dot--bl"></div>\n' +
+                            '                                            <div class="dot dot--tl"></div>\n' +
+                            '                                        </div>\n' +
+                            '                                    </div>\n'
+                    }
+
+                    $('#studentDetails').append('    <div class="col-sm-4">\n' +
+                        '                            <div class="card card-outline card-warning" style="background-repeat:no-repeat; background-position: right top; background-size: 40% auto; background-image: url(https://preview.keenthemes.com/metronic8/demo8/assets/media/svg/shapes/abstract-2.svg))">\n' +
+                        '                                <div class="card-body">\n' +
+                        rating +
+                        '                                    <div class="form-row form-group">\n' +
+                        '                                        <div class="col-md-5">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-bold">Student Name</span>\n' +
+                        '                                        </div>\n' +
+                        '                                        <div class="col-md-7">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-normal">' + v.StudentName + '</span>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                    <div class="form-row form-group">\n' +
+                        '                                        <div class="col-md-5">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-bold">Company Name</span>\n' +
+                        '                                        </div>\n' +
+                        '                                        <div class="col-md-7">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-normal">' + v.CompanyName + '</span>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                    <div class="form-row form-group">\n' +
+                        '                                        <div class="col-md-5">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-bold">Industry Type</span>\n' +
+                        '                                        </div>\n' +
+                        '                                        <div class="col-md-7">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-normal">' + v.IndustryType + '</span>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                    <div class="form-row form-group">\n' +
+                        '                                        <div class="col-md-5">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-bold">Qualification</span>\n' +
+                        '                                        </div>\n' +
+                        '                                        <div class="col-md-7">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-normal">' + v.Qualification + '</span>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                    <div class="form-row form-group">\n' +
+                        '                                        <div class="col-md-5">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-bold">Purchase of Study</span>\n' +
+                        '                                        </div>\n' +
+                        '                                        <div class="col-md-7">\n' +
+                        '                                            <span class="col-form-label-sm font-weight-normal">' + v.PurposeOfStudy + '</span>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                </div>\n' +
+                        '                                <img src="' + v.StudentImage + '" alt="" class="align-self-end h-100px" width="70" height="70">\n' +
+                        '                            </div>\n' +
+                        '                        </div>');
+
+                });
+            },
+            error: function (err) {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            }
+        });
+    }
+</script>

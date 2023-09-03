@@ -1,0 +1,85 @@
+﻿@*@model List<SSTM.Models.CourseDocument.CourseDocumentsListModel>*@
+@{
+    ViewBag.Title = "Old Documents";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <div class="card">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Old Document </h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 form-group table-responsive">
+                    <table id="tblOldCourseDocuments" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 18%;">Documents Name</th>
+                                <th style="width: 20%;">Files</th>
+                                <th class="text-center" style="width: 10%;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr id="@item.Id" course="@item.CourseId">
+                                    <td>@item.DocName</td>
+                                    <td>
+                                        <a onclick="editCourseDocument(@item.Id,1)" style="color:#dc3545;cursor:pointer">
+                                            @item.Filename
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.isApproved)
+                                        {
+                                            <label class="badge badge-success">Approved</label>
+                                        }
+                                        else if (item.isCompleted)
+                                        {
+                                            <label class="badge badge-info">Complete</label>
+                                        }
+                                        else
+                                        {
+                                            <label class="badge badge-danger">Incomplete</label>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+@section scripts{
+
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var LoadEditor = '@Url.Action("GetCourseDocFile", "CourseDoc")';
+        $(document).ready(function () {
+            $("#tblOldCourseDocuments").DataTable();
+        });
+        function editCourseDocument(documentid, value) {
+
+            Ajaxhelper.post(LoadEditor, { d: documentid, s: value }, onSuccessLoadEditor, null, null);
+            function onSuccessLoadEditor(data) {
+                $("#ZohoOffice").show();
+                $("#divZohoOffice").html(data);
+                $('#ZohoOffice').modal('show');
+            }
+        }
+    </script>
+}

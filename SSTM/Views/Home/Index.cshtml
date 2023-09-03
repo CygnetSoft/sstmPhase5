@@ -1,0 +1,38 @@
+﻿@model ImportUsersModel
+@{
+    ViewBag.Title = "Import users";
+    Layout = "";
+}
+
+<style>
+    #viewContent {
+        border-top: solid 2px #CCC;
+    }
+
+        #viewContent > form > span {
+            display: block;
+            color: red;
+        }
+
+        #viewContent h3 {
+            border-bottom: none;
+        }
+</style>
+<h1>Import Excel File into Database</h1>
+<h2>
+    
+    @using (Html.BeginForm("Reset", "ImportExcel"))
+    {
+        <button id="reset">Reset »</button>
+    }
+</h2>
+<div id="viewContent">
+    <h3>@ViewBag.Result</h3>
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+       {
+       
+        <input type="file" name="file"/>
+        <button id="submitButton" type="submit">Submit</button>
+        @*@Html.ValidationMessageFor(model => model.file)*@
+    }
+</div>

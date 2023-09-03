@@ -1,0 +1,410 @@
+﻿@model IEnumerable<SSTM.Models.TodayClassDocsWithSSTMModel>
+@{
+    ViewBag.Title = "Today class docs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">@ViewBag.Coursename Today Courses</h3>
+        </div>
+        <div class="card-body" id="todaycourse">
+            <div class="row">
+                <span style="color:red"><b> @ViewBag.Error</b></span>
+                <span>Trainer Current Topic Started : </span><label><b><label class="ml-2" id="currentTopic"></label></b></label>
+                <div class="counter" style='color: green;'>
+                    (  <span class='e-m-days' style="display:none">0 Days |</span>
+                    <span class='e-m-hours'>0</span> Hours |
+                    <span class='e-m-minutes'>0</span> Minutes |
+                    <span class='e-m-seconds'>0</span> Seconds )
+                </div>
+                <div class="col-md-12 table-responsive">
+                    <table id="tblCourses" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Section Time</th>
+                                <th>Batch Id</th>
+                                @*<th>Fin</th>*@
+                                @*<th class="text-center" style="width:14%">Sub Course</th>*@
+                                <th class="text-center" style="width:10%">Documents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="@item.CourseId" isCentral="@item.isCentral" liCourseid="@item.LiCourseid">
+                                    <td>@item.coursename</td>
+                                    <td>@item.section1SectionName</td>
+                                    <td>@item.batchid</td>
+                                    @*<td>@item.fin</td>*@
+                                    @*<td><button type='button' title='Sub Course' class='btn btn-warning btn-sm btnSubCourse'>Sub Course</button></td>*@
+                                    <td class="text-center">
+                                        <button type='button' title='Documents' class='btn btn-info btn-sm btnCourseDocs'>
+                                            <i class='fa fa-files-o'></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <input type="hidden" id="courseid" value="@item.CourseId" />
+                                <input type="hidden" id="batchid" value="@item.batchid" />
+                                <input type="hidden" id="LiCourseId" value="@item.LiCourseid" />
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="ViewCourseDocsModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divViewCourseDocsModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+    <script>
+
+        var viewCourseDocsUrl = '@Url.Action("ViewTodayCourseDocs", "TodayClassDocs")';
+        var GetLessonPlanDetailsUrl = '@Url.Action("GetLessonPlanDetails", "TodayClassDocs")';
+        //ViewCourseDocs
+        var GotoShareUrl = '@Url.Action("Index", "TodayClassDocs")';
+        var GototodayPageUrl = '@Url.Action("Index", "TodayClassDocs")';
+        var GotoLogout = '@Url.Action("Signout", "Login", new { area = "Administration" })';
+        $(function () {
+            InittblCourses();
+            localStorage.setItem("pdfViewFullScreen", "1");
+        });
+
+        var topic = "", licourseid = 0;;
+        
+        function DivDsiable() {
+            $("#todaycourse").find('input, textarea, button, select').attr('disabled', 'disabled');
+            $("#btnCourseDocs").attr('disabled', 'disabled');
+            $("#todaycourse").css({
+                "pointer-events": 'none',
+                "opacity": "0.4",
+                "background": "#584f4f8a"
+            });
+        }
+        function DivEnabled() {
+            $("#todaycourse").find('input, textarea, button, select ,table').removeAttr('disabled', 'disabled');
+            $("#btnCourseDocs").removeAttr('disabled', 'disabled');
+            $("#todaycourse").css({
+                "pointer-events": '',
+                "opacity": "",
+                "background": ""
+            });
+
+        }
+        var BlockTrainersUrl = '@Url.Action("BlockUser", "TodayClassDocs")';
+        //function GetLessonPlanDetails() {
+        //    $(".counter").hide();
+        //    var params = { courseId: $("#LiCourseId").val(), batchid: $("#batchid").val(), topic: "" };
+        //    //var params = { courseId: "347", batchid: "2412", topic: "" };
+        //    Ajaxhelper.post(GetLessonPlanDetailsUrl, params, onSuccessGetLessonPlanDetails, null, null);
+
+        //}
+        //function onSuccessGetLessonPlanDetails(result) {
+        //    topic = result.topic;
+
+        //    if (topic != "") {
+        //        $("#currentTopic").text(result.topic);
+
+        //        if (result.topic.trim() == "Instant Performance Reflection") {
+        //            //$(".sidebar").hide();
+        //        }
+        //        else
+        //        {
+        //            //$(".sidebar").show();
+        //        }
+        //    }
+        //    else {
+        //        $("#currentTopic").text("Now lession plan not exist");
+        //        $("#currentTopic").css('color', 'red');
+        //    }
+
+        //    if (result.topic == "") {
+        //        DivDsiable();
+        //    }
+        //    else if (result.topic == "Lunch Break" || result.topic == "Tea Break") {
+        //       // DivDsiable();
+        //        $(".counter").show();
+
+        //        var timer2 = result.remainig_time;
+        //        var timer = timer2.split(':');
+        //        var hours = parseInt(timer[0], 10);
+        //        var minutes = parseInt(timer[1], 10);
+        //        var seconds = parseInt(timer[2], 10);
+        //        $(".e-m-hours").text(hours);
+        //        $(".e-m-minutes").text(minutes);
+        //        $(".e-m-seconds").text(seconds);
+
+
+        //        //timer
+        //        function getCounterData(obj) {
+        //            var days = parseInt($('.e-m-days', obj).text());
+        //            var hours = parseInt($('.e-m-hours', obj).text());
+        //            var minutes = parseInt($('.e-m-minutes', obj).text());
+        //            var seconds = parseInt($('.e-m-seconds', obj).text());
+        //            return seconds + (minutes * 60) + (hours * 3600) + (days * 3600 * 24);
+        //        }
+
+        //        function setCounterData(s, obj) {
+        //            var days = Math.floor(s / (3600 * 24));
+        //            var hours = Math.floor((s % (60 * 60 * 24)) / (3600));
+        //            var minutes = Math.floor((s % (60 * 60)) / 60);
+        //            var seconds = Math.floor(s % 60);
+
+        //            console.log(days, hours, minutes, seconds);
+
+        //            $('.e-m-days', obj).html(days);
+        //            $('.e-m-hours', obj).html(hours);
+        //            $('.e-m-minutes', obj).html(minutes);
+        //            $('.e-m-seconds', obj).html(seconds);
+        //        }
+
+        //        var count = getCounterData($(".counter"));
+
+        //        var timer = setInterval(function () {
+        //            count--;
+                   
+        //            if (count == 0) {
+        //                alert(result.topic);
+        //                clearInterval(timer);
+                       
+        //                if (result.topic == "Lunch Break") {
+        //                    Swal.fire('Attendance complete');
+        //                }
+        //                else if (result.topic == "Tea Break") {
+        //                    //Swal.fire('Break Completed');
+        //                }
+        //                GetLessonPlanDetails()
+        //                DivEnabled();
+        //            }
+        //            setCounterData(count, $(".counter"));
+        //        }, 1000);
+        //    }
+        //    else {
+        //        DivEnabled();
+        //        $(".counter").show();
+
+        //        var timer2 = result.remainig_time;
+        //        var timer = timer2.split(':');
+        //        var hours = parseInt(timer[0], 10);
+        //        var minutes = parseInt(timer[1], 10);
+        //        var seconds = parseInt(timer[2], 10);
+        //        $(".e-m-hours").text(hours);
+        //        $(".e-m-minutes").text(minutes);
+        //        $(".e-m-seconds").text(seconds);
+
+
+        //        //timer
+        //        function getCounterData(obj) {
+        //            var days = parseInt($('.e-m-days', obj).text());
+        //            var hours = parseInt($('.e-m-hours', obj).text());
+        //            var minutes = parseInt($('.e-m-minutes', obj).text());
+        //            var seconds = parseInt($('.e-m-seconds', obj).text());
+        //            return seconds + (minutes * 60) + (hours * 3600) + (days * 3600 * 24);
+        //        }
+
+        //        function setCounterData(s, obj) {
+        //            var days = Math.floor(s / (3600 * 24));
+        //            var hours = Math.floor((s % (60 * 60 * 24)) / (3600));
+        //            var minutes = Math.floor((s % (60 * 60)) / 60);
+        //            var seconds = Math.floor(s % 60);
+
+        //            console.log(days, hours, minutes, seconds);
+
+        //            $('.e-m-days', obj).html(days);
+        //            $('.e-m-hours', obj).html(hours);
+        //            $('.e-m-minutes', obj).html(minutes);
+        //            $('.e-m-seconds', obj).html(seconds);
+        //        }
+
+        //        var count = getCounterData($(".counter"));
+
+        //        var timer = setInterval(function () {
+        //            count--;
+        //            if (count == 0) {
+        //                clearInterval(timer);
+        //                GetLessonPlanDetails();
+        //            }
+        //            setCounterData(count, $(".counter"));
+        //        }, 1000);
+        //    }
+        //}
+
+        @*function GetLessonPlanDetails() {
+            var params = { courseId: '@currentSession.CurrentCourseId', batchid: '@currentSession.CurrentBatchId', topic: "test" };
+
+            Ajaxhelper.post(GetLessonPlanDetailsUrl, params, onSuccessGetLessonPlanDetails, null, null);
+        }*@
+        function GetLessonPlanDetails() {
+            
+            //$(".counter").hide();
+            var params = { courseId: $("#LiCourseId").val(), batchid: $("#batchid").val(), topic: "" };
+            //var params = { courseId: "347", batchid: "2412", topic: "" };
+            Ajaxhelper.post(GetLessonPlanDetailsUrl, params, onSuccessGetLessonPlanDetails, null, null);
+
+        }
+
+        function onSuccessGetLessonPlanDetails(result) {
+
+           
+            $("#currentTopic").text(result.topic);
+            $("#remaining_time").val(result.remainig_time);
+
+            $("#pagecount").text($("#pageNumber").val());
+
+            var start_times = result.start_time;
+            var currenttime = result.current_time;
+
+
+            //if (result.topic.trim() == "Instant Performance Reflection") {
+            //    localStorage.setItem("IPRStatus", "1");
+            //    $(".sidebar").hide();
+            //    $("#IPR").show();
+            //}
+            //else {
+            //    localStorage.setItem("IPRStatus", "0");
+            //    $(".sidebar").show();
+            //    $("#IPR").hide();
+            //}
+
+            if (result.topic == "Lunch Break" || result.topic == "Tea Break" || result.topic == "") {
+                $(".counter").show();
+                //if (localStorage.getItem("pdfViewFullScreen") == "3") {
+                   
+                //    alert(result.topic);
+                //}
+                //Swal.fire("Course time over Now " + result.topic);
+                //toastr.error("Course time over Now " +result.topic);
+                //window.location.href=GototodayPageUrl;
+            }
+            else {
+                $(".counter").show();
+            }
+           
+
+            if (result.remainig_time != "0:00:00") {
+                var timer2 = result.remainig_time;
+                var timer = timer2.split(':');
+                var hours = parseInt(timer[0], 10);
+                var minutes = parseInt(timer[1], 10);
+                var seconds = parseInt(timer[2], 10);
+                $(".e-m-hours").text(hours);
+                $(".e-m-minutes").text(minutes);
+                $(".e-m-seconds").text(seconds);
+            }
+            else {
+                $(".e-m-hours").text("0");
+                $(".e-m-minutes").text("00");
+                $(".e-m-seconds").text("00");
+                
+            }
+
+            //timer
+            function getCounterData(obj) {
+                var days = parseInt($('.e-m-days', obj).text());
+                var hours = parseInt($('.e-m-hours', obj).text());
+                var minutes = parseInt($('.e-m-minutes', obj).text());
+                var seconds = parseInt($('.e-m-seconds', obj).text());
+                return seconds + (minutes * 60) + (hours * 3600) + (days * 3600 * 24);
+            }
+
+            function setCounterData(s, obj) {
+                var days = Math.floor(s / (3600 * 24));
+                var hours = Math.floor((s % (60 * 60 * 24)) / (3600));
+                var minutes = Math.floor((s % (60 * 60)) / 60);
+                var seconds = Math.floor(s % 60);
+
+                console.log(days, hours, minutes, seconds);
+
+                $('.e-m-days', obj).html(days);
+                $('.e-m-hours', obj).html(hours);
+                $('.e-m-minutes', obj).html(minutes);
+                $('.e-m-seconds', obj).html(seconds);
+            }
+
+            var count = getCounterData($(".counter"));
+
+            var timer = setInterval(function () {
+                count--;
+                if (count == 0) {
+                    clearInterval(timer);
+                    //toastr.error("Course time is over");
+                  
+                    $("#counter").hide();
+                    location.reload(true);
+                    //InittblCourses();
+                    //GetLessonPlanDetails();
+                   // GetLessonPlanDetails();
+                    //alert("Course time is over");
+                    //window.location.href=GototodayPageUrl;
+
+                    //Swal.fire({
+                    //    title: 'Course time is over',
+                    //    showCancelButton: true,
+                    //    confirmButtonText: 'OK',
+                    //}).then((result) => {
+                    //
+                    //})
+                }
+                setCounterData(count, $(".counter"));
+            }, 1000);
+
+        }
+
+        function InittblCourses() {
+            GetLessonPlanDetails();
+            $('#tblCourses > tbody > tr').on('click', '.btnCourseDocs', function (e) {
+
+               // var remainigtime = $(".e-m-hours").text() + ":" + $(".e-m-minutes").text() + ":" + $(".e-m-seconds").text();
+
+                e.preventDefault();
+
+                var courseId = $(this).closest('tr').attr('id');
+                var courseName = $(this).closest('tr').find('td:eq(0)').html();
+                var batchId = $(this).closest('tr').find('td:eq(2)').html();
+                var isCentral = $(this).closest('tr').attr('isCentral');
+                var liCourseid = $(this).closest('tr').attr('liCourseid');
+
+                Ajaxhelper.post(viewCourseDocsUrl, { courseId: courseId, batchId: batchId, isCentral: isCentral }, onSuccessViewCourseDocs, null, null);
+
+                function onSuccessViewCourseDocs(data) {
+                    $('#divViewCourseDocsModal').html(data);
+
+                    $('#h4CourseDocsModal').html(courseName + " Douments");
+
+                    $('#ViewCourseDocsModal').modal('show');
+                }
+            });
+
+            $('#tblCourses > tbody > tr').on('click', '.btnSubCourse', function (e) {
+                // alert(GotoShareUrl + "?MasterCourse=false&MasterCourseId=" + Id + "&Coursename=" + $(this).closest('tr').find('td:eq(0)').html());
+                e.preventDefault();
+                var Id = $(this).closest('tr').attr('id');
+                window.location.href = GotoShareUrl + "/?MasterCourse=false&MasterCourseId=" + Id + "&Coursename=" + $(this).closest('tr').find('td:eq(0)').html();
+            });
+            $("#tblCourses").dataTable().fnDestroy();
+            $('#tblCourses').dataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                'order': [0, 'asc'],
+                'aoColumns': [null, { "bSortable": false }, { "bSortable": false }, { "bSortable": false }]
+            }).fnDraw();
+        }
+
+       
+    </script>
+}

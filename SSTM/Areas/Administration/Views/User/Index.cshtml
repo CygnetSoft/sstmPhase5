@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "Manage Users";
+    ViewBag.Url = Request.Url;
+    //Layout = "~/Areas/Administration/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Users</h3>
+
+            <button type="button" id="btnAddUser" class="btn btn-primary btn-sm float-right ml-2">
+                <i class="fa fa-plus-square"></i>&nbsp;Add New
+            </button> &nbsp;
+            <a href="@Url.Action("Index", "TrainnerMacAddress", new { area = "" })" class="btn btn-primary btn-sm float-right">
+                <i class="fa fa-plus"></i> Add Trainner Mac Address
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                        <input class="custom-control-input" type="radio" id="rdbAllUsers" value="2" name="rdbUserStatusFilter">
+                        <label for="rdbAllUsers" class="custom-control-label">All</label>
+                    </div>
+
+                    <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                        <input class="custom-control-input" type="radio" id="rdbAllActiveUsers" value="1" name="rdbUserStatusFilter" checked>
+                        <label for="rdbAllActiveUsers" class="custom-control-label">Active</label>
+                    </div>
+
+                    <div class="custom-control custom-radio" style="display:inline;">
+                        <input class="custom-control-input" type="radio" id="rdbAllInactiveUsers" value="0" name="rdbUserStatusFilter">
+                        <label for="rdbAllInactiveUsers" class="custom-control-label">Inactive</label>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <table id="tblUsers" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th class="text-center" style="width:8%">Status</th>
+                                <th class="text-center" style="width:10%">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="AddOrEditUserModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAddOrEditUserModalContent" class="modal-content">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    @*<script src="~/Theme/plugins/mask/jquery.mask.min.js"></script>*@
+
+    <script>
+        var getUsersListUrl = '@Url.Action("GetUsersList", "User", new {area = "Administration"})';
+        var getUserByIdUrl = '@Url.Action("GetUserById", "User", new { area = "Administration" })';
+
+        var deleteUserUrl = '@Url.Action("DeleteUser", "User", new { area = "Administration" })';
+    </script>
+
+    <script src="~/Scripts/administration/user/index.js"></script>
+}

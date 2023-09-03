@@ -1,0 +1,401 @@
+﻿@using GleamTech.AspNet.Mvc
+@using GleamTech.DocumentUltimate
+@using GleamTech.DocumentUltimate.AspNet
+@using GleamTech.DocumentUltimate.AspNet.UI
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .loading-indicator {
+        font-size: 8pt;
+        background-image: url(../images/loading/loading.gif);
+        background-repeat: no-repeat;
+        background-position: top left;
+        padding-left: 20px;
+        height: 18px;
+        text-align: left;
+    }
+
+    #loading {
+        position: absolute;
+        left: 45%;
+        top: 40%;
+        border: 3px solid #B2D0F7;
+        background: white url(/Theme/images/loading.gif) repeat-x;
+        padding: 10px;
+        font: bold 14px verdana,tahoma,helvetica;
+        color: #003366;
+        width: 180px;
+        text-align: center;
+    }
+</style>
+
+
+<style>
+    #viewer {
+        width: 100% !important;
+        height: 700px !important;
+    }
+</style> @*new*@
+<html>
+
+<head>
+    <title>Course document viewer | SSTM (Secured System for Training Materials)</title>
+    @*@this.RenderHead(documentViewer)*@ @*old*@
+
+</head>
+<body>
+    <div style="text-align:center; padding:0 10px 10px 10px;">
+        <a onclick="goBack()" href="#">Back to Courses </a>
+        
+    </div>
+    <div style="text-align:right; padding:0 10px 10px 10px;">
+        <label style="float: left;">Topic : </label><label id="lbltopic" class="ml-1" style="float: left;color:blueviolet"></label>
+        <div class="counter" style='color: green;'>
+            <span class='e-m-days' style="display:none">0 Days |</span>
+            <span class='e-m-hours'>0</span> Hours |
+            <span class='e-m-minutes'>0</span> Minutes |
+            <span class='e-m-seconds'>0</span> Seconds
+        </div>
+
+        <label id="lblcountdown" style="color:brown" class="remainingtimer ml-1"></label>
+        <input type="hidden" id="remaining_time" />
+
+    </div>
+    <div id="loading">
+        @*new*@
+        <div class="loading-indicator">
+            Page wait first time File loading...
+        </div>
+    </div>
+    @if (!String.IsNullOrEmpty(ViewBag.pdffullpath))
+            {
+        <iframe id="viewer" onload="closeProgressIndicator()" src="~/DocViewer/DocumentViewer.aspx?path=@ViewBag.pdffullpath" frameborder='0'>
+            <p>Your browser does not support iframes.</p>
+        </iframe>
+    }
+    else
+    {
+        if (!String.IsNullOrEmpty(ViewBag.VideoPath))
+        {
+            <div class="video-frame" style="margin-left: 25%;">
+                <video width="700" controls controlsList="nodownload" autoplay="autoplay">
+                    <source src="@ViewBag.VideoPath" type="video/@ViewBag.videofomat" />
+                    Your browser does not support the video tag or the file format of this video.
+                </video>
+            </div>
+        }
+        else
+        {
+            <div id="rwswpinfo" style="padding: 10px;
+  background-color: #2196F3;
+  color: white; display:none;">
+                <strong>Info!</strong> Hello, Please submit Risk Assessment & Safe Work Procedure declaration form.<a href="@Url.Action("riskassessment", "intro", new { requesttype = "all",area = "" })" style="background-color: white;
+  color: blue;
+  padding: 15px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;">Click here to submit</a>
+            </div>
+
+            <iframe id="viewer" onload="closeProgressIndicator()" src="~/DocViewer/DocumentViewer.aspx?path=@ViewBag.fullpath" frameborder='0'>
+                <p>Your browser does not support iframes.</p>
+            </iframe>
+        }
+    }
+    @*@this.RenderBody(documentViewer)*@ @*old*@
+    <div style="text-align:center; padding:10px 10px 0 10px;">
+        <a onclick="goBack()" href="#">Back to Courses</a>
+        @*href="@Url.Action("Index", "Course", new { area = "" })"*@
+
+    </div>
+    <input type="hidden" id="batchid" value="@ViewBag.Batchid" />
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+
+
+        var BlockTrainersUrl = '@Url.Action("BlockUser", "TodayClassDocs")';
+        //window.onbeforeunload = function (event) {
+        //    var message = 'Dear Trainer, Please comply the lesson plan';
+        //    if (typeof event == 'undefined') {
+        //        event = window.event;
+        //    }
+        //    if (event) {
+        //        event.returnValue = message;
+        //    }
+        //    return message;
+        //};
+
+        //window.menubar.visible = false ;
+        //window.toolbar.visible = false ;
+
+        $(window).on('mouseover', (function () {
+            window.onbeforeunload = null;
+        }));
+        $(window).on('mouseout', (function () {
+            window.onbeforeunload = ConfirmLeave;
+        }));
+        function ConfirmLeave() {
+            toastr.error("Dear Trainer, Please complete the lesson plan");
+            return "";
+        }
+        var prevKey="";
+        $(document).keydown(function (e) {
+
+            if (e.key=="F5") {
+                redirect_condition();
+            }
+            else if (e.key.toUpperCase() == "W" && prevKey == "CONTROL") {
+                redirect_condition();
+            }
+            else if (e.key.toUpperCase() == "R" && prevKey == "CONTROL") {
+                redirect_condition();
+            }
+            else if (e.key.toUpperCase() == "F4" && (prevKey == "ALT" || prevKey == "CONTROL")) {
+                redirect_condition();
+            }
+            prevKey = e.key.toUpperCase();
+        });
+
+        function redirect_condition()
+        {
+            var time=$(".e-m-hours").text()+":"+$(".e-m-minutes").text()+":"+$(".e-m-seconds").text();
+
+            if(time!="0:00:00")
+            {
+                window.onbeforeunload = ConfirmLeave;
+            }
+            else
+            {
+                //Swal.fire({
+                //    title: 'Course time is over',
+                //    showCancelButton: true,
+                //    confirmButtonText: 'OK',
+                //}).then((result) => {
+                //    window.location.href=GototodayPageUrl;
+                //})
+
+            }
+        }
+        var userRole = '@currentSession.UserRole';
+        localStorage.setItem("userRole",userRole);
+
+        var documentPrintedUrl = '@Url.Action("DocumentPrinted","CourseDoc")';
+        var GetLessonPlanDetailsUrl = '@Url.Action("GetLessonPlanDetails", "TodayClassDocs")';
+        var GototodayPageUrl = '@Url.Action("Index", "TodayClassDocs")';
+
+        function documentViewerPrinted(sender, e) {
+            var documentViewer = sender;
+
+            var params = { courseId: @ViewBag.CourseId, docId: @ViewBag.DocId, printedPages: e.totalPages };
+
+            Ajaxhelper.post(documentPrintedUrl, params, onSuccessDocumentPrint, null,null);
+        }
+
+        function onSuccessDocumentPrint(data) { }
+
+        function goBack() {
+            var time=  $(".e-m-hours").text()+":"+$(".e-m-minutes").text()+":"+$(".e-m-seconds").text();
+
+            if(time!="0:00:00")
+            {
+                toastr.error("Dear Trainer, Please complete the lesson plan");
+            }
+            else
+            {
+                window.history.back();
+            }
+        }
+
+        function GetLessonPlanDetails()
+        {
+            var params = { courseId: '@currentSession.CurrentCourseId', batchid: '@currentSession.CurrentBatchId',topic:"test" };
+
+            Ajaxhelper.post(GetLessonPlanDetailsUrl, params, onSuccessGetLessonPlanDetails, null,null);
+        }
+
+        function onSuccessGetLessonPlanDetails(result)
+        {
+
+            $("#lbltopic").text(result.topic);
+
+            $("#remaining_time").val(result.remainig_time);
+
+            $("#pagecount").text($("#pageNumber").val());
+
+            var start_times=result.start_time;
+            var currenttime=result.current_time;
+
+            if(currenttime>start_times)
+            {
+                toastr.error("Course time already started");
+            }
+
+            //if(result.topic.trim()=="Instant Performance Reflection")
+            //{
+            //    localStorage.setItem("IPRStatus","1");
+            //    $(".sidebar").hide();
+            //    $("#IPR").show();
+            //}
+            //else
+            //{
+            //    localStorage.setItem("IPRStatus","0");
+            //    $(".sidebar").show();
+            //    $("#IPR").hide();
+            //}
+
+            if(result.topic=="Tea Break")//result.topic=="Lunch Break" ||
+            {
+                $(".counter").show();
+                if(localStorage.getItem("pdfViewFullScreen")=="3" )
+                {
+                    alert("**INFO** : Tea break time is started. Please enjoy your refreshments.");
+                }
+                //Swal.fire("Course time over Now " + result.topic);
+                //toastr.error("Course time over Now " +result.topic);
+                //window.location.href=GototodayPageUrl;
+            }
+            else
+            {   
+                $(".counter").show();
+            }
+            if('@ViewBag.VideoPath'!='')
+            {
+                closeProgressIndicator();
+            }
+
+            if(result.remainig_time!="0:00:00")
+            {
+                var timer2 =result.remainig_time;
+                var timer = timer2.split(':');
+                var hours = parseInt(timer[0], 10);
+                var minutes = parseInt(timer[1], 10);
+                var seconds = parseInt(timer[2], 10);
+                $(".e-m-hours").text(hours);
+                $(".e-m-minutes").text(minutes);
+                $(".e-m-seconds").text(seconds);
+            }
+            else
+            {
+                $(".e-m-hours").text("0");
+                $(".e-m-minutes").text("00");
+                $(".e-m-seconds").text("00");
+                redirect_condition();
+            }
+
+            //timer
+            function getCounterData(obj) {
+                var days = parseInt($('.e-m-days', obj).text());
+                var hours = parseInt($('.e-m-hours', obj).text());
+                var minutes = parseInt($('.e-m-minutes', obj).text());
+                var seconds = parseInt($('.e-m-seconds', obj).text());
+                return seconds + (minutes * 60) + (hours * 3600) + (days * 3600 * 24);
+            }
+
+            function setCounterData(s, obj) {
+                var days = Math.floor(s / (3600 * 24));
+                var hours = Math.floor((s % (60 * 60 * 24)) / (3600));
+                var minutes = Math.floor((s % (60 * 60)) / 60);
+                var seconds = Math.floor(s % 60);
+
+                console.log(days, hours, minutes, seconds);
+
+                $('.e-m-days', obj).html(days);
+                $('.e-m-hours', obj).html(hours);
+                $('.e-m-minutes', obj).html(minutes);
+                $('.e-m-seconds', obj).html(seconds);
+            }
+
+            var count = getCounterData($(".counter"));
+
+            var timer = setInterval(function() {
+                count--;
+                if (count == 0) {
+                    clearInterval(timer);
+                    //toastr.error("Course time is over");
+                    if(localStorage.getItem("pdfViewFullScreen")=="3")
+                    {
+                        if(result.topic.trim()=="Instant Performance Reflection")
+                        {
+                            alert("**ALERT** : IPR time is over. Please ignore this alert if you have already done.");
+                        }
+                    }
+                    $("#counter").hide();
+                    GetLessonPlanDetails();
+                    //alert("Course time is over");
+                    //window.location.href=GototodayPageUrl;
+
+                    //Swal.fire({
+                    //    title: 'Course time is over',
+                    //    showCancelButton: true,
+                    //    confirmButtonText: 'OK',
+                    //}).then((result) => {
+                    //
+                    //})
+                }
+                setCounterData(count, $(".counter"));
+            }, 1000);
+
+        }
+        $(document).ready(function(){
+            GetLessonPlanDetails();
+
+            var raswpfile = "";
+
+            var pdffullpath = '@ViewBag.pdffullpath';
+
+            var fullpath = '@ViewBag.fullpath';
+
+            if (pdffullpath != "" && pdffullpath != null) {
+                raswpfile = pdffullpath;
+            }
+            else if (fullpath != "" && fullpath != null) {
+                raswpfile = fullpath;
+            }
+
+            if (raswpfile != "") {
+                if (raswpfile.includes('-RA-') || raswpfile.includes('-SWP-')) {
+                    if (localStorage.getItem("raswp") !== null) {
+
+                        var raswpValue = localStorage.getItem("raswp");
+
+                        localStorage.setItem('raswp', raswpValue);
+
+                        if (raswpValue == '1') {
+                            $("#rwswpinfo").show();
+                        }
+                    }
+                    else {
+                        localStorage.setItem('raswp', "1");
+                        $("#rwswpinfo").show();
+
+                    }
+                }
+            }
+        });
+        function closeProgressIndicator() {
+            $("#loading").hide();
+        } //new
+
+
+        $(function() {
+            if (window.history && window.history.pushState) {
+                //window.history.pushState('', null, './');
+                $(window).on('popstate', function() {
+                    // alert('Back button was pressed.');
+                    document.location.href = '#';
+                    //blockUser();
+                });
+            }
+        });
+
+        //function blockUser() {
+        //    Ajaxhelper.post(BlockTrainersUrl, null, onSuccesstrainerBlock, null, null);
+        //    function onSuccesstrainerBlock(data) {
+        //        alert("IPR failed your blocked please contact to administrator for unblock");
+        //        //window.location.href = GotoLogout;
+        //    }
+        //}
+    </script>
+</body>
+</html>

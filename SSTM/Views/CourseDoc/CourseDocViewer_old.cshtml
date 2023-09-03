@@ -1,0 +1,76 @@
+﻿@using GleamTech.AspNet.Mvc
+@using GleamTech.DocumentUltimate
+@using GleamTech.DocumentUltimate.AspNet
+@using GleamTech.DocumentUltimate.AspNet.UI
+
+@{
+    ViewBag.Title = "Course document viewer";
+    ViewBag.Url = Request.Url;
+    Layout = null;
+
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+
+    var documentViewer = new DocumentViewer
+    {
+        Width = 100,
+        Height = 600,
+        Document = ViewBag.DocName,
+        ClientEvents = new DocumentViewerClientEvents { Printed = "documentViewerPrinted" }
+    };
+
+    if (currentSession.UserRole == "Print Incharge")
+    {
+        documentViewer.DeniedPermissions = DocumentViewerPermissions.SelectText | DocumentViewerPermissions.Download | DocumentViewerPermissions.DownloadAsPdf;
+    }
+    else
+    {
+        documentViewer.DeniedPermissions = DocumentViewerPermissions.SelectText | DocumentViewerPermissions.Download | DocumentViewerPermissions.DownloadAsPdf | DocumentViewerPermissions.Print;
+    }
+}
+
+<style>
+    #documentViewer {
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+
+<html>
+<head>
+    <title>Course document viewer | SSTM (Secured System for Training Materials)</title>
+
+    @this.RenderHead(documentViewer)
+</head>
+<body>
+    <div style="text-align:center; padding:0 10px 10px 10px;">
+        <a onclick="goBack()"  href="#">Back to Courses</a>
+    </div>
+
+    @this.RenderBody(documentViewer)
+
+    <div style="text-align:center; padding:10px 10px 0 10px;">
+        <a onclick="goBack()" href="#">Back to Courses</a>
+        @*href="@Url.Action("Index", "Course", new { area = "" })"*@
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+
+    <script>
+        var documentPrintedUrl = '@Url.Action("DocumentPrinted","CourseDoc")';
+
+        function documentViewerPrinted(sender, e) {
+            var documentViewer = sender;
+
+            var params = { courseId: @ViewBag.CourseId, docId: @ViewBag.DocId, printedPages: e.totalPages };
+
+            Ajaxhelper.post(documentPrintedUrl, params, onSuccessDocumentPrint, null,null);
+        }
+
+        function onSuccessDocumentPrint(data) { }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

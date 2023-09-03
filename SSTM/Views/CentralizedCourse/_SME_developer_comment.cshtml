@@ -1,0 +1,89 @@
+﻿<div class="modal-header">
+    <h4 id="h4SMEListModal" class="modal-title">Comment</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label> SME Remarks</label>
+        <textarea id="txtSMEComment" class="form-control"></textarea>
+        <hr />
+        <label> Developer Reply Remarks</label>
+        <textarea id="txtDeveloperComment" class="form-control"></textarea>
+
+        <input type="button" id="btnComment_SME_And_developer" class="btn btn-sm btn-info mt-4" value="Submit" />
+        <div class="mt-3">
+            <b class="badge badge-danger">Note: No Remarks then pass N/A Means Approve by SME,<br /><br /> Developer and SME Both  N/A Required After course Released otherwise not go to release</b>
+        </div>
+    </div>
+</div>
+
+<script>
+    var remarkCourseToSMEUrl = '@Url.Action("Comment_SME_And_developer", "CentralizedCourse")';
+
+    $(document).ready(function () {
+        if (userRole === 'Administration' || userRole === 'Director' || userRole === 'Manager') {
+            $('#txtDeveloperComment').prop('disabled', false);
+            $('#txtSMEComment').prop('disabled', false);
+        }
+        else {
+            if (userRole == "SME") {
+                if ($("#txtSMEComment") == "") {
+                    toastr.error("Remark Required !");
+                }
+                $('#txtDeveloperComment').prop('disabled', true);
+            }
+            else {
+                if ($("#txtDeveloperComment") == "") {
+                    toastr.error("Remark Required !");
+                }
+
+                $('#txtSMEComment').prop('disabled', true);
+            }
+        }
+    });
+
+    $('#btnComment_SME_And_developer').on('click', function () {
+        if (userRole === 'Administration' || userRole === 'Director' || userRole === 'Manager') {
+            if ($("#txtSMEComment").val() == "") {
+                toastr.error("Remark Required ! Enter N/A Comment Required!");
+                return;
+            }
+            if ($("#txtDeveloperComment").val() == "") {
+                toastr.error("Remark Required ! Enter N/A Comment Required !");
+                return;
+            }
+        }
+        else {
+            if (userRole == "SME") {
+                if ($("#txtSMEComment").val() == "") {
+                    toastr.error("Remark Required !");
+                    return;
+                }
+            }
+            else {
+                if ($("#txtDeveloperComment").val() == "") {
+                    toastr.error("Remark Required !");
+                    return;
+                }
+            }
+        }
+        Ajaxhelper.post(remarkCourseToSMEUrl, {
+            courseId: selectedDocumentId, SMEcomment: $("#txtSMEComment").val(), developer: $("#txtDeveloperComment").val()
+        }, onSuccessremarkCourseToSME, null, null);
+
+        function onSuccessremarkCourseToSME(data) {
+            if (data.result) {
+                toastr.success('Selected Central Document is successfully Remarks. Notification mail sent.');
+
+                $('#SMECommentModal').modal('hide');
+                GetCoursesList();
+            }
+            else
+                toastr.error(data.message);
+        }
+
+        $('#btnComment_SME_And_developer').prop('disabled', false);
+    });
+</script>

@@ -1,0 +1,197 @@
+﻿@{
+    ViewBag.Title = "Download Course Document";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+
+}
+<style>
+    .select2-container .select2-selection--single {
+        height: 40px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 6px !important;
+        right: 9px !important;
+        width: 26px !important;
+    }
+
+    .modal-open .ui-datepicker {
+        z-index: 20000 !important;
+    }
+</style>
+<link href="http://code.jquery.com/ui/1.9.1/themes/flick/jquery-ui.css" rel="stylesheet">
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Download Course Document</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3">
+                    <label>Master Selection</label>
+
+                    <select id="mst_Coursetype" class="dropdown form-control">
+                        <option value="other">Course</option>
+                        <option value="staff">Staff</option>
+                        <option value="isoedu">ISO EDU</option>
+                        <option value="NewCourse">New Course</option>
+                    </select>
+                </div>
+
+                <div class="col-3 mb-4">
+                    <label>Course</label>
+                    @Html.DropDownList("ddlCourses", new SelectList(TempData["CoursesList"] as SelectList, "Value", "Text"), new { @class = "form-control ddlCourses" })
+                </div>
+
+                <div class=" col-md-12 modal-footer pull-right">
+                    <a id="btnExportCourseDocs" class="btn btn-success">
+                        Download Documents
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-3">
+                    <select id="mst_Documenttype" class="dropdown form-control" style="margin-top: 2rem !important;">
+                        <option value="1">Video</option>
+                        <option value="0">UploadDocs</option>
+                        <option value="3">Confidential Doc</option>
+                        <option value="2">CommonDoc</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>Document</label>
+                    @Html.DropDownList("ddlDocument", new SelectList(TempData["DocumentList"] as SelectList, "Value", "Text"), new { @class = "form-control ddlDocument" })
+                </div>
+
+                <div class=" col-md-12 modal-footer pull-right">
+                    <a id="btnExportTrainerDocuement" class="btn btn-warning">
+                        Download Documents
+                    </a>
+                </div>
+            </div>
+            <a id="filedownload" class="form-control" style="display:none">Download</a>
+        </div>
+    </div>
+</section>
+<input type="hidden" id="CourseType" class="current_CourseType" />
+@section scripts{
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var Getmst_CoursesListwithjsonUrl = '@Url.Action("Getmst_CoursesListwithjson", "BulkImportExport")';
+
+        var getCourseDocumentsUrl = '@Url.Action("GetCourseDocuments","CourseDocVersion")';
+        var getCourseDocVersionsUrl = '@Url.Action("GetCourseDocVersions", "CourseDocVersion")';
+
+        var loadCourseDocumentUrl = '@Url.Action("LoadCourseDocument", "CourseDoc")';
+        var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+
+        var getdrpSubCoursListUrl = '@Url.Action("GetSubCouseList", "Course", new { area = "" })';
+        var ExportcourseUrl = '@Url.Action("DownloadDocumentFolder", "BulkImportExport")';
+        var Get_sub_courseUrl = '@Url.Action("VideoFiles", "BulkImportExport")';
+
+        var DownloadTrainerDocumentFolderUrl = '@Url.Action("DownloadDocumentotherDocumentFolder", "BulkImportExport")';
+
+        if (userRole == "Staff") {
+            var CourseType = "staff";
+            $(".current_CourseType").val(CourseType);
+        }
+        else {
+            var CourseType = "other";
+            $(".current_CourseType").val(CourseType);
+        }
+
+        var userRole = '@currentSession.UserRole';
+
+
+
+        $("#ddlCourses").change(function () {
+            mainvalue = this.value;
+            lastDrpValue = 0;
+            $("#filedownload").hide();
+
+        });
+        $("#drpSubCourseId").change(function () {
+            lastDrpValue = this.value;
+            mainvalue = 0;
+        });
+        $("#drpSubCourseId1").change(function () {
+            lastDrpValue = this.value;
+            mainvalue = 0;
+        });
+        $("#drpSubCourseId2").change(function () {
+            lastDrpValue = this.value;
+            mainvalue = 0;
+        });
+
+
+        $("#mst_Coursetype").on("change", function () {
+            var fileData = new FormData();
+            fileData.append('type', this.value);
+            $.ajax({
+                url: Getmst_CoursesListwithjsonUrl,
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data  ,
+                data: fileData,
+                success: function (data) {
+                    if (data.result) {
+                        $("#ddlCourses").html('');
+
+                        $("#ddlCourses").append($("<option></option>").val("").html("-- Select Course --"));
+
+                        $.each(data.content, function (key, item) {
+                            $("#ddlCourses").append($("<option></option>").val(item.Id).html(item.CourseName));
+                        });
+                    }
+                },
+                error: function (err) {
+                    toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                }
+            })
+        });
+
+        $("#mst_Documenttype").on("change", function () {
+
+            var fileData = new FormData();
+            fileData.append('CourseType', $("#mst_Documenttype").val());
+            fileData.append('MasterDoc', true);
+            fileData.append('MasterDocId', 0);
+            $.ajax({
+                url: Get_sub_courseUrl,
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data  ,
+                data: fileData,
+                success: function (data) {
+                    if (data.result) {
+                        $("#ddlDocument").html('');
+
+
+                        $("#ddlDocument").append($("<option></option>").val("").html("-- Select Document --"));
+
+                        $.each(data.content, function (key, item) {
+                            $("#ddlDocument").append($("<option></option>").val(item.Id).html(item.DocumentName));
+                        });
+                    }
+                },
+                error: function (err) {
+                    toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                }
+            })
+        });
+
+
+
+    </script>
+
+    <script src="~/Scripts/course/BulkImport.js"></script>
+    <script src="~/Scripts/course/Bulk_video_upload_import.js"></script>
+}

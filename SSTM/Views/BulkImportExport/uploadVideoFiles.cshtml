@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "upload Video Files";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+<style>
+    .select2-container .select2-selection--single {
+        height: 40px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 6px !important;
+        right: 9px !important;
+        width: 26px !important;
+    }
+
+    .modal-open .ui-datepicker {
+        z-index: 20000 !important;
+    }
+</style>
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Import Course Document</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <select id="mst_Documenttype" class="dropdown form-control">
+                    <option value="1">video</option>
+                    <option value="0">UploadDocs</option>
+                    <option value="3">Confidential Doc</option>
+                    <option value="2">CommonDoc</option>
+                </select>
+                <hr class="mb-2" />
+                <div class="col-3">
+                    <label>Document</label>
+                    @Html.DropDownList("ddlDocument", new SelectList(TempData["DocumentList"] as SelectList, "Value", "Text"), new { @class = "form-control ddlDocument" })
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 1</label>
+                    <select id="drpSubDocId" class="dropdown form-control Document" name="drpSubCourseId" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 1 --</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 2</label>
+                    <select id="drpSubDocId1" class="dropdown form-control drpSubCourseId1" name="drpSubCourseId1" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 2 --</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 3</label>
+                    <select id="drpSubDocId2" class="dropdown form-control drpSubCourseId2" name="drpSubCourseId2" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 3 --</option>
+                    </select>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Import Multiple Documents</label>
+                    <input type="file" id="uploadFile" class="form-control" multiple="multiple" accept="video/mp4,video/webm" />
+                </div>
+                <table class="table" id="FilesList" style="visibility:hidden">
+                    <tr>
+                        <th>
+                            Attachment(s)
+                        </th>
+                    </tr>
+                </table>
+                <div class=" col-md-12 modal-footer pull-right">
+                    <a id="btnImportCourseDocs" class="btn btn-success">
+                        Upload Documents
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    var SaveDocumentUrl = '@Url.Action("SaveDocument", "TrainerUploadDocument", new { area = "" })';
+    var Get_sub_courseUrl = '@Url.Action("VideoFiles", "BulkImportExport")';
+    var Getmst_DocumentListwithjsonUrl = '@Url.Action("VideoFiles", "BulkImportExport")';
+
+    $(document).ready(function () {
+
+        $("#uploadFile").on("change", function () {
+            var fileInput = document.getElementById('uploadFile');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+
+                var sfilename = fileInput.files[i].name;
+                let srandomid = Math.random().toString(36).substring(7);
+
+                // formdata.append(sfilename, fileInput.files[i]);
+                var fname = "", fnamewithoutExtension = "";
+                if (sfilename != "") {
+                    fname = sfilename.split(".");
+                    fnamewithoutExtension = fname[0].replace("_", "-");
+                }
+                var markup = "<tr id='" + srandomid + "'><td><input type='text' class='form-control docnamedata" + i + "' placeholder='Document Name' value='" + fnamewithoutExtension + "'></td><td>" + sfilename + "</td></tr>"; // Binding the file name
+                $("#FilesList tbody").append(markup);
+
+            }
+            chkatchtbl();
+
+        });
+    });
+    function chkatchtbl() {
+        if ($('#FilesList tr').length > 1) {
+            $("#FilesList").css("visibility", "visible");
+        } else {
+            $("#FilesList").css("visibility", "hidden");
+        }
+    }
+    function drpSubCourseId(sub_course_id, sub_course) {
+
+        var fileData = new FormData();
+
+        fileData.append('CourseType', $("#mst_Documenttype").val());
+        fileData.append('MasterDoc', false);
+        fileData.append('MasterDocId', sub_course_id);
+        $.ajax({
+            url: Get_sub_courseUrl,
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data  ,
+            data: fileData,
+            success: function (data) {
+                if (data.result) {
+                    if (sub_course == 0) {
+                        $("#drpSubDocId").html('');
+                        $("#drpSubDocId").append($("<option></option>").val("").html("-- Select Sub Document --"));
+                        $.each(data.content, function (key, item) {
+                            $("#drpSubDocId").append($("<option></option>").val(item.Id).html(item.DocumentName));
+                        });
+                    }
+
+                    if (sub_course == 1) {
+                        $("#drpSubDocId1").html('');
+                        $("#drpSubDocId1").append($("<option></option>").val("").html("-- Select Sub Document --"));
+                        $.each(data.content, function (key, item) {
+                            $("#drpSubDocId1").append($("<option></option>").val(item.Id).html(item.DocumentName));
+                        });
+                    }
+
+                    if (sub_course == 2) {
+                        $("#drpSubDocId2").html('');
+                        $("#drpSubDocId2").append($("<option></option>").val("").html("-- Select Sub Document --"));
+                        $.each(data.content, function (key, item) {
+                            $("#drpSubDocId2").append($("<option></option>").val(item.Id).html(item.DocumentName));
+                        });
+                    }
+                }
+            },
+            error: function (err) {
+                toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+            }
+        })
+    }
+    var lastDrpValue = 0;
+    var isparent = 1;
+    $("#ddlDocument").change(function () {
+        lastDrpValue = this.value;
+        drpSubCourseId(lastDrpValue, 0);
+        isparent = 0;
+    });
+
+    $("#drpSubDocId").change(function () {
+        lastDrpValue = this.value;
+        drpSubCourseId(lastDrpValue, 1);
+        isparent = 0;
+    });
+    $("#drpSubDocId1").change(function () {
+        lastDrpValue = this.value;
+        drpSubCourseId(lastDrpValue, 2);
+        isparent = 0;
+    });
+    $("#drpSubDocId2").change(function () {
+        lastDrpValue = this.value;
+        isparent = 0;
+        //drpSubCourseId(lastDrpValue, 3);
+    });
+
+    $("#mst_Documenttype").on("change", function () {
+        if (this.value == 1) {
+            $("#uploadFile").attr("accept", "video/mp4,video/webm");
+        }
+        else {
+            $("#uploadFile").removeAttr("accept", "video/mp4,video/webm");
+        }
+        var fileData = new FormData();
+        fileData.append('CourseType', $("#mst_Documenttype").val());
+        fileData.append('MasterDoc', true);
+        fileData.append('MasterDocId', 0);
+        $.ajax({
+            url: Get_sub_courseUrl,
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data  ,
+            data: fileData,
+            success: function (data) {
+                if (data.result) {
+                    $("#ddlDocument").html('');
+                    $("#drpSubDocId").html('');
+                    $("#drpSubDocId1").html('');
+                    $("#drpSubDocId2").html('');
+
+                    $("#ddlDocument").append($("<option></option>").val("").html("-- Select Document --"));
+                    $("#drpSubDocId").append($("<option></option>").val("").html("-- Select Sub Document --"));
+                    $("#drpSubDocId1").append($("<option></option>").val("").html("-- Select Sub Document --"));
+                    $("#drpSubDocId2").append($("<option></option>").val("").html("-- Select Sub Document --"));
+
+                    $.each(data.content, function (key, item) {
+                        $("#ddlDocument").append($("<option></option>").val(item.Id).html(item.DocumentName));
+                    });
+                }
+            },
+            error: function (err) {
+                toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+            }
+        })
+    });
+
+</script>
+<script src="~/Scripts/course/Bulk_video_upload_import.js"></script>

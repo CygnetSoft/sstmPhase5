@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "Activity Logs";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Areas/Administration/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Activity Logs</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2 form-group">
+                    <label>Date From</label>
+
+                    <div class="input-group">
+                        <input type="text" id="txtDateFrom" class="form-control datepicker" />
+
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-default" onclick="OpenCalendar('#txtDateFrom');">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2 form-group">
+                    <label>Date To</label>
+
+                    <div class="input-group">
+                        <input type="text" id="txtDateTo" class="form-control datepicker" />
+
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-default" onclick="OpenCalendar('#txtDateTo');">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 form-group" style="padding-top:32px;">
+                    <button type="button" id="btnSearchLogs" class="btn btn-primary">
+                        <i class="fa fa-search-plus"></i>&nbsp;Search
+                    </button>
+
+                    <button type="button" id="btnDeleteLogs" class="btn btn-danger">
+                        <i class="fa fa-trash-o"></i>&nbsp;Delete
+                    </button>
+                </div>
+
+                <div class="col-12">
+                    <hr />
+                </div>
+
+                <div class="col-md-12 form-group table-responsive">
+                    <table id="tblActivityLogs" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>History</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var getActivityLogsUrl = '@Url.Action("GetActivityLogsList", "ActivityLog", new { area="Administration"})';
+
+        var deleteActivityLogsUrl = '@Url.Action("DeleteSelectedRecords", "ActivityLog", new { area= "Administration" })';
+    </script>
+
+    <script src="~/Scripts/administration/activityLog/index.js"></script>
+}

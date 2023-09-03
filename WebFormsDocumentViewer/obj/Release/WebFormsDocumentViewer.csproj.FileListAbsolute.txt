@@ -1,0 +1,11 @@
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Release\WebFormsDocumentViewer.xml
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Release\WebFormsDocumentViewer.dll
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Release\WebFormsDocumentViewer.pdb
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Release\WebFormsDocumentViewer.dll
+E:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Release\WebFormsDocumentViewer.pdb
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Release\WebFormsDocumentViewer.xml
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Release\WebFormsDocumentViewer.dll
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\bin\Release\WebFormsDocumentViewer.pdb
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Release\WebFormsDocumentViewer.csprojResolveAssemblyReference.cache
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Release\WebFormsDocumentViewer.dll
+D:\cygnet\sstm\phase-5\WebFormsDocumentViewer\obj\Release\WebFormsDocumentViewer.pdb

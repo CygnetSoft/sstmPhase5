@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "QP Approval Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-12 row">
+                <div class="col-8">
+                    <h3 class="card-title">
+                        QP Approval Request
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="col-md-12 form-group table-responsive mt-3">
+                <table id="tblLevelApproval" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Sr.No</th>
+                            <th style="width: 20%;">Documents Name</th>
+                            <th style="width: 15%;">Files</th>
+                            <th style="width: 15%;">Status</th>
+                            <th style="width: 15%;">Level 1 Action</th>
+                            <th style="width: 15%;">Level 2 Action</th>
+                            <th style="width: 15%;">Level 3 Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyqp"></tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="~/Scripts/TrainerQPUpload/QPApprovelLevel.js"></script>
+
+@Scripts.Render("~/Theme/datatablesjs")
+<script>
+    var Url_Get_approval_list = '@Url.Action("Get_approval_list", "TrainerQPUpload")';
+    @*var Remark_QP_DocumentUrl = '@Url.Action("QP_Document_Remark", "TrainerQPUpload")';
+    var DeleteQPDocumentUrl = '@Url.Action("DeleteQPCourseDocument", "TrainerUploadDocument")';*@
+
+    var loadCourseDocumentUrl = '@Url.Action("LoadCommonDocument", "CourseDoc")';
+    var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+
+    var GotoDocUrl = '@Url.Action("CommonDocument", "TrainerUploadDocument")';
+
+    var Url_Get_approval_level1 = '@Url.Action("level1_approval", "TrainerQPUpload")';
+    var Url_Get_approval_level2 = '@Url.Action("level2_approval", "TrainerQPUpload")';
+    var Url_Get_approval_level3 = '@Url.Action("level3_approval", "TrainerQPUpload")';
+
+    var openSMEListUrl = '@Url.Action("OpenSMEList", "TrainerQPUpload")';
+    var Shared_QP_DocumentUrl = '@Url.Action("Shared_QP_Document", "TrainerQPUpload")';
+    var GotoQPStdentUrl = '@Url.Action("SharedStudentList", "TrainerQPUpload")';
+    var selectedqpid = 0;
+
+    $(document).ready(function () {
+        Get_approval_list()
+    });
+
+    function ViewCourseDoc(fileName) {
+       
+        var courseId = "TrainerQP";
+        var docId = 0;
+
+        Ajaxhelper.post(loadCourseDocumentUrl, { path: "TrainerQP", filename: fileName }, onSuccessLoadDocument, null, null);
+
+        function onSuccessLoadDocument(data) {
+            if (data.result)
+                window.location = courseDocViewerUrl + data.fs;
+            else
+                toastr.error(data.message);
+        }
+    }
+</script>
+

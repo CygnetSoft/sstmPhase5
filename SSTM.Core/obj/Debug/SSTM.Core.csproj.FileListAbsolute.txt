@@ -1,0 +1,8 @@
+E:\cygnet\sstm\phase-5\SSTM.Core\bin\Debug\SSTM.Core.dll
+E:\cygnet\sstm\phase-5\SSTM.Core\bin\Debug\SSTM.Core.pdb
+E:\cygnet\sstm\phase-5\SSTM.Core\obj\Debug\SSTM.Core.dll
+E:\cygnet\sstm\phase-5\SSTM.Core\obj\Debug\SSTM.Core.pdb
+D:\cygnet\sstm\phase-5\SSTM.Core\bin\Debug\SSTM.Core.dll
+D:\cygnet\sstm\phase-5\SSTM.Core\bin\Debug\SSTM.Core.pdb
+D:\cygnet\sstm\phase-5\SSTM.Core\obj\Debug\SSTM.Core.dll
+D:\cygnet\sstm\phase-5\SSTM.Core\obj\Debug\SSTM.Core.pdb

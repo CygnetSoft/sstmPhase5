@@ -1,0 +1,180 @@
+﻿<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">RA & SWP Trainer Declaration Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" id="raswpmodal">
+            <div class="card-body">
+                <div class="form-row form-group">
+                    <div class="col-md-12">
+                        <label class="col-form-label-sm">Choose Course:</label>
+                        <select class="form-control select2" data-width="100%" id="courseListModal" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                        <div class="invalid-feedback col-form-label-sm">Course is Required.</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label class="col-form-label-sm">Choose Batch:</label>
+                        <select class="form-control select2" data-width="100%" id="batchListModal" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                        <div class="invalid-feedback col-form-label-sm">Batch is Required.</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label class="col-form-label-sm">Declaration:</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="chkDeclaration" checked>
+                            <label class="custom-control-label" for="chkDeclaration">Here I declare that I have briefed the Risk Assessment and Safe Work Procedure to the students.</label>
+                        </div>
+                        @*<label class="col-form-label-sm">I hereby declare that I have briefed the Risk Assessment and Safer Procedure to the students.</label>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="btnSubmit" type="button" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>
+
+
+
+ 
+
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            url: "@Url.Action("GetAllCourse", "Intro",null)",
+            method: "Get",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            success: ((data) => {
+                let k = JSON.parse(data.Result);
+
+                $('#courseListModal').empty().append($('<option/>').val(0).html('Select'))
+                $.map(k, function (v, i) {
+                    $('#courseListModal').append($('<option></option>').val(v.CourseId).html(v.CourseName));
+                });
+
+                $('#courseListModal').prop('selectedIndex', 1);
+
+
+                if (data.Batchs != null && data.Batchs.length > 0) {
+
+                    $('#batchListModal').empty().append($('<option/>').val(0).html('Select'))
+                    $.map(data.Batchs, function (v, j) {
+                        $('#batchListModal').append($('<option></option>').val(v.BatchId).html(v.BatchId));
+                    });
+
+                    $('#batchListModal').prop('selectedIndex', 1);
+
+                    view();
+                }
+                else {
+                    $('#batchListModal').empty().append($('<option/>').val(0).html('Select'))
+                    $('#batchListModal').prop('selectedIndex', 0);
+                }
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+
+
+        $('#courseListModal').change(function () {
+            let courseId = Number($('#courseListModal').val());
+
+            if (courseId == 0) {
+                toastr.error('Please select course.');
+                return;
+            }
+
+            $.ajax({
+                url: "@Url.Action("GetBatchesBasedOnCourseId", "Intro")?courseId=" + courseId,
+                method: "Get",
+                dataType: "json",
+                beforeSend: (() => { $(".loadingDiv").show(); }),
+                success: ((data) => {
+
+                    if (data.Batchs != null && data.Batchs.length > 0) {
+
+                        $('#batchListModal').empty().append($('<option/>').val(0).html('Select'))
+                        $.map(data.Batchs, function (v, j) {
+                            $('#batchListModal').append($('<option></option>').val(v.BatchId).html(v.BatchId));
+                        });
+
+                        $('#batchListModal').prop('selectedIndex', 1);
+
+                    }
+                    else {
+                        $('#batchListModal').empty().append($('<option/>').val(0).html('Select'))
+                        $('#batchListModal').prop('selectedIndex', 0);
+                    }
+                }),
+                error: ((err) => {
+                    toastr.error('Something went wrong! Please refresh the page and try again.');
+                    console.warn(err);
+                })
+            });
+        });
+
+
+        $("#btnSubmit").on('click', function () {
+
+            let courseId = Number($('#courseListModal').val());
+            let batchId = Number($('#batchListModal').val());
+            let declaration = $("#chkDeclaration")[0];
+
+            if (courseId == 0 || batchId == 0) {
+                toastr.error('Please select course and batch.');
+                return;
+            }
+
+            if (!declaration.checked) {
+                toastr.error('Please check Declaration box.');
+                return;
+            }
+
+            $.ajax({
+                url: "@Url.Action("SaveRiskAssessmentDeclaration", "Intro",null)",
+                type: "POST",
+                data: { courseId: courseId, batchId: batchId },
+                success: function (data) {
+                    if (data == 'success') {
+                        toastr.success('Your declaration saved successfully. Sending declaration link to Students. Please wait..');
+                        $.ajax("@Url.Action("SendRANotification", "Intro")?courseId=" + courseId + '&batchId=' + batchId + '&windowLocation= ' + window.location.origin
+                        ).then(function (data0) {
+
+                            toastr.success('RA and SWP Declaration link sent to all the students through SMS. Please ask them to submit the same.');
+                            //$('#modal').modal('toggle');
+
+                            $(".modal").modal('toggle');
+
+                        });
+                    }
+                    else if (data == 'exists')
+                    {
+                        toastr.error('RA and SWP form has already been submitted for the select course and batch.');
+                    }
+                    else
+                        toastr.error('Something went wrong while saving your declaration. Please refresh the page and try again.');
+                },
+
+                error: function (err) {
+                    toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                }
+            }).done(function () {
+
+            });
+        });
+</script>

@@ -1,0 +1,142 @@
+﻿@model SSTM.Models.CourseDocRemarks.CourseDocRemarksModel
+
+@using GleamTech.AspNet.Mvc
+@using GleamTech.DocumentUltimate
+@using GleamTech.DocumentUltimate.AspNet
+@using GleamTech.DocumentUltimate.AspNet.UI
+
+@{
+    ViewBag.Title = "Review & give remarks for course document";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+
+    var documentViewer = new DocumentViewer
+    {
+        Width = 800,
+        Height = 600,
+        Document = Model.DocName,
+        DeniedPermissions = DocumentViewerPermissions.All
+    };
+}
+
+<link href="~/Theme/plugins/summernote/summernote-bs4.css" rel="stylesheet">
+
+<style>
+    .alert-dismissible {
+        padding-right: 1rem;
+    }
+
+    #documentViewer {
+        width: 100% !important;
+    }
+</style>
+
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <div class="row">
+        @if (currentSession.UserRole != "Developer" && currentSession.UserRole != "HR" && currentSession.UserRole != "Trainer" &&
+                                        currentSession.UserRole != "Print Incharge" && ViewBag.DocType == "Course")
+        {
+            <div class="col-md-6">
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h5><i class="icon fas fa-info-circle"></i> Note!</h5>
+                    To assign the remarks and suggention for this document, you can scroll down at the bottom of the page.
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="alert alert-success alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h5><i class="icon fas fa-exclamation-circle"></i> Note!</h5>
+                    If there is no any suggestions then you can directly accept the document and it will send accept document
+                    notification to Director and Developer.
+                </div>
+            </div>
+        }
+
+        <div class="col-md-12 form-group text-center">
+            @this.RenderHead(documentViewer)
+            @this.RenderBody(documentViewer)
+        </div>
+
+        @if (currentSession.UserRole == "Developer" && currentSession.UserRole != "HR" && currentSession.UserRole != "Trainer" &&
+                                            currentSession.UserRole != "Print Incharge" && ViewBag.DocType == "Course")
+        {
+            <div class="col-md-12 form-group">
+                @using (Html.BeginForm("SaveCourseDocRemarks", "CourseDocRemarks", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSaveCourseDocRemarks", autocomplete = "off" }))
+                {
+                    @*@Html.AntiForgeryToken()*@
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.CourseId)
+                    @Html.HiddenFor(m => m.DocId)
+                    @Html.HiddenFor(m => m.Remarks)
+                    @Html.HiddenFor(m => m.Suggestion)
+                    @Html.HiddenFor(m => m.ReferenceFile)
+                    @Html.HiddenFor(m => m.isCompleted)
+
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">Add or update remarks for <strong>@ViewBag.DocName</strong></h3>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label>Remarks</label>
+                                    <div id="summerNoteRemarks"></div>
+                                    @Html.ValidationMessageFor(m => m.Remarks, null, new { @class = "alert-danger" })
+                                </div>
+
+                                <div class="col-md-6 form-group">
+                                    <label>Suggestions</label>
+                                    <div id="summerNoteSuggestion"></div>
+                                    @Html.ValidationMessageFor(m => m.Suggestion, null, new { @class = "alert-danger" })
+                                </div>
+
+                                <div class="col-md-12 form-group">
+                                    <label>Reference Doc</label>
+                                    <input type="file" id="ReferenceDoc" name="ReferenceDoc" />
+                                    <label>@Model.ReferenceFile</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-success">
+                                Save Remarks&nbsp;&nbsp;<i class="fa fa-tasks"></i>
+                            </button>
+
+                            <div class="float-right">
+                                <button type="button" id="btnAcceptCourseDoc" class="btn btn-primary">
+                                    No remarks? Accept it!&nbsp;&nbsp;<i class="fa fa-check-square"></i>
+                                </button>
+
+                                <a class="btn btn-default" href="@Url.Action("Index","Course")">
+                                    Close&nbsp;&nbsp;<i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Theme/plugins/summernote/summernote-bs4.min.js"></script>
+
+    <script>
+        var saveCourseDocRemarksUrl = '@Url.Action("SaveCourseDocRemarks", "CourseDocRemarks", new { area = "" })';
+        var acceptCourseDocsUrl = '@Url.Action("AcceptCourseDocs", "CourseDoc", new { area = "" })';
+
+        var courseIndexUrl = '@Url.Action("index", "Course", new { area=""})';
+    </script>
+
+    <script src="~/Scripts/courseDocRemarks/reviewCourseDocument.js"></script>
+}

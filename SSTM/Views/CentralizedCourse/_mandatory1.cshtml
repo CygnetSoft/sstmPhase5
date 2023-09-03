@@ -1,0 +1,97 @@
+﻿<div class="col-12">
+    <div class="col-12">
+        <div class="row">
+            <input type="text" id="labelname" class="form-control col-3 " placeholder="Enter pre define text" />
+            <select id="textorimage" class="form-control col-1 ml-2">
+                <option value="text" selected>Text</option>
+                <option value="image">Image</option>
+            </select>
+            <textarea id="name" class="fosrm-control col-4 ml-1 textshow" placeholder="Enter replace text">
+
+            </textarea>
+            @*<input type="text"  />*@
+            <input type="file" id="nameimage" style="display:none" class="fosrm-control col-4 ml-1 imageshow mt-1" placeholder="Enter replace text" />
+            <select id="repeate" class="form-control col-2 ml-1">
+                <option value="">-- Select --</option>
+                <option value="PPT">PPT</option>
+                <option value="LG">LG</option>
+                <option value="FG">FG</option>
+                <option value="CRM">CRM</option>
+                <option value="LP">LP</option>
+                <option value="QA">QA</option>
+                <option value="Qwithoutanswer">Qwithoutanswer</option>
+                <option value="AP">AP</option>
+                <option value="AR">AR</option>
+                <option value="Assessmentchecklist">Assessmentchecklist</option>
+                <option value="RA">RA</option>
+                <option value="SWP">SWP</option>
+                <option value="All">All</option>
+            </select>
+            <a id="addmandatoryrow" class="btn col-1 btn-primary ml-1" style="height: 37px;"><i class=" fa fa-plus"></i> Add</a>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6">
+                    <div class="pull-left">
+                       
+                    </div>
+                </div>
+                @*<div class="col-6">
+                    <div style="float:right">
+                        <a id="savemandatoryback" class="btn btn-danger mt-3" style="display:none"><i class=" fa fa-backward"></i> Back</a>
+                        <a id="savemandatory1" class="btn btn-primary mt-3" style="display:none"><i class=" fa fa-save"></i> Save</a>
+                    </div>
+                </div>*@
+            </div>
+        </div>  
+    </div>
+
+    <table id="btlmadatory1" style="line-height: 0.3;font-size: 14px;" class="table mt-3">
+        <tbody></tbody>
+    </table>
+
+</div>
+<script>
+    $("#savemandatoryback").on("click", function () {
+        $(".step1").show();
+        $(".step2").hide();
+    });
+    $("#textorimage").on("change", function () {
+
+        if ($(this).val() == "text") {
+            $(".textshow").show();
+            $(".imageshow").hide();
+        }
+        else {
+            $(".textshow").hide();
+            $(".imageshow").show();
+        }
+    })
+
+    $("#nameimage").change(function () {
+        var fileUpload = this.files[0];
+
+        // Create FormData object
+        var fileData = new FormData();
+
+        // Looping over all files and add it to FormData object
+
+        fileData.append(fileUpload.name, fileUpload);
+        fileData.append("filename1", $("#labelname").val());
+
+
+        $.ajax({
+            url: FileUpload_folderUrl,
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data  ,
+            data: fileData,
+            success: function (data) {
+                if (data.result == true)
+                    $("#name").val(data.FileName);
+                else
+                    $("#name").val('');
+            },
+        });
+    });
+</script>

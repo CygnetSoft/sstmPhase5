@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8175EFCD-7E34-4C8E-8DF1-199F16BB6A87}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SSTM.Data</RootNamespace>
+    <AssemblyName>SSTM.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CoContra.net45, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoContra.1.0.2\lib\net45\CoContra.net45.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.Triggers, Version=5.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.Triggers.5.3.1\lib\net45\EntityFramework.Triggers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.TypedOriginalValues, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.TypedOriginalValues.1.0.1\lib\net40\EntityFramework.TypedOriginalValues.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.3.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IDbContext.cs" />
+    <Compile Include="Infrastructure\IRepository.cs" />
+    <Compile Include="Infrastructure\IRepositoryContext.cs" />
+    <Compile Include="Infrastructure\RepositoryBase.cs" />
+    <Compile Include="Infrastructure\RepositoryContext.cs" />
+    <Compile Include="Mapping\ActivityLogMap.cs" />
+    <Compile Include="Mapping\AssessmentPaperMap.cs" />
+    <Compile Include="Mapping\CentralizedCourseMap.cs" />
+    <Compile Include="Mapping\CentralizedDocumentFilesMap.cs" />
+    <Compile Include="Mapping\CentralizedHistoryMap.cs" />
+    <Compile Include="Mapping\CentralizedMasterMap.cs" />
+    <Compile Include="Mapping\Central_CourseSharingMap.cs" />
+    <Compile Include="Mapping\DeveloperMonitorTimerMap.cs" />
+    <Compile Include="Mapping\ReportMap.cs" />
+    <Compile Include="Mapping\ConfigMap.cs" />
+    <Compile Include="Mapping\CourseAssignmentMap.cs" />
+    <Compile Include="Mapping\CourseDocRemarksMap.cs" />
+    <Compile Include="Mapping\CourseDocumentMap.cs" />
+    <Compile Include="Mapping\CourseDocVersionMap.cs" />
+    <Compile Include="Mapping\CourseDownloadUserMap.cs" />
+    <Compile Include="Mapping\CourseMap.cs" />
+    <Compile Include="Mapping\CourseReminderLatterUndertakingMap.cs" />
+    <Compile Include="Mapping\CourseReminderMap.cs" />
+    <Compile Include="Mapping\CourseRenewalMap.cs" />
+    <Compile Include="Mapping\CourseSharingMap.cs" />
+    <Compile Include="Mapping\CourseStatusMap.cs" />
+    <Compile Include="Mapping\CourseTrackersMap.cs" />
+    <Compile Include="Mapping\ExceptionLogMap.cs" />
+    <Compile Include="Mapping\MainCourseMap.cs" />
+    <Compile Include="Mapping\NewCourseTrackersMap.cs" />
+    <Compile Include="Mapping\QPRequestMap.cs" />
+    <Compile Include="Mapping\RiskAssessmentDeclarationMap.cs" />
+    <Compile Include="Mapping\RoleMap.cs" />
+    <Compile Include="Mapping\StudentFeedbackMap.cs" />
+    <Compile Include="Mapping\StudentIntroPageMap.cs" />
+    <Compile Include="Mapping\StudentNotificationMap.cs" />
+    <Compile Include="Mapping\StudentQpMap.cs" />
+    <Compile Include="Mapping\StudentQP_WrittenMap.cs" />
+    <Compile Include="Mapping\SubCourseMap.cs" />
+    <Compile Include="Mapping\TrainerQPSharedStudentMap.cs" />
+    <Compile Include="Mapping\TrainerQPUploadMap.cs" />
+    <Compile Include="Mapping\TrainerQP_Level_ApprovalMap.cs" />
+    <Compile Include="Mapping\TrainerUploadDocumentMap.cs" />
+    <Compile Include="Mapping\TrainingCenterMap.cs" />
+    <Compile Include="Mapping\TrainnerMacAddressMap.cs" />
+    <Compile Include="Mapping\UserMap.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SSTMDbContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SSTM.Core\SSTM.Core.csproj">
+      <Project>{B141196A-9153-4BDF-A9D7-2419310682A7}</Project>
+      <Name>SSTM.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,2857 @@
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfCourseDocVersions]    Script Date: 8/7/2021 3:13:49 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROC [sstmo].[GetListOfCourseDocVersions]
+	@DocId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT c.Id AS CourseId, c.CourseName, cdv.DocId, cd.DocName, cdv.Id, cdv.[FileName], cdv.[Version],
+		CONVERT(varchar(100), cdv.VersionDate,103)VersionDate, cdv.isActive,
+		isnull(u.FirstName,'')+' '+isnull(u.LastName,'') as createdby_User ,
+		isnull(u1.FirstName,'')+' '+isnull(u1.LastName,'') as Updateby_User ,
+		isnull(cdv.revision,'') revision,
+		isnull(CONVERT(varchar(100),cdv.revisionDate,103),'')revisionDate 
+		FROM sstmo.CourseDocVersion cdv
+			LEFT JOIN sstmo.CourseDocument cd ON cd.Id = cdv.DocId
+			LEFT JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN [sstmo].[User] u on u.Id=cdv.CreatedBy
+			LEFT JOIN [sstmo].[User] u1 on u1.Id=cdv.UpdatedBy
+		WHERE cdv.isDeleted = 0 AND cdv.DocId = @DocId
+		order by cdv.VersionDate desc
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+
+--------------------------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetRecentDocumentList]    Script Date: 23/6/2021 10:35:31 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create PROC [sstmo].[GetRecentDocumentList]
+	@Days BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	
+		SELECT c.Id AS CourseId, c.CourseName, cd.ID DocId, cd.DocName, cd.Id, cd.[FileName] as FileName,
+		isnull(u.FirstName,'')+' '+isnull(u.LastName,'') as createdby_User ,cd.CreatedOn,cd.UpdatedOn
+		FROM sstmo.CourseDocument cd
+			LEFT JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN [sstmo].[User] u on u.Id=cd.CreatedBy
+		WHERE cd.isDeleted = 0 AND (CONVERT(date,cd.CreatedOn) >= CONVERT(date,DATEADD(day, @Days, getdate()))  
+		or  CONVERT(date,cd.UpdatedOn) >= CONVERT(date,DATEADD(day, @Days, getdate())))  
+		and c.Id!='' and c.CourseName!='' 
+		 order by case when  cd.UpdatedOn!=null then cd.UpdatedOn else cd.CreatedOn end desc
+	
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+----------------------------------
+GO
+ALTER TABLE [sstmo].[CourseDocument] ADD isOldDocument nvarchar(10) NULL  \\ old for old document.
+----------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfCourseDocuments]    Script Date: 8/7/2021 11:37:59 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetListOfCourseDocuments] 57,0
+ALTER PROC [sstmo].[GetListOfCourseDocuments]
+	@CourseId BIGINT,
+	@MasterCourse bit
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	
+	SELECT  c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting,ISNULL(cs.isDeveloper,0) AS isDeveloper, cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate-- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1
+		WHERE cd.CourseId = @CourseId and c.MasterCourse= @MasterCourse and  c.CourseType='other' 
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+		union 
+
+		SELECT distinct c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			'true' AS isTraining, 'true' AS isPrinting,'true' as isDeveloper,  cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate -- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1 -- added 8-7-2021
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0			
+		WHERE cd.CourseId =  @CourseId and  c.CourseType='staff' and  c.MasterCourse= @MasterCourse
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+--------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfCourseDocumentsversion]    Script Date: 20/6/2021 10:42:00 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetListOfCourseDocuments] 10013
+ALTER PROC [sstmo].[GetListOfCourseDocumentsversion]
+	@CourseId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting,ISNULL(cs.isDeveloper,0) AS isDeveloper, cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id
+		WHERE cd.CourseId = @CourseId and  c.CourseType='other'
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+	union 
+
+		SELECT distinct c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			'true' AS isTraining, 'true' AS isPrinting,'true' as isDeveloper, cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0			
+		WHERE cd.CourseId =  @CourseId and  c.CourseType='staff'
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+-----------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfOldCourseDocuments]    Script Date: 20/6/2021 11:36:37 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetListOfOldCourseDocuments]
+Create PROC [sstmo].[GetListOfOldCourseDocuments]
+	
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	 SELECT c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting, cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id
+		WHERE  c.CourseType='other' and (cd.isOldDocument!='' or cd.isOldDocument != null)
+		
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+
+------------------------------------
+GO
+
+/****** Object:  Table [sstmo].[CourseTrackers]    Script Date: 22/6/2021 2:02:11 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[CourseTrackers](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[Courseid] [bigint] NULL,
+	[submitedUserId] [int] NULL,
+	[submitedDate] [date] NULL,
+	[SMEAssignUserId] [int] NULL,
+	[AssignDate] [date] NULL,
+	[SMEReviewUserId] [int] NULL,
+	[SMEReviewDate] [date] NULL,
+	[ImproveUserId] [int] NULL,
+	[ImproveDate] [date] NULL,
+	[SMEAcceptUserId] [int] NULL,
+	[SMEAcceptDate] [date] NULL,
+	[ReleseUserid] [int] NULL,
+	[ReleaseDate] [date] NULL,
+	[CreateDated] [datetime] NULL,
+	[UpdateDated] [datetime] NULL,
+ CONSTRAINT [PK_CourseTrackers] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+------------------------------------
+GO
+
+/****** Object:  StoredProcedure [sstmo].[DocumentTrack]    Script Date: 23/6/2021 1:56:41 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE  PROC [sstmo].[DocumentTrack]
+	@CourseId bigint
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	select t.id,t.Courseid,
+		isnull(t.submitedDate,null)submitedDate,isnull(u1.FirstName ,'')+' '+isnull(u1.LastName ,'')submitedUser,
+		isnull(t.AssignDate,null)AssignDate,isnull(u2.FirstName ,'')+' '+isnull(u2.LastName ,'')SMEAssignUser,
+		isnull(t.SMEReviewDate,null)SMEReviewDate,isnull(u3.FirstName ,'')+' '+isnull(u3.LastName ,'')SMEReviewUser,
+		isnull(t.ImproveDate,null)ImproveDate,isnull(u4.FirstName ,'')+' '+isnull(u4.LastName ,'')ImproveUser,
+		isnull(t.SMEAcceptDate,null)SMEAcceptDate,isnull(u5.FirstName ,'')+' '+isnull(u5.LastName ,'')SMEAcceptUser,
+		isnull(t.ReleaseDate,null)ReleaseDate,isnull(u6.FirstName ,'')+' '+isnull(u6.LastName ,'')ReleseUser
+	from [sstmo].[CourseTrackers] t
+	left join [sstmo].[User] u1 on u1.Id=t.submitedUserId
+	left join [sstmo].[User] u2 on u2.Id=t.SMEAssignUserId
+	left join [sstmo].[User] u3 on u3.Id=t.SMEReviewUserId
+	left join [sstmo].[User] u4 on u4.Id=t.ImproveUserId
+	left join [sstmo].[User] u5 on u5.Id=t.SMEAcceptUserId
+	left join [sstmo].[User] u6 on u6.Id=t.ReleseUserid
+
+	where Courseid=@CourseId
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+-------------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetComonCoursesList]    Script Date: 27/6/2021 1:11:50 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetComonCoursesList] 1,2
+ALTER  PROC [sstmo].[GetComonCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId  and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+				
+			END
+	else
+	IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive   and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+				
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+-----------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetCoursesList]    Script Date: 27/6/2021 1:47:38 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROC [sstmo].[GetCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and (c.CourseType=null or c.CourseType='other')
+					and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId 
+					 and (c.CourseType=null or c.CourseType='other')
+					 and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+
+	else
+
+		IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and (c.CourseType=null or c.CourseType='other')
+				and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+					cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive
+				 AND (c.CourseType=null or c.CourseType='other')
+				 AND MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+-------------------------
+GO
+insert into [sstmo].[Role](Id,RoleName,isActive,isDeleted,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy)values
+(10,'DownloadLogin',1,0,'2020-06-28 00:00:00.000',1,'2020-06-28 15:06:28.850',0);
+GO
+----------------------
+GO
+
+/****** Object:  Table [sstmo].[CourseDownloadUser]    Script Date: 28/6/2021 12:12:20 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[CourseDownloadUser](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[CourseId] [bigint] NULL,
+	[User_id] [bigint] NULL,
+	[CreatedOn] [datetime] NULL,
+	[CreatedBy] [bigint] NULL,
+	[UpdatedOn] [datetime] NULL,
+	[UpdatedBy] [bigint] NULL,
+ CONSTRAINT [PK_CourseDownloadUser] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+----------------------------
+=========================================================
+GO
+/****** Object:  StoredProcedure [sstmo].[GetCourseDownloadUserList]    Script Date: 28/6/2021 12:31:21 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	[sstmo].[GetCourseDownloadUserList] 17,1,37
+-- =============================================
+Create PROCEDURE [sstmo].[GetCourseDownloadUserList]
+	@UserId bigint,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS
+BEGIN
+	select du.Id, du.CourseId,du.User_id,c.CourseName from [sstmo].[Course] c
+		left join  [sstmo].[CourseDownloadUser] du  on c.Id=du.CourseId
+		WHERE 
+		c.isDeleted = 0 and (c.CourseType=null or c.CourseType='other')
+			and MasterCourse= @MasterCourse and MasterCoursId=@MasterCoursId
+
+END
+
+GO
+---------------------
+alter table [sstmo].[CourseSharing] add isDeveloper bit null default(0)
+GO
+update [sstmo].[CourseSharing] set isdeveloper=0
+GO
+-----------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListofSharedCourseDocs]    Script Date: 30/6/2021 12:03:05 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROC [sstmo].[GetListofSharedCourseDocs]
+	@CourseId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT c.Id AS CourseId, c.CourseName, cd.Id AS DocId, cd.DocName, cd.[Filename],
+	 cs.isTraining, cs.isPrinting,cs.isDeveloper,ISNULL(cd.UpdatedOn,getdate()) as dates
+		FROM sstmo.Course c
+			INNER JOIN sstmo.CourseDocument cd ON cd.CourseId = c.Id
+			INNER JOIN sstmo.CourseSharing cs ON cs.isDeleted = 0 AND cs.CourseId = c.Id AND cs.DocId = cd.Id
+		WHERE c.Id = @CourseId and (c.CourseType=null or c.CourseType='other') 
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+-------------------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfSharedCourses]    Script Date: 30/6/2021 12:05:31 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROC [sstmo].[GetListOfSharedCourses]
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT Id AS CourseId, CourseName, 
+			CAST(CASE WHEN (SELECT COUNT(isTraining) FROM sstmo.CourseSharing WHERE isDeleted = 0 AND CourseId = c.Id AND isTraining = 1) > 0 
+					  THEN 1 ELSE 0 END AS BIT) AS isTraining,
+			CAST(CASE WHEN (SELECT COUNT(isPrinting) FROM sstmo.CourseSharing WHERE isDeleted = 0 AND CourseId = c.Id AND isPrinting = 1) > 0
+					  THEN 1 ELSE 0 END AS BIT) AS isPrinting,
+			CAST(CASE WHEN (SELECT COUNT(isDeveloper) FROM sstmo.CourseSharing WHERE isDeleted = 0 AND CourseId = c.Id AND isDeveloper = 1) > 0
+					  THEN 1 ELSE 0 END AS BIT) AS isDeveloper
+		FROM sstmo.Course c
+		WHERE isDeleted = 0 AND isActive = 1 AND 
+			Id IN (SELECT CourseId FROM sstmo.CourseSharing WHERE isDeleted = 0 AND (isTraining = 1 OR isPrinting = 1))
+				and (c.CourseType=null or c.CourseType='other') and c.MasterCourse= @MasterCourse and 
+				c.MasterCoursId=@MasterCoursId
+
+
+	--SELECT Distinct c.Id as 'Courseid',c.CourseName as 'Course Name',
+	--		 'true' as isTraining ,'true' as isPrinting
+	--		 FROM   [sstmo].[Course] c 
+	--left join  [sstmo].[CourseSharing]  cs  ON cs.CourseId=c.Id
+	--WHERE   c.CourseType='other' and c.MasterCoursId=10018 and c.MasterCourse=@MasterCourse and 
+	--			c.MasterCoursId=@MasterCoursId 
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+------------------------------
+update [sstmo].[CourseStatus] set isDeleted=1 where id in (5,6)
+GO
+-----------------------------
+
+ALTER TABLE  [sstmo].[CourseDocVersion]
+ALTER COLUMN Version varchar(100);
+GO
+ALTER TABLE [sstmo].[CourseDocVersion]
+ADD revision nvarchar(100) NULL
+GO
+
+ALTER TABLE [sstmo].[CourseDocVersion]
+ADD revisionDate datetime NULL
+GO
+
+-----------------------
+--11-07-2021
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	sstmo.GetDashbord_chart
+-- =============================================
+ALTER PROCEDURE [sstmo].[GetDashbord_chart]
+		
+AS
+BEGIN
+
+	select TotalCourse,ReleaseCourse,PendingDeveloperCourse,PendingSMECourse,PendinSharingCourse from(
+	select (select count(*)   from [sstmo].[Course] where (AirLineCourseId!=0 and  AirLineCourseId is not null) and  isDeleted = 0 and CourseType='other' ) as TotalCourse,
+
+	(select count(*) ReleaseCourse  from [sstmo].[Course]  c
+		where  c.id  in (select courseId from  [sstmo].[CourseSharing]) and 
+	  c.statusid!=3  and c.statusid=7 and   c.isDeleted = 0 and c.CourseType='other' 
+	  and (AirLineCourseId!=0 and AirLineCourseId is not null)  ) as ReleaseCourse,
+
+	(select count(*) PendingDeveloperCourse  from [sstmo].[Course] 
+	where statusid!=3 and statusid!=7 and  isDeleted = 0 and CourseType='other' 
+	and (AirLineCourseId!=0 and AirLineCourseId is not null)  ) as PendingDeveloperCourse,
+
+	(select count(*) PendingSMECourse  from [sstmo].[Course] 
+	where statusid=3 and   statusid!=7 and  isDeleted = 0 and CourseType='other' 
+	and (AirLineCourseId!=0 and AirLineCourseId is not null) ) as PendingSMECourse,
+
+	(select count(*) PendinSharingCourse  from [sstmo].[Course]  c
+	where c.id not in (select courseId from  [sstmo].[CourseSharing]) and 
+	  c.statusid!=3 
+	 and c.statusid=7 and     c.isDeleted = 0 and c.CourseType='other'  
+	 and (AirLineCourseId!=0 and AirLineCourseId is not null) ) as PendinSharingCourse
+)
+as t1
+END
+----------------------------------------------------------------
+GO
+
+/****** Object:  Table [sstmo].[TrainerUploadDocument]    Script Date: 13/7/2021 1:04:41 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[TrainerUploadDocument](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[DocumentName] [nvarchar](50) NULL,
+	[DocumentPath] [nvarchar](100) NULL,
+	[Status] [int] NULL,
+	[CreatedOn] [datetime] NULL,
+	[CreatedBy] [bigint] NULL,
+	[UpdatedOn] [datetime] NULL,
+	[UpdatedBy] [bigint] NULL,
+	[isDeleted] [bit] NULL CONSTRAINT [DF_TrainerUploadDocument_isDeleted_1]  DEFAULT ((0)),
+	[TrainerId] [bigint] NULL CONSTRAINT [DF__TrainerUp__Train__39237A9A]  DEFAULT ((0)),
+	[MasterDoc] [bit] NULL,
+	[MasterDocId] [bigint] NULL,
+ CONSTRAINT [PK_TrainerUploadDocument] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [sstmo].[TrainerUploadDocument] ADD  CONSTRAINT [DF_TrainerUploadDocument_isDeleted_1]  DEFAULT ((0)) FOR [isDeleted]
+GO
+
+
+-------------------------------
+alter table [sstmo].[User] add Trainer_AirLine_id  bigint null DEFAULT  0 
+------------------------Above done in sstm test below pending-------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfUsers]    Script Date: 18/7/2021 11:01:50 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROC [sstmo].[GetListOfUsers]
+	@isActive INT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	IF @isActive = 2
+		BEGIN
+			SELECT u.Id, u.FirstName, u.LastName, u.Email, u.Mobile, u.isActive, tc.[Name] AS TrainingCenter, LTRIM(RTRIM(r.RoleName)) AS [Role],
+			u.Trainer_AirLine_id
+				FROM sstmo.[User] u
+					LEFT JOIN sstmo.TrainingCenter tc ON tc.Id = u.TrainingCenterId
+					LEFT JOIN sstmo.[Role] r ON r.id = u.RoleId
+				WHERE u.isDeleted = 0
+		END
+	ELSE
+		BEGIN
+			SELECT u.Id, u.FirstName, u.LastName, u.Email, u.Mobile, u.isActive, tc.[Name] AS TrainingCenter, 
+			LTRIM(RTRIM(r.RoleName)) AS [Role],u.Trainer_AirLine_id
+				FROM sstmo.[User] u
+					LEFT JOIN sstmo.TrainingCenter tc ON tc.Id = u.TrainingCenterId
+					LEFT JOIN sstmo.[Role] r ON r.id = u.RoleId
+				WHERE u.isDeleted = 0 AND u.isActive = @isActive
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+----------
+alter table [sstmo].[TrainerUploadDocument] add TrainerId bigint null default 0
+---------------
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:sstmo.Get_TrainerUploadDocument 0
+-- =============================================
+Create PROCEDURE sstmo.Get_TrainerUploadDocument
+	@status as int 
+AS
+BEGIN
+	select *,isnull(u.FirstName,'')+' '+ isnull(u.LastName,'') as TrainerName from [sstmo].[TrainerUploadDocument] t
+	left join [sstmo].[User] u on t.TrainerId=u.id 
+	where  t.isDeleted=0 and t.Status=@status  
+	order by t.id desc
+END
+GO
+------------------------
+alter table [sstmo].[Course] add AirLineCourseId bigint null default 0
+---------
+
+USE [SSTM_V2]
+GO
+/****** Object:  StoredProcedure [sstmo].[GetCoursesList]    Script Date: 20/7/2021 11:08:34 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROC [sstmo].[GetCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and (c.CourseType=null or c.CourseType='other')
+					and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId 
+					 and (c.CourseType=null or c.CourseType='other')
+					 and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+
+	else
+
+		IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and (c.CourseType=null or c.CourseType='other')
+				and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+					cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive
+				 AND (c.CourseType=null or c.CourseType='other')
+				 AND MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+---------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetStaffSubCoursesList]    Script Date: 20/7/2021 11:09:53 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetStaffCoursesList] 1,2,40
+ALTER PROC [sstmo].[GetStaffSubCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@useid BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	IF @isActive > 1
+		BEGIN
+			if @StatusId=0
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+						cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id 
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND  (c.CourseType=null or c.CourseType='staff') 
+					and  (@useid=0 or CHARINDEX(cast(@useid as nvarchar(100)),ISNULL(ca.StaffId,''))>0) 
+					and   c.MasterCourse= @MasterCourse and c.MasterCoursId=@MasterCoursId
+			else
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+						FROM sstmo.Course c
+							LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id 
+							LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+							LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+							Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+						WHERE c.isDeleted = 0 AND  (c.CourseType=null or c.CourseType='staff') 
+						and  (@useid=0 or CHARINDEX(cast(@useid as nvarchar(100)),ISNULL(ca.StaffId,''))>0) 
+						and   c.MasterCourse= @MasterCourse and  StatusId=@StatusId and
+						c.MasterCoursId=@MasterCoursId
+			end 
+		
+	ELSE
+		BEGIN
+		if @StatusId=0
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive 
+				 and (c.CourseType=null or c.CourseType='staff')
+				 and (@useid=0 or CHARINDEX(cast(@useid as nvarchar(100)),ISNULL(ca.StaffId,''))>0)
+				and   c.MasterCourse= @MasterCourse and 
+				c.MasterCoursId=@MasterCoursId
+				 --and  StatusId=@StatusId
+		else
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive 
+				 and (c.CourseType=null or c.CourseType='staff')
+				 and (@useid=0 or CHARINDEX(cast(@useid as nvarchar(100)),ISNULL(ca.StaffId,''))>0)
+				 and  StatusId=@StatusId and   c.MasterCourse= @MasterCourse and 
+				c.MasterCoursId=@MasterCoursId
+		END
+	
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+
+---------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetComonCoursesList]    Script Date: 20/7/2021 11:13:15 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetComonCoursesList] 1,2
+ALTER  PROC [sstmo].[GetComonCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId  and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+				
+			END
+	else
+	IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive   and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+				
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+---------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfSharedCourses]    Script Date: 21/7/2021 12:12:45 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROC [sstmo].[GetListOfSharedCourses]
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT Id AS CourseId, CourseName, 
+			CAST(CASE WHEN (SELECT COUNT(isTraining) FROM sstmo.CourseSharing WHERE isDeleted = 0 AND CourseId = c.Id AND isTraining = 1) > 0 
+					  THEN 1 ELSE 0 END AS BIT) AS isTraining,
+			CAST(CASE WHEN (SELECT COUNT(isPrinting) FROM sstmo.CourseSharing WHERE isDeleted = 0 AND CourseId = c.Id AND isPrinting = 1) > 0
+					  THEN 1 ELSE 0 END AS BIT) AS isPrinting,
+			CAST(CASE WHEN (SELECT COUNT(isDeveloper) FROM sstmo.CourseSharing WHERE isDeleted = 0 AND CourseId = c.Id AND isDeveloper = 1) > 0
+					  THEN 1 ELSE 0 END AS BIT) AS isDeveloper
+		FROM sstmo.Course c
+		WHERE isDeleted = 0 AND isActive = 1 AND 
+			Id IN (SELECT CourseId FROM sstmo.CourseSharing WHERE isDeleted = 0 AND (isTraining = 1 OR isPrinting = 1 Or isDeveloper=1))
+				and (c.CourseType=null or c.CourseType='other') and c.MasterCourse= @MasterCourse and 
+				c.MasterCoursId=@MasterCoursId
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+
+GO
+----------------------------------------------------
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+alter PROCEDURE sstmo.Today_Class_Doc
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT Id AS CourseId, CourseName,AirLineCourseId
+		FROM sstmo.Course c
+		WHERE isDeleted = 0 AND isActive = 1
+				and (c.CourseType=null or c.CourseType='other') 
+				--and c.MasterCourse= @MasterCourse and 
+				--c.MasterCoursId=@MasterCoursId
+END
+GO
+--------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListof_Today_doc_CourseDocs]    Script Date: 26/8/2021 1:02:33 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create PROC [sstmo].[GetListof_Today_doc_CourseDocs]
+	@CourseId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT c.Id AS CourseId, c.CourseName, cd.Id AS DocId, cd.DocName, cd.[Filename],
+	cs.isTraining, cs.isPrinting,cs.isDeveloper
+		FROM sstmo.Course c
+			INNER JOIN sstmo.CourseDocument cd ON cd.CourseId = c.Id
+			INNER JOIN sstmo.CourseSharing cs ON cs.isDeleted = 0 AND cs.CourseId = c.Id AND cs.DocId = cd.Id
+		WHERE c.Id = @CourseId and (c.CourseType=null or c.CourseType='other') 
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+-------------------------------------
+---------------------------
+/****** Object:  Table [sstmo].[TrainnerMacAddress]    Script Date: 5/08/2021 10:56:55 pm ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[TrainnerMacAddress](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[MacAddress] [nvarchar](500) NULL,
+ CONSTRAINT [PK_TrainnerMacAddress] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+---------------------------------------------
+--------pending below
+
+CREATE TABLE [sstmo].[TrainerUploadDocument](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[DocumentName] [nvarchar](50) NULL,
+	[DocumentPath] [nvarchar](100) NULL,
+	[Status] [int] NULL,
+	[CreatedOn] [datetime] NULL,
+	[CreatedBy] [bigint] NULL,
+	[UpdatedOn] [datetime] NULL,
+	[UpdatedBy] [bigint] NULL,
+	[isDeleted] [bit] NULL CONSTRAINT [DF_TrainerUploadDocument_isDeleted_1]  DEFAULT ((0)),
+	[TrainerId] [bigint] NULL CONSTRAINT [DF__TrainerUp__Train__39237A9A]  DEFAULT ((0)),
+	[MasterDoc] [bit] NULL,
+	[MasterDocId] [bigint] NULL,
+ CONSTRAINT [PK_TrainerUploadDocument] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+Go
+---------------------------------31-08-2021-----------------
+insert into [sstmo].[Role](Id,RoleName,isActive,isDeleted,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy)
+values(11,'AEB',1,0,'2021-08-31 00:00:00.000',1,'2021-08-31 00:00:00.000',0)
+GO
+--------------------------
+/****** Object:  Table [sstmo].[TrainerQPUpload]    Script Date: 1/09/2021 2:04:59 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [sstmo].[TrainerQPUpload](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[TrainerId] [bigint] NULL,
+	[DocumentName] [varchar](100) NULL,
+	[DocumentPath] [varchar](100) NULL,
+	[Status] [int] NULL CONSTRAINT [DF_Table_1_status]  DEFAULT ((0)),
+	[Comment] [nvarchar](500) NULL,
+	[isShared] [bit] NULL CONSTRAINT [DF_Table_1_isshared]  DEFAULT ((0)),
+	[SMEId] [bigint] NULL DEFAULT ((0)),
+	[CreatedOn] [datetime] NULL,
+	[CreatedBy] [bigint] NULL,
+	[UpdatedOn] [datetime] NULL,
+	[UpdatedBy] [bigint] NULL,
+ CONSTRAINT [PK_TrainerQPUpload] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+SET ANSI_PADDING OFF
+GO
+----------------------------------------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[Get_trainer_QP_List]    Script Date: 8/09/2021 12:17:53 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	sstmo.Get_trainer_QP_List 1
+-- =============================================
+Create PROCEDURE [sstmo].[Get_trainer_QP_List]
+	@Trainer as bigint,
+	@smeid as bigint
+AS
+BEGIN
+	if @smeid=0 
+		begin
+		if @Trainer=0
+			begin
+				select t.*,u.FirstName,u.LastName from [sstmo].[TrainerQPUpload] t
+				left join [sstmo].[User] u on u.Id=t.trainerid order by t.id desc
+			End
+		else
+			begin
+				select t.*,u.FirstName,u.LastName from [sstmo].[TrainerQPUpload] t
+				left join [sstmo].[User] u on u.Id=t.trainerid
+				where t.trainerid=@Trainer order by t.id desc
+			end
+		end
+	else
+		begin
+				select t.*,u.FirstName,u.LastName from [sstmo].[TrainerQPUpload] t
+				left join [sstmo].[User] u on u.Id=t.trainerid
+				where t.SMEId=@smeid order by t.id desc
+			end
+END
+GO
+------------------------------------1-09-2021----------
+GO
+/****** Object:  StoredProcedure [sstmo].[Get_Iso_Edu_ComonCoursesList_All]    Script Date: 1/09/2021 11:25:41 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetComonCoursesList] 1,2
+Create PROC [sstmo].[Get_Iso_Edu_ComonCoursesList_All]
+	@isActive INT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	IF @isActive > 1
+		BEGIN
+		select *from sstmo.Course
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and CourseType='isoedu'
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive   and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and CourseType='isoedu'
+				
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+----------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[Get_Iso_Edu_CoursesList]    Script Date: 1/09/2021 11:29:41 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create PROC [sstmo].[Get_Iso_Edu_CoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and c.CourseType='isoedu'
+					and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId 
+					 and  c.CourseType='isoedu'
+					 and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId
+			END
+
+	else
+
+		IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and  c.CourseType='isoedu'
+				and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+					cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive
+				 AND  c.CourseType='isoedu'
+				 AND MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+----------------------------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[Get_Iso_Edu_ComonCoursesList]    Script Date: 1/09/2021 11:32:30 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetComonCoursesList] 1,2
+Create  PROC [sstmo].[Get_Iso_Edu_ComonCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId and c.CourseType='isoedu'
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId  and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId and c.CourseType='isoedu'
+				
+			END
+	else
+	IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and c.CourseType='isoedu'
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive   and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and c.CourseType='isoedu'
+				
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+---------------------------------------------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfCourseDocuments]    Script Date: 2/09/2021 12:01:56 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetListOfCourseDocuments] 57,0
+ALTER PROC [sstmo].[GetListOfCourseDocuments]
+	@CourseId BIGINT,
+	@MasterCourse bit
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	
+	SELECT  c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting,ISNULL(cs.isDeveloper,0) AS isDeveloper, cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate-- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1
+		WHERE cd.CourseId = @CourseId and c.MasterCourse= @MasterCourse and  c.CourseType='other' 
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+		union 
+
+		SELECT distinct c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			'true' AS isTraining, 'true' AS isPrinting,'true' as isDeveloper,  cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate -- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1 -- added 8-7-2021
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0			
+		WHERE cd.CourseId =  @CourseId and  c.CourseType='staff' and  c.MasterCourse= @MasterCourse
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+
+		union 
+
+		SELECT distinct c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			'true' AS isTraining, 'true' AS isPrinting,'true' as isDeveloper,  cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate -- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1 -- added 8-7-2021
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0			
+		WHERE cd.CourseId =  @CourseId and  c.CourseType='isoedu' and  c.MasterCourse= @MasterCourse
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+------------------------------------------7-09-2021-----------
+GO
+ALTER TABLE [sstmo].[TrainerQPUpload] ADD SMEId bigint  NULL
+GO
+------------------
+/****** Object:  Table [sstmo].[TrainerQP_Shared_Student]    Script Date: 8/09/2021 1:59:55 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [sstmo].[TrainerQP_Shared_Student](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[QP_id] [bigint] NULL,
+	[course_id] [varchar](50) NULL,
+	[batch_id] [varchar](50) NULL,
+	[course_name] [nvarchar](200) NULL,
+	[batch_name] [nvarchar](200) NULL,
+ CONSTRAINT [PK_TrainerQP_Shared_Student] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+----------------09-09-2021----------
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	Get_QP_Course_and_Batch_id 347,292.0
+-- =============================================
+
+create PROCEDURE sstmo.Get_QP_Course_and_Batch_id
+	@courseid as nvarchar(100),
+	@batchid as nvarchar(100)
+AS
+BEGIN
+	select course_id
+	batch_id,
+	course_name,
+	DocumentName,
+	'https://sstmtest.s3.ap-southeast-1.amazonaws.com/TrainerQP/'+DocumentPath as DocumentUrl
+	from  [sstmo].[TrainerQP_Shared_Student] sq 
+left join [sstmo].[TrainerQPUpload] q  on q.id=Qp_id
+	where course_id=@courseid and batch_id=@batchid
+END
+GO
+-----------------------------------7-10-2021-----------
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfUsers]    Script Date: 7/10/2021 10:31:35 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROC [sstmo].[GetListOfUsers]
+	@isActive INT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	IF @isActive = 2
+		BEGIN
+			SELECT u.Id, u.FirstName, u.LastName, u.Email, u.Mobile, u.isActive, tc.[Name] AS TrainingCenter, LTRIM(RTRIM(r.RoleName)) AS [Role],
+			u.Trainer_AirLine_id
+				FROM sstmo.[User] u
+					LEFT JOIN sstmo.TrainingCenter tc ON tc.Id = u.TrainingCenterId
+					LEFT JOIN sstmo.[Role] r ON r.id = u.RoleId
+				WHERE u.isDeleted = 0 and u.RoleId!=0
+		END
+	ELSE
+		BEGIN
+			SELECT u.Id, u.FirstName, u.LastName, u.Email, u.Mobile, u.isActive, tc.[Name] AS TrainingCenter, 
+			LTRIM(RTRIM(r.RoleName)) AS [Role],u.Trainer_AirLine_id
+				FROM sstmo.[User] u
+					LEFT JOIN sstmo.TrainingCenter tc ON tc.Id = u.TrainingCenterId
+					LEFT JOIN sstmo.[Role] r ON r.id = u.RoleId
+				WHERE u.isDeleted = 0 AND u.isActive = @isActive and u.RoleId!=0
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+
+
+
+----------------------------11-10-2021 below pending---------------
+/****** Object:  Table [sstmo].[TrainerQP_Level_Approval]    Script Date: 12/10/2021 11:16:14 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [sstmo].[TrainerQP_Level_Approval](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[QP_Id] [bigint] NULL,
+	[Level1_User_id] [bigint] NULL,
+	[Level1_Approve_date] [datetime] NULL,
+	[Level1_Comment] [nvarchar](500) NULL,
+	[Level1_IsAccept] [varchar](50) NULL,
+	[Level2_User_id] [bigint] NULL,
+	[Level2_Approve_date] [datetime] NULL,
+	[Level2_Comment] [nvarchar](500) NULL,
+	[Level2_IsAccept] [varchar](50) NULL,
+	[Level3_User_id] [bigint] NULL,
+	[Level3_Approve_date] [datetime] NULL,
+	[Level3_Comment] [nvarchar](500) NULL,
+	[Level3_IsAccept] [varchar](50) NULL,
+ CONSTRAINT [PK_sstm.TrainerQP_Level_Approval] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+GO
+------------------------------------------------
+insert into [sstmo].[Role](id,RoleName,isActive,isDeleted,CreatedOn,CreatedBy)
+values(12,'QP_Approval_Level1','True','False','2020-10-11 00:00:00.000',1)
+GO
+insert into [sstmo].[Role](id,RoleName,isActive,isDeleted,CreatedOn,CreatedBy)
+values(13,'QP_Approval_Level2','True','False','2020-10-11 00:00:00.000',1)
+GO
+
+insert into [sstmo].[Role](id,RoleName,isActive,isDeleted,CreatedOn,CreatedBy)
+values(14,'QP_Approval_Level3','True','False','2020-10-11 00:00:00.000',1)
+
+GO 
+insert into [sstmo].[Role](id,RoleName,isActive,isDeleted,CreatedOn,CreatedBy)
+values(15,'Aassociate Developer','True','False','2020-12-31 00:00:00.000',1)
+------------------------------------12-10-2021-------------
+/****** Object:  StoredProcedure [sstmo].[sp_get_QP_Approval_list]    Script Date: 12/10/2021 10:47:46 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	sp_get_QP_Approval_list
+-- =============================================
+create PROCEDURE [sstmo].[sp_get_QP_Approval_list]
+	
+AS
+BEGIN
+	select distinct TQP.*,level1_user.FirstName as l1_Username,level2_user.FirstName as l2_Username
+		,level3_user.FirstName as l3_Username,
+		l1.* from [sstmo].[TrainerQPUpload] TQP
+		left join [sstmo].[TrainerQP_Level_Approval] l1 on l1.QP_Id=TQP.id
+		left join [sstmo].[User] level1_user on level1_user.Id=l1.Level1_User_id
+		left join [sstmo].[User] level2_user on level2_user.Id=l1.Level2_User_id
+		left join [sstmo].[User] level3_user on level3_user.Id=l1.Level3_User_id
+		where Status=3 and isShared=1
+END
+
+----------------------30-10-2021-----------------
+/****** Object:  Table [sstmo].[QPQuestionMaster]    Script Date: 30/10/2021 1:44:21 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[QPQuestionMaster](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[course_name] [nvarchar](max) NULL,
+	[course_code] [nvarchar](max) NULL,
+	[module_name] [nvarchar](50) NULL,
+	[trainerid] [bigint] NULL,
+	[staticdata] [nvarchar](max) NULL,
+	[footer] [nvarchar](max) NULL,
+ CONSTRAINT [PK_QPQuestionMaster] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+----------------------
+
+/****** Object:  Table [sstmo].[QPQuestion_data]    Script Date: 30/10/2021 1:42:14 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[QPQuestion_data](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[master_id] [bigint] NULL,
+	[Question] [text] NULL,
+	[ans1] [nvarchar](max) NULL,
+	[ans2] [nvarchar](max) NULL,
+	[ans3] [nvarchar](max) NULL,
+	[ans4] [nvarchar](max) NULL,
+ CONSTRAINT [PK_QPQuestion_data] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+-------intro page start 22-11-2021-------------------
+
+GO
+/****** Object:  Table [sstmo].[StudentFeedback]    Script Date: 22-11-2021 21:40:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [sstmo].[StudentFeedback](
+	[FeedbackId] [bigint] IDENTITY(1,1) NOT NULL,
+	[StudentName] [nvarchar](300) NOT NULL,
+	[StudentId] [bigint] NULL,
+	[BatchId] [bigint] NULL,
+	[CourseId] [bigint] NOT NULL,
+	[Rating] [nvarchar](max) NULL,
+	[Rating_Description] [nvarchar](max) NULL,
+	[IsActive] [bit] NULL,
+	[CreatedOn] [datetime] NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+ CONSTRAINT [PK_StudentFeedback] PRIMARY KEY CLUSTERED 
+(
+	[FeedbackId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON ) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [sstmo].[StudentIntroPage]    Script Date: 22-11-2021 21:40:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [sstmo].[StudentIntroPage](
+	[StudentIntroPageId] [bigint] IDENTITY(1,1) NOT NULL,
+	[StudentId] [bigint] NULL,
+	[CourseId] [bigint] NULL,
+	[BatchId] [nvarchar](max) NULL,
+	[StudentName] [nvarchar](max) NULL,
+	[CompanyName] [nvarchar](max) NULL,
+	[IndustryType] [nvarchar](max) NULL,
+	[Qualification] [nvarchar](max) NULL,
+	[PurposeOfStudy] [nvarchar](max) NULL,
+	[StudentImage] [nvarchar](max) NULL,
+	[IsActive] [bit] NOT NULL,
+	[CreatedOn] [datetime] NOT NULL,
+ CONSTRAINT [PK__StudentI__35E25F4F56AB5201] PRIMARY KEY CLUSTERED 
+(
+	[StudentIntroPageId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON ) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [sstmo].[StudentNotification]    Script Date: 22-11-2021 21:40:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [sstmo].[StudentNotification](
+	[NotificationId] [uniqueidentifier] NOT NULL,
+	[StudentId] [bigint] NULL,
+	[NotificationType] [nvarchar](50) NULL,
+	[DeviceId] [nvarchar](max) NULL,
+	[DeviceType] [nvarchar](100) NULL,
+	[MobileNo] [nvarchar](20) NULL,
+	[Message] [nvarchar](max) NULL,
+	[ToAddress] [nvarchar](500) NULL,
+	[Subject] [nvarchar](4000) NULL,
+	[Body] [nvarchar](max) NULL,
+	[IsSend] [bit] NULL,
+	[IsRecieved] [bit] NULL,
+	[SessionStartTime] [time](0) NULL,
+	[SessionExpiryTime] [time](0) NULL,
+	[Link] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NULL,
+	[UpdatedOn] [datetime] NULL,
+ CONSTRAINT [PK__StudentN__20CF2E127D407D94] PRIMARY KEY CLUSTERED 
+(
+	[NotificationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON ) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+/****** Object:  Table [sstmo].[StudentQP_Choice]    Script Date: 22-11-2021 21:40:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [sstmo].[StudentQP_Choice](
+	[StudentQPChoiceId] [bigint] IDENTITY(1,1) NOT NULL,
+	[StudentQpId] [bigint] NOT NULL,
+	[IsText] [bit] NOT NULL,
+	[QpChoice] [nvarchar](max) NOT NULL,
+	[Orderby] [int] NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[CreatedBy] [bigint] NOT NULL,
+	[UpdatedBy] [bigint] NULL,
+	[UpdatedOn] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[StudentQPChoiceId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [sstmo].[StudentQP_Written]    Script Date: 22-11-2021 21:40:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [sstmo].[StudentQP_Written](
+	[StudentQpWrittenId] [bigint] IDENTITY(1,1) NOT NULL,
+	[StudentQpId] [bigint] NULL,
+	[StudentNo] [nvarchar](50) NULL,
+	[QuestionNo] [int] NULL,
+	[CourseId] [bigint] NULL,
+	[ChapterId] [bigint] NULL,
+	[Choice] [nvarchar](max) NULL,
+	[IsActive] [bit] NULL,
+	[CreatedOn] [datetime] NULL,
+ CONSTRAINT [PK_StudentQP_Written] PRIMARY KEY CLUSTERED 
+(
+	[StudentQpWrittenId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON ) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [sstmo].[StudentQP_Choice]  WITH CHECK ADD  CONSTRAINT [FK_StudentQP_Choice_StudentQP_StudentQpId] FOREIGN KEY([StudentQpId])
+REFERENCES [sstmo].[StudentQP] ([StudentQpId])
+GO
+ALTER TABLE [sstmo].[StudentQP_Choice] CHECK CONSTRAINT [FK_StudentQP_Choice_StudentQP_StudentQpId]
+GO
+
+
+--------------procedure intro ----------
+
+
+GO
+
+/****** Object:  StoredProcedure [dbo].[SP_Get_StudentExamPercentOnCourse]    Script Date: 23/11/2021 10:50:41 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[SP_Get_StudentExamPercentOnCourse]  //old
+  @StudentNo nvarchar(20)=null,
+  @CourseId nvarchar(20)=null,
+  @chapterId nvarchar(20)=null,
+  @CurrentDate datetime=null
+AS
+BEGIN
+
+ create table #ExamPercentageTemp(
+    TotalWritten decimal(4,2),
+	BasedOnChoice decimal(4,2)
+ )
+    declare @TotalStdQpWritCIDndStdNo int =null,@TotalStdQpWritCIDndStdNoch int=null
+    set @TotalStdQpWritCIDndStdNo= (select count( *) TotalWritten from [sstmo].[StudentQP_Written] StdQPWR 
+    join [sstmo].[StudentQP] StdQP on StdQPWR.StudentQpId=StdQP.StudentQpId
+    where StdQPWR.StudentNo=@StudentNo and StdQPWR.[CourseId]=@CourseId and StdQPWR.ChapterId=@chapterId  and cast(StdQPWR.CreatedOn as date)=@CurrentDate)
+	
+	set @TotalStdQpWritCIDndStdNoch= (select count( *) BasedOnChoice  from [sstmo].[StudentQP_Written] StdQPWR 
+    join [sstmo].[StudentQP] StdQP on StdQPWR.StudentQpId=StdQP.StudentQpId
+    where StdQPWR.StudentNo=@StudentNo and StdQPWR.[CourseId]=@CourseId and StdQPWR.ChapterId=@chapterId and StdQPWR.Choice=StdQP.Correct_Choice
+	and cast(StdQPWR.CreatedOn as date)=@CurrentDate)
+	
+    insert into #ExamPercentageTemp (TotalWritten,BasedOnChoice)values (@TotalStdQpWritCIDndStdNo,@TotalStdQpWritCIDndStdNoch)  
+	declare @totalWritten int
+	set @totalWritten =(select TotalWritten from #ExamPercentageTemp)
+	IF @totalWritten!=0
+		select cast(BasedOnChoice as float)/cast (TotalWritten as float)*100 as ExamPercentage from #ExamPercentageTemp
+	ELSE
+		select BasedOnChoice,TotalWritten ExamPercentage from #ExamPercentageTemp
+END
+
+GO
+
+  
+CREATE PROCEDURE [dbo].[SP_Get_StudentExamPercentOnCourse]      //new
+  @StudentNo nvarchar(20)=null,    
+  @CourseId nvarchar(20)=null,    
+  @chapterId nvarchar(20)=null,    
+  @CurrentDate datetime=null    
+AS    
+BEGIN    
+    
+ create table #ExamPercentageTemp(    
+    TotalWritten decimal(4,2),    
+ BasedOnChoice decimal(4,2)    
+ )    
+    declare @TotalStdQpWritCIDndStdNo int =null,@TotalStdQpWritCIDndStdNoch int=null    
+    set @TotalStdQpWritCIDndStdNo= (select count( *) TotalWritten from [sstmo].[StudentQP_Written] StdQPWR     
+    join [sstmo].[StudentQP] StdQP on StdQPWR.StudentQpId=StdQP.StudentQpId    
+    where StdQPWR.StudentNo=@StudentNo and StdQPWR.[CourseId]=@CourseId and StdQPWR.ChapterId=@chapterId  and cast(StdQPWR.CreatedOn as date)=@CurrentDate)    
+     
+ set @TotalStdQpWritCIDndStdNoch= (select count( *) BasedOnChoice  from [sstmo].[StudentQP_Written] StdQPWR     
+    join [sstmo].[StudentQP] StdQP on StdQPWR.StudentQpId=StdQP.StudentQpId    
+    where StdQPWR.StudentNo=@StudentNo and StdQPWR.[CourseId]=@CourseId and StdQPWR.ChapterId=@chapterId and StdQPWR.Choice=StdQP.Correct_Choice    
+ and cast(StdQPWR.CreatedOn as date)=@CurrentDate)    
+     
+    insert into #ExamPercentageTemp (TotalWritten,BasedOnChoice)values (@TotalStdQpWritCIDndStdNo,@TotalStdQpWritCIDndStdNoch)      
+ declare @totalWritten int    
+ set @totalWritten =(select TotalWritten from #ExamPercentageTemp)    
+ IF @totalWritten!=0    
+   select convert(nvarchar,(convert(float, BasedOnChoice)/convert (float,TotalWritten)*100)) as ExamPercentage from #ExamPercentageTemp  
+   --select str(convert(nvarchar(50), (cast(BasedOnChoice as float)/cast (TotalWritten as float)*100)),20,16) as [16_digit] from #ExamPercentageTemp   
+ ELSE    
+  select BasedOnChoice,TotalWritten ExamPercentage from #ExamPercentageTemp    
+END 
+
+GO
+
+----------------------------------
+
+GO
+
+/****** Object:  StoredProcedure [dbo].[SP_Get_OverallStudentMarksBasedOnCourse]    Script Date: 23/11/2021 10:50:15 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROC [dbo].[SP_Get_OverallStudentMarksBasedOnCourse]  //Old
+  @CourseId nvarchar(20)=null,
+  @chapterId nvarchar(20)=null,
+  @CurrentDate datetime=null
+As
+Begin
+    create table #StudentMark(
+		StudentNo nvarchar(20),
+		PerQuestionMark int,
+		Choice nvarchar(10),
+		Correct_Choice nvarchar(10)
+	)
+    insert into #StudentMark select StdQPWR.StudentNo,StdQP.PerQuestionMark,Choice,Correct_Choice from [sstmo].[StudentQP_Written] StdQPWR 
+    join [sstmo].[StudentQP] StdQP on StdQPWR.StudentQpId=StdQP.StudentQpId
+    where StdQPWR.[CourseId]=@CourseId and StdQPWR.ChapterId=@chapterId and cast(StdQPWR.CreatedOn as date)=@CurrentDate
+
+	select StudentNo,sum(PerQuestionMark) as TotalCorrectMark,(select sum(PerQuestionMark) TotalMark from #StudentMark) TotalMark
+	from #StudentMark where Choice=Correct_Choice group by  StudentNo
+	
+end
+
+
+CREATE PROC [dbo].[SP_Get_OverallStudentMarksBasedOnCourse] //new
+  @CourseId NVARCHAR(20)	=	NULL,  
+  @chapterId NVARCHAR(20)	=	NULL,  
+  @CurrentDate DATETIME		=	NULL  
+As  
+Begin
+
+	SELECT StudentNo, CONVERT(NVARCHAR,TotalMarks) AS TotalMark, CONVERT(NVARCHAR,SUM(TotalCorrectMark)) AS TotalCorrectMark 
+	FROM 
+	(SELECT ans.StudentNo, qus.TotalMarks,
+		CASE WHEN  qus.Correct_Choice = ans.Choice THEN  qus.PerQuestionMark 
+		ELSE 0 END [TotalCorrectMark]
+	FROM sstmo.studentqp qus 
+	INNER JOIN sstmo.studentqp_written ans ON ans.StudentQpId = qus.StudentQpId
+	WHERE ans.[CourseId]= @CourseId AND ans.ChapterId=@chapterId AND CAST(ans.CreatedOn AS DATE)= cast(@CurrentDate AS DATE)
+	) mark
+	GROUP BY  StudentNo, TotalMarks
+end  
+
+GO
+------------------------------
+GO
+////old//////////////
+/****** Object:  StoredProcedure [dbo].[SP_Get_ExamMarkBasedOnCourse]    Script Date: 23/11/2021 10:49:53 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE procedure [dbo].[SP_Get_ExamMarkBasedOnCourse]--'530',1,'2021-11-20' //old
+@CourseId int=null,
+@ChapterId int=null,
+@CurrentDate date=null
+as
+
+begin
+    create table #StudentMark(
+		StudentNo nvarchar(20),
+		PerQuestionMark int,
+		Correct_Choice nvarchar(3),
+		Choice nvarchar(3)
+	)
+	create table #StdMarks(
+	    StudentNo nvarchar(20),
+		PerQuestionMark int,
+		TotalMark int
+	)
+	declare @SQLQuries nvarchar(1200)
+	
+	 insert into #StudentMark (StudentNo,PerQuestionMark,Correct_Choice,Choice)  select StudentNo,PerQuestionMark,Correct_Choice,StdQPWrt.Choice  from [sstmo].[StudentQP_Written] StdQPWrt
+	 join [sstmo].[StudentQP] StdQP on StdQPWrt.StudentQpId=StdQP.StudentQpId and StdQPWrt.CourseId=@CourseId and 
+	 StdQPWrt.ChapterId= @ChapterId and cast(StdQPWrt.CreatedOn as date)= cast(@CurrentDate as date)
+	 
+	 insert into #StdMarks (StudentNo,PerQuestionMark) select StudentNo,Sum(PerQuestionMark) StudentMarks from #StudentMark where Correct_Choice=Choice  group by StudentNo
+	 
+	 insert into #StdMarks (StudentNo,TotalMark) select StudentNo,Sum(PerQuestionMark) from #StudentMark group by StudentNo
+	 
+	select * from(select StudentNo , sum(PerQuestionMark) PerQuestionMark,sum(TotalMark) TotalMark from #StdMarks  group by StudentNo) as StdTotalRecord
+	where PerQuestionMark=TotalMark
+
+end
+GO
+//////////////////new //////////////
+
+/****** Object:  StoredProcedure [dbo].[SP_Get_ExamMarkBasedOnCourse]    Script Date: 20/11/2021 12:40:04 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [dbo].[SP_Get_ExamMarkBasedOnCourse] '351',1,'2022-01-12'
+alter procedure [dbo].[SP_Get_ExamMarkBasedOnCourse] --'351',1,'2022-01-12'
+@CourseId int=null,
+@ChapterId int=null,
+@CurrentDate date=null
+as
+
+begin
+   select StdQPWrt.StudentNo,cast(Sum(PerQuestionMark) as nvarchar(100)) PerQuestionMark,convert(nvarchar(100), Sum(CASE WHEN  StdQPWrt.Choice = Correct_Choice THEN PerQuestionMark ELSE 0 END)) as TotalMark
+	from [sstmo].[StudentQP_Written] StdQPWrt
+	join [sstmo].[StudentQP] StdQP on StdQPWrt.StudentQpId=StdQP.StudentQpId and StdQPWrt.CourseId= @CourseId and 
+	StdQPWrt.ChapterId= @ChapterId 
+	and cast(StdQPWrt.CreatedOn as date)= cast(getdate() as date) 
+	GROUP BY StudentNo
+
+end
+GO
+
+//////////////////
+
+CREATE procedure [dbo].[SP_Get_ExamMarkBasedOnCourse]--'530',1,'2021-11-20'  //new 
+@CourseId int=null,  
+@ChapterId int=null,  
+@CurrentDate date=null  
+as  
+  
+begin  
+    create table #StudentMark(  
+  StudentNo nvarchar(20),  
+  PerQuestionMark int,  
+  Correct_Choice nvarchar(3),  
+  Choice nvarchar(3)  
+ )  
+ create table #StdMarks(  
+     StudentNo nvarchar(20),  
+  PerQuestionMark int,  
+  TotalMark int  
+ )  
+ declare @SQLQuries nvarchar(1200)  
+   
+  insert into #StudentMark (StudentNo,PerQuestionMark,Correct_Choice,Choice)  select StudentNo,PerQuestionMark,Correct_Choice,StdQPWrt.Choice  from [sstmo].[StudentQP_Written] StdQPWrt  
+  join [sstmo].[StudentQP] StdQP on StdQPWrt.StudentQpId=StdQP.StudentQpId and StdQPWrt.CourseId=@CourseId and   
+  StdQPWrt.ChapterId= @ChapterId and cast(StdQPWrt.CreatedOn as date)= cast(@CurrentDate as date)  
+    
+  insert into #StdMarks (StudentNo,PerQuestionMark) select StudentNo,Sum(PerQuestionMark) StudentMarks from #StudentMark where Correct_Choice=Choice  group by StudentNo  
+    
+  insert into #StdMarks (StudentNo,TotalMark) select StudentNo,Sum(PerQuestionMark) from #StudentMark group by StudentNo  
+    
+ select * from(select StudentNo , convert(nvarchar,sum(PerQuestionMark)) PerQuestionMark,convert(nvarchar,sum(TotalMark)) TotalMark from #StdMarks  group by StudentNo) as StdTotalRecord  
+ where PerQuestionMark=TotalMark  
+  
+end  
+
+
+GO
+
+/** Object:  Table [sstmo].[StudentQP]    Script Date: 21/12/2021 12:26:26 PM **/
+ALTER TABLE [sstmo].[StudentQP_Choice] DROP CONSTRAINT [FK_StudentQP_Choice_StudentQP_StudentQpId]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[sstmo].[StudentQP]') AND type in (N'U'))
+DROP TABLE [sstmo].[StudentQP]
+GO
+
+/** Object:  Table [sstmo].[StudentQP]    Script Date: 21/12/2021 12:26:26 PM **/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[StudentQP](
+	[StudentQpId] [bigint] IDENTITY(1,1) NOT NULL,
+	[QuestionNo] [int] NULL,
+	[CourseId] [bigint] NULL,
+	[ChapterId] [bigint] NULL,
+	[IsQp] [bit] NULL,
+	[Qp_Doc_Name] [nvarchar](300) NULL,
+	[Question] [nvarchar](max) NULL,
+	[Is_Url_Choice_A] [bit] NULL,
+	[Choice_A] [nvarchar](max) NULL,
+	[Choice_A_Url] [nvarchar](max) NULL,
+	[Is_Url_Choice_B] [bit] NULL,
+	[Choice_B] [nvarchar](max) NULL,
+	[Choice_B_Url] [nvarchar](max) NULL,
+	[Is_Url_Choice_C] [bit] NULL,
+	[Choice_C] [nvarchar](max) NULL,
+	[Choice_C_Url] [nvarchar](max) NULL,
+	[Is_Url_Choice_D] [bit] NULL,
+	[Choice_D] [nvarchar](max) NULL,
+	[Choice_D_Url] [nvarchar](max) NULL,
+	[Correct_Choice] [nvarchar](max) NULL,
+	[PerQuestionMark] [bigint] NULL,
+	[TotalMarks] [bigint] NULL,
+	[IsActive] [bit] NULL,
+	[CreatedBy] [bigint] NULL,
+	[CreatedOn] [datetime] NULL,
+	[UpdatedBy] [bigint] NULL,
+	[UpdatedOn] [datetime] NULL,
+ CONSTRAINT [PK_StudentQP] PRIMARY KEY CLUSTERED 
+(
+	[StudentQpId] ASC
+
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+----------ENd Procedure-----------
+------------End Intro page -------------------------
+
+
+
+-------------14-12-2021 ----------------
+
+
+GO
+
+/****** Object:  Table [sstmo].[Course_Reminder]    Script Date: 22/12/2021 12:01:41 pm ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [sstmo].[Course_Reminder](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[li_course_id] [bigint] NULL,
+	[DeveloperId] [bigint] NULL CONSTRAINT [DF__Course_Re__Devel__278EDA44]  DEFAULT ((0)),
+	[course_type] [nvarchar](500) NULL,
+	[course_level] [nvarchar](500) NULL,
+	[course_type_name] [nvarchar](500) NULL,
+	[course_level_name] [nvarchar](500) NULL,
+	[renewal_reminder] [varchar](500) NULL,
+	[course_name] [varchar](500) NULL,
+	[reminder_days] [int] NULL,
+	[course_duration] [varchar](50) NULL,
+	[remark] [varchar](500) NULL,
+	[doc_file] [varchar](500) NULL,
+	[renew_date] [date] NULL,
+	[is_renew_required] [bit] NULL CONSTRAINT [DF_Course_Reminder_is_renew_required]  DEFAULT ((0)),
+	[total_renew_counter] [int] NULL CONSTRAINT [DF_Course_Reminder_renew_counter]  DEFAULT ((0)),
+	[reminder_created_date] [date] NULL CONSTRAINT [DF_Course_Reminder_created_date]  DEFAULT (getdate()),
+	[course_proposal_link] [nvarchar](max) NULL CONSTRAINT [DF_Course_Reminder_course_proposal]  DEFAULT ((0)),
+	[need_analysis_link] [nvarchar](max) NULL,
+	[latter_signature] [nvarchar](500) NULL,
+	[director_latter_signature] [nvarchar](500) NULL,
+	[latter_undertaking] [bit] NULL CONSTRAINT [DF_Course_Reminder_latter_undertaking]  DEFAULT ((0)),
+	[steps] [int] NULL CONSTRAINT [DF_Course_Reminder_steps]  DEFAULT ((0)),
+	[MasterCourse] [bit] NULL CONSTRAINT [DF_Course_Reminder_MasterCourse]  DEFAULT ((0)),
+	[MasterCoursId] [bigint] NULL CONSTRAINT [DF_Course_Reminder_MasterCoursId]  DEFAULT ((0)),
+	[CreatedOn] [datetime] NULL CONSTRAINT [DF_Course_Reminder_CreatedOn]  DEFAULT (getdate()),
+	[CreatedBy] [bigint] NULL CONSTRAINT [DF_Course_Reminder_CreatedBy]  DEFAULT ((0)),
+	[UpdatedOn] [datetime] NULL,
+	[UpdatedBy] [bigint] NULL,
+ CONSTRAINT [PK_Course_Reminder] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+
+
+
+GO
+
+/****** Object:  Table [sstmo].[Course_Reminder_Latter_Undertaking]    Script Date: 22/12/2021 12:02:07 pm ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[Course_Reminder_Latter_Undertaking](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[latter_content] [text] NULL,
+	[Course_id] [bigint] NULL,
+	[CreatedOn] [datetime] NULL,
+	[CreatedBy] [bigint] NULL,
+	[UpdatedOn] [datetime] NULL,
+	[UpdatedBy] [bigint] NULL,
+ CONSTRAINT [PK_Course_Reminder_Latter_Undertaking] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+
+
+go
+alter table [sstmo].[Course] add  NewCourseId bigint  NULL DEFAULT(0)
+alter table [sstmo].[Course_Reminder] add  DeveloperId bigint  NULL DEFAULT(0)
+alter table [sstmo].[Course_Reminder] add  director_latter_signature nvarchar(500)  NULL
+go
+
+-------------------
+USE [SSTM_V2]
+GO
+/****** Object:  StoredProcedure [sstmo].[GetCoursesList]    Script Date: 14/12/2021 1:55:42 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create PROC [sstmo].[GetNewCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT,
+	@NewCourseId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and (c.CourseType=null or c.CourseType='NewCourse')
+					and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId 
+					 and (c.CourseType=null or c.CourseType='NewCourse')
+					 and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+			END
+
+	else
+
+		IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and (c.CourseType=null or c.CourseType='NewCourse')
+				and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+					cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive
+				 AND (c.CourseType=null or c.CourseType='NewCourse')
+				 AND MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+------------------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetComonCoursesList]    Script Date: 14/12/2021 2:04:39 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetNewComonCoursesList] 1,2
+Create  PROC [sstmo].[GetNewComonCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT,
+	@NewCourseId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and MasterCourse= @MasterCourse  
+					 AND (c.CourseType=null or c.CourseType='NewCourse')and 
+					MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND 
+					(c.CourseType=null or c.CourseType='NewCourse') and  c.StatusId = @StatusId  and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+				
+			END
+	else
+	IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and MasterCourse= @MasterCourse and 
+				(c.CourseType=null or c.CourseType='NewCourse')and 
+				MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive  and 
+				(c.CourseType=null or c.CourseType='NewCourse')and 
+				MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and (c.NewCourseId= @NewCourseId or  @NewCourseId is null)
+				
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+
+GO
+-------------------------------------15-12-2021--------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetComonCoursesList]    Script Date: 15/12/2021 12:26:42 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetComonCoursesList] 1,2
+ALTER  PROC [sstmo].[GetComonCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId and (NewCourseId is null or NewCourseId=0)
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId  and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId and (NewCourseId is null or NewCourseId=0)
+				
+			END
+	else
+	IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and (NewCourseId is null or NewCourseId=0)
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive   and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and (NewCourseId is null or NewCourseId=0)
+				
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+-----------------------------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetComonCoursesList_All]    Script Date: 15/12/2021 12:28:14 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetComonCoursesList] 1,2
+ALTER  PROC [sstmo].[GetComonCoursesList_All]
+	@isActive INT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and (NewCourseId is null or NewCourseId=0)
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+			cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive   and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId and (NewCourseId is null or NewCourseId=0)
+				
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+--------------------------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetCoursesList]    Script Date: 15/12/2021 12:29:42 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROC [sstmo].[GetCoursesList]
+	@isActive INT,
+	@StatusId BIGINT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+	if @StatusId!=0
+		IF @isActive > 1
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.StatusId = @StatusId and (c.CourseType=null or c.CourseType='other')
+					and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId  and (NewCourseId is null or NewCourseId=0)
+			END
+		ELSE
+			BEGIN
+				SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+					FROM sstmo.Course c
+						LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+						LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+						LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+						Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+					WHERE c.isDeleted = 0 AND c.isActive = @isActive AND c.StatusId = @StatusId 
+					 and (c.CourseType=null or c.CourseType='other')
+					 and MasterCourse= @MasterCourse and 
+					MasterCoursId=@MasterCoursId  and (NewCourseId is null or NewCourseId=0)
+			END
+
+	else
+
+		IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and (c.CourseType=null or c.CourseType='other')
+				and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId  and (NewCourseId is null or NewCourseId=0)
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+					cs.Status as CourseStatus,AirLineCourseId
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive
+				 AND (c.CourseType=null or c.CourseType='other')
+				 AND MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId  and (NewCourseId is null or NewCourseId=0)
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+------------------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetCoursesList_All]    Script Date: 15/12/2021 12:30:19 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+alter  PROC [sstmo].[GetCoursesList_All]
+	@isActive INT,
+	@MasterCourse bit,
+	@MasterCoursId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	IF @isActive > 1
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+				cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0  and (c.CourseType=null or c.CourseType='other')
+				and MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId  and (NewCourseId is null or NewCourseId=0)
+		END
+	ELSE
+		BEGIN
+			SELECT c.*, u.FirstName + ' ' + u.LastName AS Developer, u1.FirstName + ' ' + u1.LastName AS SME,
+					cs.Status as CourseStatus
+				FROM sstmo.Course c
+					LEFT JOIN sstmo.CourseAssignment ca ON ca.CourseId = c.Id
+					LEFT JOIN sstmo.[User] u ON u.Id = ca.DeveloperId
+					LEFT JOIN sstmo.[User] u1 ON u1.Id = ca.SMEId
+					Left Join [sstmo].[CourseStatus] cs on cs.Id=c.StatusId
+				WHERE c.isDeleted = 0 AND c.isActive = @isActive
+				 AND (c.CourseType=null or c.CourseType='other')
+				 AND MasterCourse= @MasterCourse and 
+				MasterCoursId=@MasterCoursId  and (NewCourseId is null or NewCourseId=0)
+		END
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+GO
+------------------------------------------17-12-2021------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListOfCourseDocuments]    Script Date: 16/12/2021 11:36:51 pm ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- [sstmo].[GetListOfCourseDocuments] 57,0
+ALTER PROC [sstmo].[GetListOfCourseDocuments]
+	@CourseId BIGINT,
+	@MasterCourse bit
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	
+	SELECT  c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting,ISNULL(cs.isDeveloper,0) AS isDeveloper, cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate-- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1
+		WHERE cd.CourseId = @CourseId and c.MasterCourse= @MasterCourse and  c.CourseType='other' 
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+		union 
+
+		SELECT distinct c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting,ISNULL(cs.isDeveloper,0) AS isDeveloper, 
+			cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate -- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1 -- added 8-7-2021
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0		
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id	
+		WHERE cd.CourseId =  @CourseId and  c.CourseType='staff' and  c.MasterCourse= @MasterCourse
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+
+		union 
+
+		SELECT distinct c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting,ISNULL(cs.isDeveloper,0) AS isDeveloper,
+			 cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate -- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1 -- added 8-7-2021
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0		
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id	
+		WHERE cd.CourseId =  @CourseId and  c.CourseType='isoedu' and  c.MasterCourse= @MasterCourse
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+
+		union 
+
+		SELECT distinct c.Id AS CourseId, c.StatusId, cd.Id, cd.DocName, cd.[Filename], ISNULL(cd.isCompleted,0) AS isCompleted, ISNULL(cd.isActive,0) AS isActive,
+			ISNULL(cd.isDeleted,0) AS isDeleted, ISNULL(cd.isApproved,0) AS isApproved, ISNULL(cd.isReassigned,0) AS isReassigned,
+			ISNULL(cs.isTraining,0) AS isTraining, ISNULL(cs.isPrinting,0) AS isPrinting,ISNULL(cs.isDeveloper,0) AS isDeveloper,
+			 cdr.Remarks, cdr.Suggestion, cdr.ReferenceFile,
+			ISNULL(cdr.isCompleted,0) AS isRemarksCompleted,
+			v.Version,CONVERT(varchar,v.VersionDate,103) as VersionDate -- added 8-7-2021
+		FROM sstmo.CourseDocument cd
+			INNER JOIN sstmo.Course c ON c.Id = cd.CourseId
+			left join sstmo.CourseDocVersion v ON v.DocId=cd.Id and v.isActive=1 -- added 8-7-2021
+			LEFT JOIN sstmo.CourseDocRemarks cdr ON cdr.DocId = cd.Id AND cdr.isDeleted = 0		
+			LEFT JOIN sstmo.CourseSharing cs ON cs.CourseId = cd.CourseId AND cs.DocId = cd.Id	
+		WHERE cd.CourseId =  @CourseId and  c.CourseType='NewCourse' and  c.MasterCourse= @MasterCourse
+		and (cd.isOldDocument='' or cd.isOldDocument is null)
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+
+----------------------------------below pending------------------
+GO
+USE [SSTM_V2]
+GO
+/****** Object:  StoredProcedure [sstmo].[NewCourseDocumentTrack]    Script Date: 25/12/2021 11:47:20 pm ******/
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	-- [sstmo].[NewCourseDocumentTrack] 30009
+	CREATE  procedure [sstmo].[NewCourseDocumentTrack]
+		@CourseId bigint,
+		@flag as int
+	AS BEGIN
+		SET NOCOUNT ON;
+		SET ARITHABORT ON;
+
+		if @flag=0
+			begin
+				select t.id,t.Courseid,cr.NewCourseId,
+					isnull(cr.NewCourseSubmitDate,null)NewCourseSubmitDate,isnull(u7.FirstName ,'')+' '+isnull(u7.LastName ,'')NewCourseSubmitUser,
+					isnull(cr.NeedanalysisDate,null)NeedanalysisDate,isnull(u8.FirstName ,'')+' '+isnull(u8.LastName ,'')NeedanalysisUser,
+					isnull(cr.CourseProposalDate,null)CourseProposalDate,isnull(u9.FirstName ,'')+' '+isnull(u9.LastName ,'')CourseProposalUser,
+					isnull(cr.AEBMeetingDate,null)AEBMeetingDate,isnull(u10.FirstName ,'')+' '+isnull(u10.LastName ,'')AEBMeetingUser,
+					isnull(cr.LetterofundertakingDate,null)LetterofundertakingDate,isnull(u11.FirstName ,'')+' '+isnull(u11.LastName ,'')LetterofundertakingUser,
+		
+					isnull(t.submitedDate,null)submitedDate,isnull(u1.FirstName ,'')+' '+isnull(u1.LastName ,'')submitedUser,
+					isnull(t.AssignDate,null)AssignDate,isnull(u2.FirstName ,'')+' '+isnull(u2.LastName ,'')SMEAssignUser,
+					isnull(t.SMEReviewDate,null)SMEReviewDate,isnull(u3.FirstName ,'')+' '+isnull(u3.LastName ,'')SMEReviewUser,
+					isnull(t.ImproveDate,null)ImproveDate,isnull(u4.FirstName ,'')+' '+isnull(u4.LastName ,'')ImproveUser,
+					isnull(t.SMEAcceptDate,null)SMEAcceptDate,isnull(u5.FirstName ,'')+' '+isnull(u5.LastName ,'')SMEAcceptUser,
+					isnull(t.ReleaseDate,null)ReleaseDate,isnull(u6.FirstName ,'')+' '+isnull(u6.LastName ,'')ReleseUser
+
+		
+		
+				from [sstmo].[CourseTrackers] t
+				left join [sstmo].[Course] c on c.Id=t.Courseid
+				left join [sstmo].[Course_Reminder_Tracker] cr on cr.NewCourseId=c.NewCourseId
+				left join [sstmo].[User] u1 on u1.Id=t.submitedUserId
+				left join [sstmo].[User] u2 on u2.Id=t.SMEAssignUserId
+				left join [sstmo].[User] u3 on u3.Id=t.SMEReviewUserId
+				left join [sstmo].[User] u4 on u4.Id=t.ImproveUserId
+				left join [sstmo].[User] u5 on u5.Id=t.SMEAcceptUserId
+				left join [sstmo].[User] u6 on u6.Id=t.ReleseUserid
+				left join [sstmo].[User] u7 on u7.Id=cr.NewCourseSubmitUserid
+				left join [sstmo].[User] u8 on u8.Id=cr.NeedanalysisUserid
+				left join [sstmo].[User] u9 on u9.Id=cr.CourseProposalUserid
+				left join [sstmo].[User] u10 on u10.Id=cr.AEBMeetingUserid
+				left join [sstmo].[User] u11 on u11.Id=cr.LetterofundertakingUserId
+
+				where t.Courseid=@CourseId
+			END
+		else
+			begin
+				select t.id,t.Courseid,cr.NewCourseId,
+					isnull(cr.NewCourseSubmitDate,null)NewCourseSubmitDate,isnull(u7.FirstName ,'')+' '+isnull(u7.LastName ,'')NewCourseSubmitUser,
+					isnull(cr.NeedanalysisDate,null)NeedanalysisDate,isnull(u8.FirstName ,'')+' '+isnull(u8.LastName ,'')NeedanalysisUser,
+					isnull(cr.CourseProposalDate,null)CourseProposalDate,isnull(u9.FirstName ,'')+' '+isnull(u9.LastName ,'')CourseProposalUser,
+					isnull(cr.AEBMeetingDate,null)AEBMeetingDate,isnull(u10.FirstName ,'')+' '+isnull(u10.LastName ,'')AEBMeetingUser,
+					isnull(cr.LetterofundertakingDate,null)LetterofundertakingDate,isnull(u11.FirstName ,'')+' '+isnull(u11.LastName ,'')LetterofundertakingUser,
+		
+					isnull(t.submitedDate,null)submitedDate,isnull(u1.FirstName ,'')+' '+isnull(u1.LastName ,'')submitedUser,
+					isnull(t.AssignDate,null)AssignDate,isnull(u2.FirstName ,'')+' '+isnull(u2.LastName ,'')SMEAssignUser,
+					isnull(t.SMEReviewDate,null)SMEReviewDate,isnull(u3.FirstName ,'')+' '+isnull(u3.LastName ,'')SMEReviewUser,
+					isnull(t.ImproveDate,null)ImproveDate,isnull(u4.FirstName ,'')+' '+isnull(u4.LastName ,'')ImproveUser,
+					isnull(t.SMEAcceptDate,null)SMEAcceptDate,isnull(u5.FirstName ,'')+' '+isnull(u5.LastName ,'')SMEAcceptUser,
+					isnull(t.ReleaseDate,null)ReleaseDate,isnull(u6.FirstName ,'')+' '+isnull(u6.LastName ,'')ReleseUser,
+					isnull(cr.RenewReminderDate,null)RenewReminderDate,'Auto Mail' as RenewReminderUser
+
+		
+		
+				from [sstmo].[CourseTrackers] t
+				left join [sstmo].[Course] c on c.Id=t.Courseid
+				left join [sstmo].[Course_Reminder_Tracker] cr on cr.NewCourseId=c.NewCourseId
+				left join [sstmo].[User] u1 on u1.Id=t.submitedUserId
+				left join [sstmo].[User] u2 on u2.Id=t.SMEAssignUserId
+				left join [sstmo].[User] u3 on u3.Id=t.SMEReviewUserId
+				left join [sstmo].[User] u4 on u4.Id=t.ImproveUserId
+				left join [sstmo].[User] u5 on u5.Id=t.SMEAcceptUserId
+				left join [sstmo].[User] u6 on u6.Id=t.ReleseUserid
+				left join [sstmo].[User] u7 on u7.Id=cr.NewCourseSubmitUserid
+				left join [sstmo].[User] u8 on u8.Id=cr.NeedanalysisUserid
+				left join [sstmo].[User] u9 on u9.Id=cr.CourseProposalUserid
+				left join [sstmo].[User] u10 on u10.Id=cr.AEBMeetingUserid
+				left join [sstmo].[User] u11 on u11.Id=cr.LetterofundertakingUserId
+
+				where cr.NewCourseId=@CourseId
+			END
+		SET ARITHABORT OFF;
+		SET NOCOUNT OFF;
+	END
+
+----------------------------------27-12-2021------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetDashbord_chart]    Script Date: 27/12/2021 12:39:24 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	sstmo.GetDashbord_chart
+-- =============================================
+ALTER PROCEDURE [sstmo].[GetDashbord_chart]
+		
+AS
+BEGIN
+
+	select TotalCourse,ReleaseCourse,PendingDeveloperCourse,PendingSMECourse,PendinSharingCourse,PendinRenewalCourse,PendingNewCourse from(
+	select (select count(*)   from [sstmo].[Course] where (AirLineCourseId!=0 and  AirLineCourseId is not null) and  isDeleted = 0 and CourseType='other' ) as TotalCourse,
+
+	(select count(*) ReleaseCourse  from [sstmo].[Course]  c
+		where  c.id  in (select courseId from  [sstmo].[CourseSharing]) and 
+	  c.statusid!=3  and c.statusid=7 and   c.isDeleted = 0 and c.CourseType='other' 
+	  and (AirLineCourseId!=0 and AirLineCourseId is not null)  ) as ReleaseCourse,
+
+	(select count(*) PendingDeveloperCourse  from [sstmo].[Course] 
+	where statusid!=3 and statusid!=7 and  isDeleted = 0 and CourseType='other' 
+	and (AirLineCourseId!=0 and AirLineCourseId is not null)  ) as PendingDeveloperCourse,
+
+	(select count(*) PendingSMECourse  from [sstmo].[Course] 
+	where statusid=3 and   statusid!=7 and  isDeleted = 0 and CourseType='other' 
+	and (AirLineCourseId!=0 and AirLineCourseId is not null) ) as PendingSMECourse,
+
+	(select count(*) PendinSharingCourse  from [sstmo].[Course]  c
+	where c.id not in (select courseId from  [sstmo].[CourseSharing]) and 
+	  c.statusid!=3 
+	 and c.statusid=7 and  c.isDeleted = 0 and c.CourseType='other'  
+	 and (AirLineCourseId!=0 and AirLineCourseId is not null) ) as PendinSharingCourse,
+
+	 (select  count(*) as date from [sstmo].[Course_Reminder] 
+		where  DATEDIFF (day,GETDATE(), renew_date)<=0) as PendinRenewalCourse,
+
+
+	 (select count(*) PendinSharingCourse  from [sstmo].[Course_Reminder] where  steps!=4) as PendingNewCourse
+)
+as t1
+
+END
+GO
+-----------------------------------------
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,MD>
+-- Create date: <27/12/20201,,>
+-- Description:	 sstmo.Get_Dashbord_New_Course
+-- =============================================
+CREATE PROCEDURE  sstmo.Get_Dashbord_New_Course
+@para as varchar(100)
+AS
+BEGIN
+	if @para='Pending'
+		begin
+			select *  from [sstmo].[Course_Reminder] where  steps!=4
+		end 
+	else
+		begin
+			select * from [sstmo].[Course_Reminder] 
+			where  DATEDIFF (day,GETDATE(), renew_date)<=0
+		end
+END
+GO
+
+
+--------------------- 28-12-2021----------------
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE sstmo.AutoRenewalNewCourseMail
+	@developer as bigint
+AS
+BEGIN
+	
+	if @developer=0
+		begin
+			select * from [sstmo].[Course_Reminder] 
+				where  DATEDIFF (day,GETDATE(), renew_date)=2
+		end 
+	else
+		begin
+			select * from [sstmo].[User] where id=@developer and RoleId=2
+		end 
+
+END
+GO
+
+----------------------------------30-12-2021---------------------
+
+GO
+/****** Object:  StoredProcedure [sstmo].[GetListofSharedCourseDocs]    Script Date: 30/12/2021 1:21:40 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+-- [sstmo].[GetListofSharedCourseDocs]
+GO
+ALTER PROC [sstmo].[GetListofSharedCourseDocs]
+	@CourseId BIGINT
+AS BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+
+	SELECT c.Id AS CourseId, c.CourseName, cd.Id AS DocId, cd.DocName, cd.[Filename],
+	 cs.isTraining, cs.isPrinting,cs.isDeveloper,ISNULL(cd.UpdatedOn,getdate()) as dates
+		FROM sstmo.Course c
+			INNER JOIN sstmo.CourseDocument cd ON cd.CourseId = c.Id
+			INNER JOIN sstmo.CourseSharing cs ON cs.isDeleted = 0 AND cs.CourseId = c.Id AND cs.DocId = cd.Id
+		WHERE c.Id = @CourseId and (c.CourseType=null or c.CourseType='other' or c.CourseType='NewCourse') 
+
+	SET ARITHABORT OFF;
+	SET NOCOUNT OFF;
+END
+
+--------------------------------------------
+
+
+/****** Object:  Table [sstmo].[Course_Reminder_Tracker]    Script Date: 30/12/2021 2:27:35 am ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [sstmo].[Course_Reminder_Tracker](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[NewCourseId] [bigint] NULL,
+	[NewCourseSubmitUserid] [bigint] NULL,
+	[NewCourseSubmitDate] [datetime] NULL CONSTRAINT [DF_Course_Reminder_Tracker_NewCourseSubmitDate]  DEFAULT (getdate()),
+	[NeedanalysisUserid] [bigint] NULL,
+	[NeedanalysisDate] [datetime] NULL,
+	[CourseProposalUserid] [bigint] NULL,
+	[CourseProposalDate] [datetime] NULL,
+	[AEBMeetingUserid] [bigint] NULL,
+	[AEBMeetingDate] [datetime] NULL,
+	[LetterofundertakingUserId] [bigint] NULL,
+	[LetterofundertakingDate] [datetime] NULL,
+	[RenewReminderUser] [nvarchar](50) NULL,
+	[RenewReminderDate] [datetime] NULL,
+ CONSTRAINT [PK_Course_Reminder_Tracker] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+---------------15-01-2022---------------------
+alter table [sstmo].[Course]
+add [DeveloperId] [bigint] NULL
+GO 
+alter table [sstmo].[Course]
+add [renewal_reminder] [varchar](500) NULL
+GO
+alter table [sstmo].[Course]
+add [reminder_days] [int] NULL
+GO
+
+alter table [sstmo].[Course]
+add[renew_date] [date] NULL
+GO
+
+alter table [sstmo].[Course]
+add [reminder_created_date] [date] NULL  DEFAULT (getdate())
+GO
+----------------------22-01-2022----------
+alter table [sstmo].[StudentFeedback]
+add trainerid nvarchar(100) NULL  
+GO
+
+alter table [sstmo].[StudentFeedback]
+add Feedback nvarchar(max) NULL  
+GO

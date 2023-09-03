@@ -1,0 +1,420 @@
+﻿@{
+    ViewBag.Title = "Students | RA & SWP Declaration";
+    Layout = null;
+}
+@Html.AntiForgeryToken()
+<!doctype html>
+<html lang="en">
+<head>
+    <title>RA & SWP Declaration</title>
+    <link href="@Url.Content("~/Content/intro-page/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2/css/select2.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/fontawesome-free/css/all.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/toastr/toastr.min.css")" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #eeecec !important
+        }
+
+        .select2-selection__rendered {
+            line-height: 35px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 35px !important;
+        }
+
+        hr.double_border_style {
+            border-top: 4px double black;
+        }
+
+            hr.double_border_style:after {
+                content: '';
+                display: inline-block;
+                position: relative;
+                top: -15px;
+                left: 40px;
+                padding: 0 10px;
+                background: #f0f0f0;
+                color: #8c8b8b;
+                font-size: 18px;
+            }
+
+        .is-invalid + .select2-container--default .select2-selection--single {
+            border: 1px solid #f44336;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 2rem center;
+            background-size: calc(3 em + 0.375 rem ) calc(3em + 0.375 rem );
+        }
+
+        .chart-gauge {
+            width: 400px;
+            margin: 10px auto;
+        }
+
+
+        .chart-color4 {
+            fill: #28a745;
+        }
+
+        .chart-color3 {
+            fill: #ffc107;
+        }
+
+        .chart-color2 {
+            fill: #fd7e14;
+        }
+
+        .chart-color1 {
+            fill: #e92213;
+        }
+
+        .needle,
+        .needle-center {
+            fill: #ccda46 !important;
+        }
+
+        .prose {
+            text-align: center;
+            font-family: sans-serif;
+            color: #ababab;
+        }
+
+        .checked {
+            color: orange;
+        }
+
+
+        body {
+            background: rgba(0,0,0,0.6);
+        }
+
+        .lds-dual-ring.hidden {
+            display: none;
+        }
+
+        .lds-dual-ring {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+        }
+
+            .lds-dual-ring:after {
+                content: " ";
+                display: block;
+                width: 64px;
+                height: 64px;
+                margin: 20% auto;
+                border-radius: 50%;
+                border: 6px solid #fff;
+                border-color: #fff transparent #fff transparent;
+                animation: lds-dual-ring 1.2s linear infinite;
+            }
+
+        @@keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,.8);
+            z-index: 999;
+            opacity: 1;
+            transition: all 0.5s;
+        }
+
+        .fa-star:not(.checked) {
+            color: #ababab !important
+        }
+    </style>
+</head>
+<body>
+    <div id="loader" class="lds-dual-ring hidden overlay"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <img src="~/Theme/images/eversafe-logo-.png" width="150" height="50" />
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-3" id="qs__section_display">
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="font-weight-bolder">Risk Assessment and Safe Work Procedure Acknowledgement Form</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="container-fluid">
+                            <div class="form-row">
+                                <div class="col-md-4">
+                                    <div class="card card-danger card-outline">
+                                        <img class="align-middle" style="margin-left:8em;margin-top:1em!important" width="100" height="100" id="trainerimage" onerror="this.src= '../Theme/images/noimage.png'" src="https://www.shareicon.net/data/512x512/2016/09/01/822711_user_512x512.png" alt="Card image cap">
+                                        <div class="card-body">
+                                            <div class="form-row form-group">
+                                                <div class="col-md-5">
+                                                    <span class="col-form-label-sm font-weight-bold">Student: </span>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <span id="studentname" class="col-form-label-sm font-weight-normal">@TempData["studentName"]</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-row form-group">
+                                                <div class="col-md-5">
+                                                    <span class="col-form-label-sm font-weight-bold">Course: </span>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <span id="coursename" class="col-form-label-sm font-weight-normal">@TempData["courseName"]</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-row form-group">
+                                                <div class="col-md-5">
+                                                    <span class="col-form-label-sm font-weight-bold">Batch: </span>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <span id="batch" class="col-form-label-sm font-weight-normal">@TempData["batchId"]</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-row form-group">
+                                                <div class="col-md-5">
+                                                    <span class="col-form-label-sm font-weight-bold">Course Date: </span>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <span id="coursedate" class="col-form-label-sm font-weight-normal">@TempData["Date"]</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <label class="col-form-label-sm">Acknowledgement:</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-row form-group">
+                                                <div class="col-md-12">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="chkDeclaration" checked>
+                                                        <label class="custom-control-label" for="chkDeclaration">I hereby declare that I attended the Risk Assessment and Safe Work Procedure briefing.</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-row mt-2">
+                                                <button id="savera" type="button" class="btn btn-warning btn-block">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @{
+        var partial = Html.Partial("CongratulationStudents");
+    }
+
+    <div class="container-fluid py-4" id="gauge__display" hidden>
+        <div class="card">
+            <div class="card-body">
+                <div class="partialView mt-5">@partial</div>
+            </div>
+        </div>
+    </div>
+    <input hidden id="courseId" value="@TempData["courseId"]" />
+    <input hidden id="batchId" value="@TempData["batchId"]" />
+    <input hidden id="studentId" value="@TempData["studentId"]" />
+    <input hidden id="TrainerId" value="@TempData["Trainerid"]" />
+
+
+</body>
+</html>
+<script src="@Url.Content("//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")"></script>
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js")"></script>
+<script src="@Url.Content("~/Theme/plugins/select2/js/select2.min.js")"></script>
+<script src="@Url.Content("//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Scripts/sstm_js_enc/_sstm_enc.js")"></script>
+<script src="~/Theme/plugins/toastr/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+    window.onbeforeunload = function (e) {
+        $.loadFuntion();
+        e.preventDefault();
+        return false
+    };
+    window.addEventListener("popstate", function (event) {
+        if (typeof event.state == "object"
+            && event.state.obsolete !== true) {
+            history.replaceState({ "obsolete": true }, "");
+            history.pushState(event.state, "");
+        }
+        if (typeof event.state == "object"
+            && event.state.obsolete === true) {
+            history.back()
+        }
+    }, false);
+    $(window).on('keydown', function (e) {
+        if (e.which == 116 || (e.keyCode === 116 && e.ctrlKey)) { // New action for F5
+            e.preventDefault();
+            $.loadFuntion();
+            return false;
+        }
+    });
+    $.loadFuntion = function () {
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'Refresh your browser ,it will automatically close your browser.!!!',
+            type: 'red',
+            typeAnimated: true,
+            animation: 'news',
+            closeAnimation: 'news',
+            buttons: {
+                tryAgain: {
+                    text: 'Refresh',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        window.open('', '_self', ''); window.close();
+                    }
+                },
+                close: function () {
+
+                }
+            }
+        });
+    }
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    $(".fa-star").click(function () {
+        $(this).parents().find('.fa-star').removeClass('checked')
+        $(this).prevAll().addClass('checked');
+        $(this).addClass('checked');
+    });
+    var i = 0;
+    $(document).ready(function () {        
+        chart_gauge(0);
+    });
+
+    $('#savera').click(function () {
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        let declaration = $("#chkDeclaration")[0];
+
+        if (!declaration.checked) {
+            toastr.error('Please check Declaration box and submit.');
+            return;
+        }
+
+        let data_arr = new Array();
+        let data_in = {};
+        data_in.CourseId = @TempData["courseId"];
+        data_in.BatchId = @TempData["batchId"];
+        data_in.StudentId = @TempData["studentId"];
+        data_in.TrainerId = @TempData["Trainerid"];
+        data_in.IsChecked = true;
+
+        data_arr.push(data_in);
+
+        var data_param = $.sstm_encrypt(JSON.stringify(data_arr))
+        $.ajax({
+            url: "@Url.Action("SaveStudentRA", "introstudent", null)",
+            method: "POST",
+        beforeSend: (() => { $('#loader').removeClass('hidden') }),
+        dataType: "json",
+            data: { inputQuery: data_param, __RequestVerificationToken: token },
+        success: function (data, xhr) {
+            if (data == 'success') {
+                $('#qs__section_display').hide();
+                $('#gauge__display').removeAttr('hidden');
+
+            }
+            else if (data == 'exists') {
+                toastr.error('You\'ve submitted already.');
+            }
+            else
+            {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+            }
+        },
+        error: function (err) {
+            toastr.error('Something went wrong! Please refresh the page and try again.');
+            console.warn(err);
+        }, complete: function () {
+            $('#loader').addClass('hidden')
+        }
+    });
+    });
+
+    function addLabelText(bgPath, labelText) {
+        let bbox = bgPath.getBBox();
+        let x = bbox.x + bbox.width / 2;
+        let y = bbox.y + bbox.height / 2;
+        let textElem = document.createElementNS(bgPath.namespaceURI, "text");
+        textElem.setAttribute("fill", 'white');
+        textElem.setAttribute("x", x);
+        textElem.setAttribute("y", y);
+        textElem.setAttribute("text-anchor", "middle");
+        textElem.classList.add("label-text");
+        textElem.textContent = labelText;
+        bgPath.after(textElem);
+    }
+    //disable possible inspect
+    jQuery(document).ready(function () {
+        function disableSelection(e) {
+            if (typeof e.onselectstart != "undefined") e.onselectstart = function () {
+                return false
+            };
+            else if (typeof e.style.MozUserSelect != "undefined") e.style.MozUserSelect = "none";
+            else e.onmousedown = function () {
+                return false
+            };
+            e.style.cursor = "default"
+        }
+        window.onload = function () {
+            disableSelection(document.body)
+        };
+
+        window.addEventListener("keydown", function (e) {
+            if (e.ctrlKey && (e.which == 65 || e.which == 66 || e.which == 67 || e.which == 70 || e.which == 73 || e.which == 80 || e.which == 83 || e.which == 85 || e.which == 86)) {
+                e.preventDefault()
+            }
+        });
+        document.keypress = function (e) {
+            if (e.ctrlKey && (e.which == 65 || e.which == 66 || e.which == 70 || e.which == 67 || e.which == 73 || e.which == 80 || e.which == 83 || e.which == 85 || e.which == 86)) { }
+            return false
+        };
+
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            if (e.keyCode == 123 || e.keyCode == 18) {
+                return false
+            }
+        };
+
+        document.oncontextmenu = function (e) {
+            var t = e || window.event;
+            var n = t.target || t.srcElement;
+            if (n.nodeName != "A") return false
+        };
+        document.ondragstart = function () {
+            return false
+        };
+    });
+</script>

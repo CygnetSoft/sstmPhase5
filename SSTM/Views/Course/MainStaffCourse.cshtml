@@ -1,0 +1,102 @@
+﻿@model SSTM.Helpers.App.AppSession
+@{
+    ViewBag.Title = "Staff Course";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Staff Main Courses</h3>
+            @if (Model.UserRole == "Administration" || Model.UserRole == "Director" || Model.UserRole == "Manager")
+            {
+                <button type="button" onclick="OpenAddOrUpdateMainCourseModal(0);" class="btn btn-primary btn-sm float-right">
+                    <i class="fa fa-plus-square"></i>&nbsp;Add New
+                </button>
+            }
+        </div>
+        <div class="card-body">
+            @if (Model.UserRole == "Administration" || Model.UserRole == "Director" || Model.UserRole == "Manager")
+            {
+                <div class="col-md-4 form-group">
+                    <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                        <input class="custom-control-input" type="radio" id="rdbAllCourses" value="2" name="rdbCourseStatusFilter">
+                        <label for="rdbAllCourses" class="custom-control-label">All</label>
+                    </div>
+
+                    <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                        <input class="custom-control-input" type="radio" id="rdbAllActiveCourses" value="1" name="rdbCourseStatusFilter" checked>
+                        <label for="rdbAllActiveCourses" class="custom-control-label">Active</label>
+                    </div>
+
+                    <div class="custom-control custom-radio" style="display:inline;">
+                        <input class="custom-control-input" type="radio" id="rdbAllInactiveCourses" value="0" name="rdbCourseStatusFilter">
+                        <label for="rdbAllInactiveCourses" class="custom-control-label">Inactive</label>
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblMainCourses" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name Course</th>
+                                <th style="width:10px">Status</th>
+                                <th style="width:12% !important">Sub Course</th>
+                                <th style="width:12% !important">Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="AddOrEditMainCourseModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div id="divAddOrEditmainCourseModal" class="modal-content">
+        </div>
+    </div>
+</div>
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+    <script>
+
+        var getMainCoursesListUrl = '@Url.Action("GetMainCoursesList", "Course")';
+        var getMainCourseByIdUrl = '@Url.Action("GetMainCourseById", "Course")';
+        var gotoSubCourseList = '@Url.Action("Index", "Course", new { MainCourse = "__id__" })';
+        var gotoStaffSubCourseList = '@Url.Action("SubStaffCourse", "Course", new { MainCourse = "__id__" })';
+
+        var userRole = '@Model.UserRole';
+      
+        var CourseType = "staff";
+
+        $(function () {
+
+            if (isAuthorized)
+                $('input[name="rdbCourseStatusFilter"]').on('change', function (e) {
+
+                    e.preventDefault();
+
+                    GetMainCoursesList(CourseType);
+                });
+            else
+                $('#divFilterByDocStatus').removeClass('col-md-9').addClass('col-md-12');
+
+            $("#AddOrEditCourseModal").on('shown.bs.modal', function () {
+                $(this).find('input[type="text"]:first').focus();
+            });
+
+            InittblMainCourses();
+            GetMainCoursesList(CourseType);
+        });
+    </script>
+    <script src="~/Scripts/MainCourse/Index.js"></script>
+
+}

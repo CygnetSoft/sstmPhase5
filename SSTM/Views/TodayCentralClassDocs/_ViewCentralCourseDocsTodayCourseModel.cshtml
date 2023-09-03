@@ -1,0 +1,57 @@
+﻿@model List<SSTM.Models.CourseSharing.SharedCourseListModel>
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<div class="modal-header">
+    <h4 id="h4CourseDocsModal" class="modal-title">Manage Course Documents</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form-group table-responsive">
+            <table id="tblCourseDocuments" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Documents Name</th>
+                        <th class="text-center" style="width: 100px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr id="@item.DocId" course="@item.CourseId">
+                                <td>@item.DocName</td>
+                                <td class="text-center">
+                                    @if (currentSession.UserRole == "Print Incharge")
+                                    {
+                                        <input type="button" class="btn btn-primary btn-sm" value="View & Print"
+                                               title="View and print course document" onclick="ViewCourseDoc(this, 'Course');" />
+                                    }
+                                    else
+                                    {
+                                        <input type="button" class="btn btn-primary btn-sm" value="View" title="View course document"
+                                               onclick="ViewCourseDoc(this, 'Course');" />
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center no-data">No documents found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>
+<input type="hidden" id="batchid" value="@ViewBag.batchid" /> 

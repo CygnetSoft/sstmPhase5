@@ -1,0 +1,195 @@
+﻿@model IEnumerable<SSTM.Models.CourseDocument.CourseDocumentsListModel>
+
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+<div class="modal-header">
+    <h4 id="h4CourseDocsModal" class="modal-title">Course Documents</h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form-group table-responsive">
+            <table id="tblCourseDocuments" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>Documents Name</th>
+
+                        @if (currentSession.UserRole != "HR")
+                        {
+                            <th>Remarks</th>
+                            <th>Suggestions</th>
+                            <th>Reference Document</th>
+                        }
+
+                        <th class="text-center" style="width:140px;">Status</th>
+
+                        @if (currentSession.UserRole == "HR")
+                        {
+                            <th class="text-center" style="width:140px;">Actions</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            var disabled = item.isDeleted || item.isCompleted ? "disabled" : "";
+                            var status = item.isCompleted ? "Complete" : "Incomplete";
+
+                            <tr id="@item.Id" course="@item.CourseId">
+                                <td>
+                                    @if (currentSession.UserRole == "SME" || currentSession.UserRole == "Director" || currentSession.UserRole == "Developer")
+                                    {
+                                        <strong>
+                                            <a href="javascript:void(0);" onclick="ViewCourseDoc(this, 'Course');">
+                                                @item.DocName
+                                            </a>
+                                        </strong>
+                                    }
+                                    else if ( currentSession.UserRole == "HR")
+                                    {
+                                        <strong>
+                                            <a href="#" onclick="editCourseDocument(@item.Id,1)">
+                                                @item.DocName
+                                            </a>
+                                        </strong>
+                                    }
+                                    else
+                                    {
+                                        <strong>@item.DocName</strong>
+                                    }
+                                </td>
+
+                                @if (currentSession.UserRole != "HR")
+                                {
+                                    <td>
+                                        @if (item.isApproved)
+                                        {
+                                            <span>N/A</span>
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw(item.Remarks)
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.isApproved)
+                                        {
+                                            <span>N/A</span>
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw(item.Suggestion)
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.isApproved)
+                                        {
+                                            <strong>N/A</strong>
+                                        }
+                                        else if (item.ReferenceFile != null)
+                                        {
+                                            <a href="javascript:void(0);" onclick="ViewCourseDoc(this, 'Reference');">
+                                                <strong>@item.ReferenceFile</strong>
+                                            </a>
+                                        }
+                                    </td>
+                                }
+
+                                <td class="text-center">
+                                    @if (item.isDeleted)
+                                    {
+                                        <label class="badge badge-secondary">Skipped</label>
+                                    }
+                                    else if (item.isReassigned)
+                                    {
+                                        <label class="badge badge-warning">Reassign</label>
+                                    }
+                                    else if (item.isApproved)
+                                    {
+                                        <label class="badge badge-success">Approved</label>
+                                    }
+                                    else if (item.isCompleted)
+                                    {
+                                        <label class="badge badge-info">Complete</label>
+                                    }
+                                    else
+                                    {
+                                        <label class="badge badge-danger">Incomplete</label>
+                                    }
+                                </td>
+
+                                @if ((item.isCompleted || item.isApproved) && item.DocName != "N/A")
+                                {
+                                    if (currentSession.UserRole == "HR")
+                                    {
+                                        <td class="text-center">
+                                            <a href="javascript:void(0);" onclick="ViewCourseDoc(this, 'Course');" class="btn btn-info btn-sm">
+                                                View
+                                            </a>
+                                            <input type="button" class="btn btn-warning btn-sm" value="Rename" onclick="RenameCourseDoc(this);" />
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center no-data">No documents found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer" style="display:block;">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+    <div class="float-right">
+        @if (currentSession.UserRole == "SME" || currentSession.UserRole == "Director")
+        {
+            <button type="button" class="btn btn-primary" onclick="RefreshCourseDocsList();">Refresh List</button>
+
+            <button type="button" id="btnSubmitCourseDocAssessment" class="btn btn-success" onclick="SubmitCourseDocsAssessment();">
+               Release Documents
+            </button>
+        }
+        @*else if (currentSession.UserRole == "Director")
+        {
+            <button type="button" class="btn btn-success" onclick="ShareCourse();">
+                Course Sharing
+            </button>
+        }*@
+    </div>
+    <p style="color:red"><b>Note :</b> Please click on Direct to Release if you have no feedback/suggestion's.</p>
+</div>
+
+<script>
+    $(document).ready(function () {
+        localStorage.setItem('smecoursedoc', $(location).attr('href'));
+    });
+    var loadCourseDocumentUrl = '@Url.Action("LoadCourseDocument", "CourseDoc")';
+    var viewCourseDocumentRemarksUrl = '@Url.Action("ViewCourseDocumentRemarks", "CourseDocRemarks")';
+
+    var submitCourseDocsAssessmentUrl = '@Url.Action("SubmitCourseDocsAssessment","Course")';
+
+    var renameCourseDocUrl = '@Url.Action("RenameCourseDoc", "CourseDoc")';
+
+    var shareCourseUrl = '@Url.Action("ShareCourse", "Course")';
+
+    var LoadEditor = '@Url.Action("GetCourseDocFile", "CourseDoc")';
+
+</script>
+
+<script src="~/Scripts/courseDoc/_smeCourseDocuments.js"></script>

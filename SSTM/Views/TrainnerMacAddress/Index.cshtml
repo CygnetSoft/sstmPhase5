@@ -1,0 +1,71 @@
+﻿@*@model IEnumerable<SSTM.Core.TrainnerMacAddress.TrainnerMacAddress>*@
+@{
+    ViewBag.Title = "Trainer Mac Address";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header primary row">
+            <div class="col-12 row">
+                <div class="col-2 mt-2"> New Mac Address : </div>
+                <div class="col-4">
+                    <input type="text" id="txtmacAddress" class="form-control" placeholder="Enter Mac Address" />
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0)" class="btn btn-primary" onclick="SaveMacAddress()"><i class="fa fa-plus"></i> Save</a>
+                </div>
+            </div>
+            <hr />
+            
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 form-group table-responsive mt-3">
+                    <table id="tblMacAddress" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Mac Address</th>
+                                <th style="width: 10%;text-align:center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodymacAddress">
+                            @*@foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <label>@item.MacAddress</label>
+                            </td>
+
+                            <td>
+                                <a href="javascript:void(0)" id="btndelete" class="btn btn-danger btn-sm delete" onclick="DeleteMacAddress(@item.Id)">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }*@
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@Scripts.Render("~/Theme/datatablesjs")
+<script src="~/Scripts/TrainnerMacAddress/TrainnerMacAddress.js"></script>
+<script>
+    var SaveMacAddressUrl = '@Url.Action("SaveMacAddress", "TrainnerMacAddress")';
+    var MacAddressListUrl = '@Url.Action("MacAddressList", "TrainnerMacAddress")';
+    var DeleteMacAddressUrl = '@Url.Action("DeleteMacAddress", "TrainnerMacAddress")';
+
+    $(document).ready(function () {
+        GetMacAddress();
+    })
+</script>

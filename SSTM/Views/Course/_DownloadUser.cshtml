@@ -1,0 +1,51 @@
+﻿<div class="modal-header">
+    <h4 id="h4DownloadListModal" class="modal-title">Assign Download Users List</h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="form-group">
+        <label>Select Download Users</label>
+        @Html.DropDownList("ddlDownloadList", new SelectList(TempData["DownloadLoginList"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+    </div>
+</div>
+
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+    <button type="button" id="btnAssignCourseToDownload" class="btn btn-success">
+        Assign
+    </button>
+</div>
+
+<script>
+    var assignCourseToDownloadUrl = '@Url.Action("AssignCourseToDownload", "Course")';
+
+    $('#btnAssignCourseToDownload').on('click', function () {
+        $('#btnAssignCourseToDownload').prop('disabled', true);
+
+        var selectedDownloadCourse = $('#ddlDownloadList').val();
+
+        if (selectedDownloadCourse != 0) {
+            Ajaxhelper.post(assignCourseToDownloadUrl, { courseId: selectedCourseId, User_Id: selectedDownloadCourse }, onSuccessAssignDownloadCourse, null, null);
+
+            function onSuccessAssignDownloadCourse(data) {
+                if (data.result) {
+                    toastr.success('Selected course is successfully assign to selected User. Notification mail sent to selected User.');
+
+                    $('#CourseDownloadModal').modal('hide');
+                    GetCoursesList();
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+        else
+            toastr.warning('Please first select User to assign the course.');
+
+        $('#btnAssignCourseToDownload').prop('disabled', false);
+    });
+</script>

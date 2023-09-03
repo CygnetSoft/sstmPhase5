@@ -1,0 +1,77 @@
+﻿@model SSTM.Helpers.App.AppSession
+@{
+    ViewBag.Title = "Centralize History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+<section class="content" style="padding-top:10px;">
+    <div class="card col-md-12 mb-5">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Centralized Course History</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="tblCentrail_history"  class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Document </th>
+                        <th>Previous Text</th>
+                        <th>Amended text</th>
+                        <th>Reason from the change</th>
+                        <th>Date of change</th>
+                        <th>Changes by</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+@section scripts{
+@Scripts.Render("~/Theme/datatablesjs")
+    <script>
+   
+        var Get_Centralize_historyUrl = '@Url.Action("Get_Centralize_history", "CentralizedCourse")';
+
+        $(document).ready(function () {
+            get_history();
+        });
+
+        function get_history() {
+            $.ajax({
+                url: Get_Centralize_historyUrl,
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data  ,
+                // data: fileData,
+                success: function (data) {
+                    try {
+                        $("#tblCentrail_history tbody").html("");
+                        $("#tblCentrail_history tbody").append(data.content);
+                        $('#tblCentrail_history').dataTable({
+                            "paging": true,
+                            "lengthChange": true,
+                            "searching": true,
+                            "info": true,
+                            "autoWidth": false,
+                            "responsive": true,
+                            'order': [0, 'asc'],
+                        }).fnDraw();
+
+                    } catch (e) {
+                        toastr.error(e.message);
+                    }
+                },
+                error: function (err) {
+                    toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+                }
+            }).done(function (data) {
+                toastr.success(data.message);
+            });
+        }
+
+    </script>
+}

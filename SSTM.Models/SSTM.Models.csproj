@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FE7F1E08-CC95-4265-B6D1-31E54221352D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SSTM.Models</RootNamespace>
+    <AssemblyName>SSTM.Models</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActivityLog\ActivityLogListModel.cs" />
+    <Compile Include="ActivityLog\ActivityLogModel.cs" />
+    <Compile Include="Assessment_Paper\AssessmentPaperModel.cs" />
+    <Compile Include="AWS\AWSModel.cs" />
+    <Compile Include="Centralized_Course\CentralDocumentsListModel.cs" />
+    <Compile Include="Centralized_Course\Centralized_CourseModel.cs" />
+    <Compile Include="Centralized_Course\Centralized_Document_filesModel.cs" />
+    <Compile Include="Centralized_Course\Centralized_HistoryModel.cs" />
+    <Compile Include="Centralized_Course\Centralized_HistoryWithDataModel.cs" />
+    <Compile Include="Centralized_Course\Centralized_List_MasterModel.cs" />
+    <Compile Include="Centralized_Course\Centralized_MasterModel.cs" />
+    <Compile Include="Centralized_Course\Central_Manadatory.cs" />
+    <Compile Include="Central_CourseSharing\Central_CourseSharingModel.cs" />
+    <Compile Include="Central_CourseSharing\Central_SharedCourseListModel.cs" />
+    <Compile Include="Config\ConfigModel.cs" />
+    <Compile Include="CourseAssignment\CourseAssignmentModel.cs" />
+    <Compile Include="CourseDocRemarks\CourseDocRemarksGridModel.cs" />
+    <Compile Include="CourseDocRemarks\CourseDocRemarksModel.cs" />
+    <Compile Include="CourseDocument\CourseDocumentModel.cs" />
+    <Compile Include="CourseDocument\CourseDocumentsListModel.cs" />
+    <Compile Include="CourseDocVersion\CourseDocVersionModel.cs" />
+    <Compile Include="CourseDocVersion\CourseDocVersionsListModel.cs" />
+    <Compile Include="CourseDownload\CourseDownloadUserDetailsModel.cs" />
+    <Compile Include="CourseDownload\CourseDownloadUserModel.cs" />
+    <Compile Include="CourseReminderDownload\AebcourseApproved.cs" />
+    <Compile Include="CourseReminderDownload\CourseProposal.cs" />
+    <Compile Include="CourseReminderDownload\DesignValidationModel.cs" />
+    <Compile Include="CourseReminderDownload\GetDCRModel.cs" />
+    <Compile Include="CourseReminderDownload\NeedAnalysis.cs" />
+    <Compile Include="CourseSharing\CourseSharingModel.cs" />
+    <Compile Include="CourseSharing\SharedCourseListModel.cs" />
+    <Compile Include="CourseStatus\CourseStatusModel.cs" />
+    <Compile Include="CourseTrackers\CourseTrackersModel.cs" />
+    <Compile Include="CourseTrackers\CourseTrackingDataModel.cs" />
+    <Compile Include="CourseTrackers\NewCourseTrackingDataModel.cs" />
+    <Compile Include="CourseTrackers\NewCourseTrackingModel.cs" />
+    <Compile Include="Course\AirlineCourseModel.cs" />
+    <Compile Include="Course\CourseListModel.cs" />
+    <Compile Include="Course\CourseModel.cs" />
+    <Compile Include="Course\DashbordCourseCountModel.cs" />
+    <Compile Include="Course_Reminder\CourseReminderModel.cs" />
+    <Compile Include="Course_Reminder\CourseRenewalModel.cs" />
+    <Compile Include="Course_Reminder\Course_Li_Reminder_Model.cs" />
+    <Compile Include="Course_Reminder\Course_Reminder_Latter_UndertakingModel.cs" />
+    <Compile Include="DeveloperMonitorTimer\DeveloperMonitorTimerModel.cs" />
+    <Compile Include="DeveloperMonitorTimer\MonitorListModel.cs" />
+    <Compile Include="EmailModel\EmailModel.cs" />
+    <Compile Include="ExceptionLog\ExceptionLogModel.cs" />
+    <Compile Include="IntroPage\CommonIntroModels.cs" />
+    <Compile Include="JQueryDataTablesModel\ControllerExtensions.cs" />
+    <Compile Include="JQueryDataTablesModel\JQueryDataTablesModel.cs" />
+    <Compile Include="JQueryDataTablesModel\JQueryDataTablesModelBinder.cs" />
+    <Compile Include="JQueryDataTablesModel\JQueryDataTablesResponse.cs" />
+    <Compile Include="Login\LoginModel.cs" />
+    <Compile Include="MemorandomModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QPRequest\QPRequestModel.cs" />
+    <Compile Include="Report\ReportModel.cs" />
+    <Compile Include="RiskAssessmentDeclarationModel.cs" />
+    <Compile Include="Role\RoleModel.cs" />
+    <Compile Include="MainCourse\MainCourseModel.cs" />
+    <Compile Include="StudentNotification\StudentNotificationModel.cs" />
+    <Compile Include="SubCourse\SubCourseModel.cs" />
+    <Compile Include="TodayClassDocsModel.cs" />
+    <Compile Include="TodayClassDocsWithSSTMModel.cs" />
+    <Compile Include="TrainerQPUpload\TrainerQPUploadDataModel.cs" />
+    <Compile Include="TrainerQPUpload\TrainerQPUploadModel.cs" />
+    <Compile Include="TrainerQPUpload\TrainerQP_Level_ApprovalModel.cs" />
+    <Compile Include="TrainerQPUpload\TrainerQP_Shared_StudentModel.cs" />
+    <Compile Include="TrainerQPUpload\TrainerStudentApiModel.cs" />
+    <Compile Include="TrainerQPUpload\Trainer_qp_level_data_model.cs" />
+    <Compile Include="TrainerUploadDocumentModel\TrainerUploadDataModel.cs" />
+    <Compile Include="TrainerUploadDocumentModel\TrainerUploadDocumentModel.cs" />
+    <Compile Include="TrainingCenter\TrainingCenterDataGridModel.cs" />
+    <Compile Include="TrainingCenter\TrainingCenterModel.cs" />
+    <Compile Include="TrainnerMacAddress\TrainnerMacAddressModel.cs" />
+    <Compile Include="User\UserModel.cs" />
+    <Compile Include="User\UsersListModel.cs" />
+    <Compile Include="Zoho\ZohoResponseModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Need Analysis Download";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Need Analysis Download</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblaebcoure" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Apply Date</th>
+                                @*<th>Type</th>*@
+                                <th>Course Level</th>
+                                <th class="text-center" style="width:8%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.CourseName
+                                    </td>
+                                    <td>
+                                        @item.aplydate
+                                    </td>
+                                    @*<td>
+                                        @item.type1
+                                    </td>*@
+                                    <td>
+                                        @item.courselevel
+                                    </td>
+                                    <td>
+                                        <a href='@item.Column1' target="_blank">Download</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+    <script>
+        $(document).ready(function () {
+            $("#tblaebcoure").DataTable();
+        });
+
+    </script>
+}

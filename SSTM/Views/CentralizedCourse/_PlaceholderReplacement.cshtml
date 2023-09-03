@@ -1,0 +1,294 @@
+﻿@model SSTM.Core.Centralized_Course.Centralized_Master
+
+<div class="modal-header">
+    <h4 id="h4CourseDocsSharingModal" class="modal-title">Image / Text Configuration</h4>
+    <a href="javascript:void(0)" class="mt-0 ml-5 btn btn-warning" style="font-size: 15px;" onclick="EditorModel(@Model.id)" id="EditorModel">Editor Raw Courese PPT File</a>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <input type="hidden" id="courseid" value="@Model.id" />
+    <div class="col-12">
+        <div class="col-12">
+            <div class="row">
+                <input type="text" id="labelname" class="form-control col-3 " placeholder="Enter pre define text" />
+                <select id="textorimage" class="form-control col-1 ml-2">
+                    <option value="text" selected>Text</option>
+                    <option value="image">Image</option>
+                </select>
+                <textarea id="name" class="fosrm-control col-4 ml-1 textshow" placeholder="Enter replace text"></textarea>
+                @*<input type="text"  />*@
+                <input type="file" id="nameimage" style="display:none" class="fosrm-control col-4 ml-1 imageshow mt-1" placeholder="Enter replace text" />
+                <select id="repeate" class="form-control col-2 ml-1">
+                    <option value="">-- Select --</option>
+                    @*<option value="PPT">PPT</option>
+                    <option value="LG">LG</option>
+                    <option value="FG">FG</option>
+                    <option value="CRM">CRM</option>
+                    <option value="LP">LP</option>
+                    <option value="QA">QA</option>
+                    <option value="Qwithoutanswer">Qwithoutanswer</option>
+                    <option value="AP">AP</option>
+                    <option value="AR">AR</option>
+                    <option value="Assessmentchecklist">Assessmentchecklist</option>
+                    <option value="RA">RA</option>
+                    <option value="SWP">SWP</option>*@
+                    <option value="All" selected>All</option>
+                </select>
+                <a id="addmandatoryrow" class="btn col-1 btn-primary ml-1" style="height: 37px;"><i class=" fa fa-plus"></i> Add</a>
+            </div>
+         
+        </div>
+
+        <table id="btlmadatory1" style="line-height: 0.9;font-size: 12px;" class="table mt-3">
+            <tbody></tbody>
+        </table>
+
+    </div>
+</div>
+<div class="modal-footer" style="display:block;">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <div class="float-right">
+        <a id="savemandatory1" class="btn btn-success" onclick="savePlaceholder('@Model.id')" ><i class=" fa fa-save"></i> Save & Generate Files</a>
+    </div>
+</div>
+
+<div class="modal fade" id="EditfileModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width:90%;">
+        <div class="modal-header" style="background-color:black;color:white">
+            <h4 class="modal-title">Edit Raw Course PPT</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
+                <span aria-hidden="true" style="color:white">×</span>
+            </button>
+        </div>
+        <div id="divEditfileModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<script>
+    var mandatory1counter = 1;
+    var mandatory2counter = 1;
+    var magatory1Array = [];
+
+    var FileUpload_folderUrl = '@Url.Action("FileUpload_folder", "CentralizedCourse")';
+    var Centralized_Course_saveURL = '@Url.Action("Centralized_Course_save", "CentralizedCourse")';
+    var get_Central_edit_dataURL = '@Url.Action("Get_Centrail_data", "CentralizedCourse")';
+    var CentralizePPTGenerateUrl = '@Url.Action("CentralizePPTGenerate", "CentralizedCourse")';
+    var OpenFileEditorUrl = '@Url.Action("Central_raw_CourseDocViewer", "CourseDoc")';
+
+    $(document).ready(function () {
+        get_Central_edit_data($("#courseid").val());
+    })
+
+    $("#textorimage").on("change", function () {
+
+        if ($(this).val() == "text") {
+            $(".textshow").show();
+            $(".imageshow").hide();
+        }
+        else {
+            $(".textshow").hide();
+            $(".imageshow").show();
+        }
+    })
+
+    $("#nameimage").change(function () {
+        var fileUpload = this.files[0];
+
+        // Create FormData object
+        var fileData = new FormData();
+
+        // Looping over all files and add it to FormData object
+
+        fileData.append(fileUpload.name, fileUpload);
+        fileData.append("filename1", $("#labelname").val());
+
+
+        $.ajax({
+            url: FileUpload_folderUrl,
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data  ,
+            data: fileData,
+            success: function (data) {
+                if (data.result == true)
+                    $("#name").val(data.FileName);
+                else
+                    $("#name").val('');
+            },
+        });
+    });
+
+
+    function savePlaceholder(id) {
+        if (id == 0) {
+            alert("Id not found please added new");
+            return;
+        }
+        magatory1Array = [];
+        $('#btlmadatory1 tbody tr').each((tr_idx, tr) => {
+            var newmagatoryArray = {};
+            var i = 0;
+            $(tr).children('td').each((td_idx, td) => {
+                //alert('[' + tr_idx + ',' + td_idx + '] => ' + $(td).text());
+                if (i == 1)
+                    newmagatoryArray.lablename = $(td).text();
+                if (i == 2)
+                    newmagatoryArray.name = $(td).text();
+                if (i == 3)
+                    newmagatoryArray.type = $(td).text();
+                if (i == 4) {
+                    newmagatoryArray.repeate = $(td).text();
+                    newmagatoryArray.id = 0;
+                }
+
+                i++;
+            });
+            magatory1Array.push(newmagatoryArray);
+        });
+
+
+        Ajaxhelper.post(Centralized_Course_saveURL,
+                   { data: JSON.stringify(magatory1Array), master_id:id },
+                   onSuccessCentralized_Course_save, null, null);
+
+        function onSuccessCentralized_Course_save(data) {
+            if (data.result) {
+                GeneratePPT(magatory1Array,id);
+                toastr.success("successfully Save");
+                $("#CoursePlaceholderModal").modal('hide');
+            }
+            else
+                toastr.error("something went to wrong please contact to admininstrator");
+        }
+    }
+
+    function get_Central_edit_data(id) {
+        Ajaxhelper.post(get_Central_edit_dataURL,
+                   { document_id: id },
+                   onSuccessget_Central_edit_data, null, null);
+    }
+
+    function onSuccessget_Central_edit_data(data) {
+        if (data.result) {
+
+            $.each(data.replace_data, function (key, item) {
+                key++;
+                var tr = "<tr>";
+                tr += "<td style='width:5%'>" + key + "</td>";
+                tr += "<td style='width:10%'>" + item.master_text + "</td>"
+                tr += "<td style='width:20%'>" + item.replace_text + "</td>";
+                tr += "<td style='width:3%'>" + item.type + "</td>";
+                tr += "<td style='width:3%'>" + item.textimage + "</td>";
+                tr += "</tr>";
+                mandatory1counter = key + 1;
+                $("#btlmadatory1 tbody").append(tr);
+                $("#labelname").val('');
+                $("#name").val('');
+                $("#repeate").val('');
+                $("#savemandatory1").show();
+                $("#savemandatoryback").show();
+            });
+
+        }
+        else
+            toastr.error("something went to wrong please contact to admininstrator");
+    }
+
+    $("#addmandatoryrow").click(function () {
+        if ($("#labelname").val() == "" || $("#name").val() == "" || $("#repeate").val() == "") {
+            alert("all filed requied");
+            return;
+        }
+        var islabelnameExist = false;
+        $('#btlmadatory1 tbody tr').each((tr_idx, tr) => {
+            var i = 0, lablename = "", type = "";
+            $(tr).children('td').each((td_idx, td) => {
+                if (i == 1)
+                    lablename = $(td).text();
+                if (i == 3)
+                    type = $(td).text();
+
+                i++;
+            });
+
+            if (lablename.trim() == $("#labelname").val().trim() && type.trim() == $("#repeate").val()) {
+                islabelnameExist = true;
+                return;
+            }
+        });
+
+        if (islabelnameExist == true) {
+            toastr.error("Enter text already Exit Please, try different name and type !");
+            $("#labelname").focus();
+            return;
+        }
+        var tr = "<tr>";
+        tr += "<td>" + mandatory1counter + "</td>";
+        tr += "<td>" + $("#labelname").val() + "</td>"
+        tr += "<td>" + $("#name").val() + "</td>";
+        tr += "<td>" + $("#repeate").val() + "</td>";
+        tr += "<td>" + $("#textorimage").val() + "</td>";
+        tr += "</tr>";
+
+        $("#btlmadatory1 tbody").append(tr);
+        mandatory1counter++;
+
+        $("#labelname").val('');
+        $("#name").val('');
+        $("#repeate").val('All');
+        $("#nameimage").val('');
+        $("#savemandatory1").show();
+        $("#savemandatoryback").show();
+    });
+
+
+    function GeneratePPT(placeholder,id)
+    {
+        var fileData = new FormData();
+        fileData.append('data', JSON.stringify(placeholder));
+        fileData.append('master_id', id);
+
+        $.ajax({
+            url: CentralizePPTGenerateUrl,
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data  ,
+            data: fileData,
+            success: function (data) {
+                try {
+                    if (data.result) {
+                        toastr.success(data.message);
+                    }
+                    else
+                        toastr.error(data.message);
+                } catch (e) {
+                    // toastr.error(e.message);
+                }
+            },
+            error: function (err) {
+                toastr.error(err.statusText + ". Please refresh the page and try again or contact our site administrator.");
+            }
+        }).done(function () {
+            //toastr.success("successfully generated ppt file");
+            $("#showpptfile_save").show();
+        });
+    }
+
+
+function EditorModel(courseid)
+{
+    Ajaxhelper.post(OpenFileEditorUrl, { courseid: courseid }, onSuccessOpenFileeditor, null, null);
+    function onSuccessOpenFileeditor(result)
+    {
+        $('#divEditfileModal').html('');
+        $('#divEditfileModal').html(result);
+        $("#editorCenterTitle").html("Central Raw PPT File Editor");
+        $("#btnback").hide();
+        $("#EditfileModal").modal('show');
+    }
+}
+</script>

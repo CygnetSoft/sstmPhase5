@@ -1,0 +1,80 @@
+﻿
+@model SSTM.Helpers.App.AppSession
+<a href="#" class="brand-link navbar-light text-center">
+    <img src="~/Theme/images/eversafe-logo-.png" alt="SSTM" class="brand-image" style="opacity: .8">
+</a>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-copy"></i>
+                    <p>
+                        Intro Pages
+                        <i class="fas fa-angle-left right"></i>
+                        <span class="badge badge-info right">6</span>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="@Url.Action("index", "intro", new { area = "" })" class="nav-link">
+                            <i class="nav-icon fa fa-list"></i>
+                            <p>
+                                Intro Page
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="@Url.Action("createstudentmcq", "intro", new { area = "" })" class="nav-link">
+                            <i class="nav-icon fa fa-list"></i>
+                            <p>
+                                Instant Testing
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ViewAnswerSheet", "intro", new { area = "" })" class="nav-link">
+                            <i class="nav-icon fa fa-list"></i>
+                            <p>
+                                View MCQ Answer
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("StudentOverallMarkSummary", "intro", new { area = "" })" class="nav-link">
+                            <i class="nav-icon fa fa-list"></i>
+                            <p>
+                                View Student Summary
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("feedbackstudentview", "intro", new { area = "" })" class="nav-link">
+                            <i class="nav-icon fa fa-list"></i>
+                            <p>
+                                Instant Feedback Student View
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("viewstudentmcq", "intro", new { area = "" })" class="nav-link">
+                            <i class="nav-icon fa fa-list"></i>
+                            <p>
+                                View MCQ Paper
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+          
+           
+           
+        </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+</div>
+<!-- /.sidebar -->

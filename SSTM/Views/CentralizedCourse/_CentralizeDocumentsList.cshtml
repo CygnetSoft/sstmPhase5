@@ -1,0 +1,139 @@
+﻿@model List<SSTM.Core.Centralized_Course.Centralized_Document_files>
+<div class="modal-header">
+    <h4 id="h4SMEListModal" class="modal-title">Central Created Documents</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+<div class="modal-body">
+    <div class="form-group">
+        <table class="table" id="Centraldocumentlist">
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Documents Name</th>
+                    @if (currentSession.UserRole == "Manager" || currentSession.UserRole == "Administration" || currentSession.UserRole == "Director" || currentSession.UserRole == "Developer")
+                    {
+                        <th style="width: 20%;text-align:center">Files</th>
+                    }
+                    <th style="width: 20%;">Type</th>
+                    <th class="text-center" style="width: 19%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyCentraldocumentlist">
+                @if (Model != null && Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr id="@item.id" course="@item.Central_Master_Id">
+                            <td> @item.Document_File_Name.ToString().Split('.')[0]</td>
+                            @if (currentSession.UserRole == "Manager" || currentSession.UserRole == "Administration" || currentSession.UserRole == "Director" || currentSession.UserRole == "Developer")
+                            {
+                                <td>
+                                    @if (item.Document_Type_Name.Trim() == "PPT")
+                                    {
+                                        <a target="_parent" href="javascript:void(0)" class=" ml-2" onclick='View_documentFile("@item.Document_File_Name","ppt",@item.Central_Master_Id,"Edit")'>@item.Document_File_Name</a>
+                                    }
+                                    else
+                                    {
+                                        <a target="_parent" href="javascript:void(0)" class="ml-2" onclick='View_documentFile(" + @item.Document_File_Name + ","doc",@item.Central_Master_Id,"Edit")'>@item.Document_File_Name</a>
+                                    }
+                                </td>
+                            }
+                            <td>@item.Document_Type_Name</td>
+                            <td style="text-align:center">
+                                @if (item.Document_Type_Name == "PPT")
+                                {
+                                    <a target="_parent" href="javascript:void(0)" class="btn btn-info btn-sm  ml-2" onclick='View_documentFile("@item.Document_File_Name","ppt",@item.Central_Master_Id,"View")'>View</a>
+                                }
+                                else
+                                {
+                                    <a target="_parent" href="javascript:void(0)" class="btn btn-info btn-sm  ml-2" onclick='View_documentFile(" + @item.Document_File_Name + ","doc",@item.Central_Master_Id,"View")'>View</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center no-data">No documents found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<input type="hidden" id="currentcoursestatus" />
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" id="btnSubmitCourseDocs" class="btn btn-success btnSubmitCourseDocs" disabled>
+        Submit Documents
+    </button>
+</div>
+<script src="~/Scripts/course/Centralize_list.js"></script>
+<script>
+    var submitCourseDocumentsUrl = '@Url.Action("SubmitCourseDocuments", "CentralizedCourse", new { area = "" })';
+
+    $(document).ready(function () {
+        var rowCount = $('#Centraldocumentlist >tbody >tr').length;
+        
+        if (rowCount==1)
+            $('.btnSubmitCourseDocs').hide();
+        else
+            $('.btnSubmitCourseDocs').show();
+
+        if ('@currentSession.UserRole' === 'Director' || '@currentSession.UserRole' === 'Administration') {
+            if (currentstatus === "Submitted" ||
+              currentstatus === "Under Review" ||
+                currentstatus === "Under Improvement" ||
+                currentstatus === "Reviewed" ||
+                currentstatus === "Approved" ||
+                currentstatus === "Released") {
+                $('.btnSubmitCourseDocs').css('display', 'none');
+            }
+        }
+        else if ('@currentSession.UserRole' === 'Manager') {
+            if (currentstatus === "Submitted" ||
+                currentstatus === "Under Review" ||
+                currentstatus === "Under Improvement" ||
+                currentstatus === "Reviewed" ||
+                currentstatus === "Approved" ||
+                currentstatus === "Released") {
+                $('#btnSubmitCourseDocs').css('display', 'none');
+
+            }
+        }
+        else if ('@currentSession.UserRole' === 'Developer') {
+            if (currentstatus == "Submitted" ||
+                currentstatus == "Under Review" ||
+                currentstatus == "Reviewed" ||
+                currentstatus == "Approved" ||
+                currentstatus == "Released") {
+                $('.btnSubmitCourseDocs').css('display', 'none');
+            }
+        }
+
+    });
+    $('#btnSubmitCourseDocs').on('click', function (e) {
+        e.preventDefault();
+
+        var courseId = $('#Centraldocumentlist > tbody > tr:eq(0)').attr('course');
+        if (courseId === undefined || courseId === 0)
+            toastr.error('Please upload and complete all the documents and then try again.');
+        else
+            Ajaxhelper.post(submitCourseDocumentsUrl, { CourseId: courseId }, onSuccessSubmitCourseDocs, null, null);
+    });
+    function onSuccessSubmitCourseDocs(data) {
+        if (data.result) {
+            toastr.success(data.message);
+        }
+        else {
+            toastr.success(data.message);
+        }
+    }
+</script>

@@ -1,0 +1,49 @@
+﻿@model  List<SSTM.Core.Course_Reminder.CourseReminder>
+@{
+    ViewBag.Title = "Letter of undertaking List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Letter of undertaking List</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tbllatter" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th class="text-center" style="width:8%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                               <tr>
+                                   <td>
+                                      @item.course_name
+                                   </td>
+                                   <td>
+                                      <a href='@Url.Action("Letterofundertaking", "CourseReminderDownload", new { id = item.Id })'>View Latter Undertaiking</a>
+                                   </td>
+                               </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+}

@@ -1,0 +1,793 @@
+﻿@{
+    ViewBag.Title = "View Student MCQ's";
+    string batchId = ViewBag.BatchId as string;
+}
+@Html.AntiForgeryToken()
+<!doctype html>
+<html lang="en">
+<head>
+    <link href="@Url.Content("~/Content/intro-page/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2/css/select2.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/fontawesome-free/css/all.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/toastr/toastr.min.css")" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #eeecec !important
+        }
+
+        .select2-selection__rendered {
+            line-height: 32px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 40px !important;
+        }
+
+        hr.double_border_style {
+            border-top: 4px double black;
+        }
+
+            hr.double_border_style:after {
+                content: '';
+                display: inline-block;
+                position: relative;
+                top: -15px;
+                left: 40px;
+                padding: 0 10px;
+                background: #f0f0f0;
+                color: #8c8b8b;
+                font-size: 18px;
+            }
+
+        .is-invalid + .select2-container--default .select2-selection--single {
+            border: 1px solid #f44336;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 2rem center;
+            background-size: calc(3 em + 0.375 rem ) calc(3em + 0.375 rem );
+        }
+
+        .container1 {
+            position: relative;
+            text-align: center;
+            color: white;
+        }
+
+        .centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .questionGreen {
+            background-color: green;
+        }
+
+        .questionRed {
+            background-color: Red;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 90px;
+            height: 36px;
+        }
+
+            .switch input {
+                display: none;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ca2222;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 6px;
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 34px;
+                width: 32px;
+                top: 1px;
+                left: 1px;
+                right: 1px;
+                bottom: 1px;
+                background-color: white;
+                transition: 0.4s;
+                border-radius: 6px;
+            }
+
+        input:checked + .slider {
+            background-color: #2ab934;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(55px);
+        }
+
+        .slider:after {
+            content: 'OFF';
+            color: white;
+            display: block;
+            position: absolute;
+            transform: translate(-50%,-50%);
+            top: 50%;
+            left: 50%;
+            font-size: 10px;
+            font-family: Verdana, sans-serif;
+        }
+
+        input:checked + .slider:after {
+            content: 'ON';
+        }
+
+        .mr-24 {
+            margin-right: 24rem !important;
+        }
+
+        .button-76 {
+            align-items: center;
+            background-image: linear-gradient( 135deg, #f34079 40%, #fc894d);
+            border: 0;
+            border-radius: 10px;
+            box-sizing: border-box;
+            box-shadow: rgb(0 0 0 / 30%) 0 5px 15px;
+            color: #fff;
+            cursor: pointer;
+            /* display: flex; */
+            flex-direction: column;
+            font-family: "Codec cold",sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            height: 40px;
+            justify-content: center;
+            letter-spacing: .4px;
+            line-height: 1;
+            max-width: 100%;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 13px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <img src="~/Theme/images/eversafe-logo-.png" width="150" height="50" />
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-3" id="qs__section_display">
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-outline card-success">
+                        <div class="card-header bg-white">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="font-weight-bolder">Question Sheet</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row form-group">
+                                <div class="col-md-12">
+                                    <label class="col-form-label-sm">Choose Course</label>
+                                    <select class="form-control select2" data-width="100%" id="courseList" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                                    <div class="invalid-feedback col-form-label-sm">Course is Required.</div>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-md-6">
+                                    <label class="col-form-label-sm">Choose Batch</label>
+                                    <select class="form-control select2" data-width="100%" id="batchList" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                                    <div class="invalid-feedback col-form-label-sm">Batch is Required.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="col-form-label-sm">Choose IPR</label>
+                                    <select class="form-control select2" data-width="100%" id="chapterList">
+                                        <option value="0">Select</option>
+                                        @for (int i = 0; i < 15; i++)
+                                        {
+                                            var chapter = i + 1;
+                                            <option value="@chapter">IPR @chapter</option>
+                                        }
+                                    </select>
+                                    <div class="invalid-feedback col-form-label-sm">IPR is Required.</div>
+                                </div>
+                            </div>                          
+                            <div class="row mt-2 py-5">
+                                <div class="col-md-6 text-center">
+                                    @*<button type="button" onclick="instantFeedback()" class="btn btn-labeled btn-success">
+                    <span class="btn-label"><i class="fa fa-check-circle"></i></span>Send Notification to All students
+                </button>*@
+                                    <button type="button" onclick="instantFeedback()" class="col-md-6 btn button-76 btn-block btn-sm">Send Notification to All students</button>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <button id="btnViewResult" type="button" class="col-md-6 btn button-75 btn-block btn-sm">Refresh Result</button>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <button id="btnFeedback" type="button" class="col-md-6 btn button-75 btn-block btn-sm">Go to Feedback</button>
+                                    @Html.Hidden("RedirectTo", Url.Action("feedbackstudentview", "intro"))
+                                </div>
+                            </div>
+                            <div id="qheader" class="card-header" style="background-color:#343a40; display:none;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="font-weight-bolder" style="color:white;">Show Answer</span>
+                                    </div>
+                                    <div class="col-md-6" style="text-align: right;">
+                                        <label class="switch"><input id="qCheckbox" type="checkbox" title="To view the answer by ON/OFF"> <span class="slider round"></span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="container-fluid ml-3">
+                                    <ol class="num list-group mcq-list"></ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 card-footer bg-light">
+                <div class="form-row">
+                    <div class="container">
+                        <table class="table table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Sl.No.</th>
+                                    <th scope="col">Photo</th>
+                                    <th scope="col">Student Name</th>
+                                    <th scope="col">Total Correct</th>
+                                    <th scope="col">Total Marks</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody id="overall_students"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-4" id="gauge__display">
+        <div class="card">
+            <div class="card-body">
+                <div class="chart-gauge"></div>
+                <div class="mt-3">
+                    <div class="stud___start_rating text-center">
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="@Url.Content("//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")"></script>
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js")"></script>
+<script src="@Url.Content("~/Theme/plugins/select2/js/select2.min.js")"></script>
+<script src="@Url.Content("//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Scripts/sstm_js_enc/_sstm_enc.js")"></script>
+<script src="@Url.Content("~/Theme/plugins/toastr/toastr.min.js")"></script>
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js")"></script>
+
+<script>
+    $(document).ajaxSend(function () {
+        $("#overlay").fadeIn(300);
+    });
+    function instantFeedback() {
+        var CourseId = $('#courseList').val();
+        var ChapterId = $('#chapterList').val();
+        let bid = Number($('#batchList').val());
+        if (CourseId != 0 && bid != 0 && ChapterId != 0) {
+            $.ajax({
+                url: "@Url.Action("InstantTestNotification", "Intro")?windowLocation=" + window.location.origin + '&courseId=' + CourseId + '&chapterId=' + ChapterId + '&batchId=' + bid,
+                method: "GET",
+                dataType: "json",
+                beforeSend: function () {
+                    $(".loadingDiv").show();
+                },
+                success: function (data, xhr) {
+
+                    toastr.success(data);
+                }
+            });
+        } else {
+            toastr.error('Please choose course, batch and then select IPR.');
+        }
+    }
+    $(".fa-star").click(function () {
+        $(this).parents().find('.fa-star').removeClass('checked')
+        $(this).prevAll().addClass('checked');
+        $(this).addClass('checked');
+    });
+    $('#courseList').change(function () {
+        $('#batchList').val(0).select2();
+        $('#chapterList').val(0).select2();
+    });
+    document.onreadystatechange = function (e) {
+        $('#gauge__display').hide();
+    }
+
+    //signalr connection
+    //$(function () {
+    //    var chat = $.connection.webSocketHub;
+    //    $.connection.hub.logging = true;
+    //    chat.client.SendPushNotifyToClient = function (name, message) {
+
+    //    };
+    //    chat.client.SstmClientConnection = function (name, connectionId) {
+
+    //    };
+    //    $.connection.hub.start().done(function (dt) {
+    //        chat.server.onConnect();
+    //        chat.server.sendClientToServer('sstm', 'connecting');
+    //    });
+    //});    
+
+    var answers = [];
+    var mcq = '';
+    $(document).ready(function () {
+        $.ajax({
+            url: "@Url.Action("GetAllCourse", "Intro",null)",
+            method: "Get",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            success: ((data) => {
+                let k = JSON.parse(data.Result);               
+                $('#courseList').empty().append($('<option/>').val(0).html('Select'))
+                $.map(k, function (v, i) {
+                    $('#courseList').append($('<option></option>').val(v.CourseId).html(v.CourseName));
+                });
+                //$('#courseList,#chapterList').select2();
+
+                $('#courseList').prop('selectedIndex', 1);
+
+
+                if (data.Batchs !=null && data.Batchs.length > 0) {
+
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $.map(data.Batchs, function (v, j) {
+                        $('#batchList').append($('<option></option>').val(v.BatchId).html(v.BatchId));
+                    });
+                    //$('#courseList,#chapterList').select2();
+
+                    $('#batchList').prop('selectedIndex', 1);
+                    //$('#chapterList').prop('selectedIndex', 1);
+
+                    $('#chapterList').val(1).select2();
+
+                    viewQuestions();
+
+                    viewResult();
+                }
+                else {
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $('#batchList').prop('selectedIndex', 0);
+                }
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+
+       
+
+        $('#qCheckbox').on("click", function () {
+            if (this.checked) {
+                //$('.mcq-list').show();
+
+                $('.mcq-list').empty().removeClass('badge badge-success');
+                $('.mcq-list').append(mcq);
+
+                if (answers.length > 0) {
+
+                    $(answers).map((i, v) => {
+
+                        $('.icon-' + v.Correct_Choice + '-' + i).append('&nbsp;&nbsp;<i class="fas fa-check-circle fa-2x mt-1 mr-1" style="color:green!important"></i>');
+
+                    });
+                }
+            }
+            else {
+                $('.mcq-list').empty().removeClass('badge badge-success');
+                $('.mcq-list').append(mcq);
+
+                //$('.mcq-list').hide();
+            }
+        });
+
+        $(function () {
+            var chat = $.connection.webSocketHub;
+            $.connection.hub.logging = true;
+            chat.client.SendPushNotifyToClient = function (name, v) {
+                name = JSON.parse(name);
+                if (name.Notify == 'mcqresult') {
+                    v = JSON.parse(v);
+
+                    if (v.length > 0) {
+                        if (v[0].StudentNo == name.StudentNo && v[0].BatchId == name.BatchId && v[0].ChapterId == name.ChapterId)
+                            viewResult();
+                    }
+                }
+            };
+            chat.client.SstmClientConnection = function (name, connectionId) {
+                //console.log(name + " : " + connectionId);
+            };
+            $.connection.hub.start().done(function (dt) {
+                chat.server.onConnect();
+            });
+        });
+    });
+
+    $('#courseList').change(function () {
+        let courseId = Number($('#courseList').val());
+
+        $('#batchList').val(0).select2();
+        $('.mcq-list').empty().removeClass('badge badge-success');
+        $('#overall_students').empty();
+        $('#qheader').hide();
+
+        if (courseId == 0) {            
+            toastr.error('Please select course.');
+            return;
+        }
+
+        $.ajax({
+            url: "@Url.Action("GetBatchesBasedOnCourseId", "Intro")?courseId=" + courseId,
+            method: "Get",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            success: ((data) => {
+
+                if (data.Batchs!=null && data.Batchs.length > 0) {
+
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $.map(data.Batchs, function (v, j) {
+                        $('#batchList').append($('<option></option>').val(v.BatchId).html(v.BatchId));
+                    });
+
+                    $('#batchList').prop('selectedIndex', 1);
+
+                    $('#chapterList').val(0).select2();                    
+                }
+                else {
+                    $('#batchList').empty().append($('<option/>').val(0).html('Select'))
+                    $('#batchList').prop('selectedIndex', 0);
+                }
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+    });
+
+    $('#batchList').change(function () {
+        let courseId = Number($('#courseList').val());
+        let batchId = Number($('#batchList').val());
+
+        $('#overall_students').empty();
+
+        if (courseId == 0 || batchId == 0) {
+            toastr.error('Please select course and batch.');
+            return;
+        }
+
+        $.ajax("@Url.Action("AssignBatch", "Intro")?courseId=" + courseId + '&batchId=' + batchId,
+        ).then(function (data) {
+            if (data == 'Success') {
+                $('#chapterList').val(0).select2();
+            }
+        });       
+    });
+
+    $('#chapterList').change(function () {
+        viewQuestions();
+    });
+
+    $('#btnViewResult').click(function () {
+        viewResult();
+    });
+
+    $('#btnFeedback').click(function () {
+
+        let courseId = Number($('#courseList').val());        
+        let batchId = Number($('#batchList').val());
+
+        if (courseId == 0 || batchId == 0) {
+            toastr.error('Please select course and batch.');
+            return;
+        }
+
+        if (confirm("Please confirm whether all the IPRs(i.e.Chapter) are completed before you go to Feedback page?") == true) {
+            var url = $("#RedirectTo").val();
+            location.href = url;
+        }
+    });
+
+    function viewQuestions() {
+        let courseId = Number($('#courseList').val());
+        let bid = Number($('#batchList').val());
+        let chapterId = Number($('#chapterList').val());
+
+        var chkbox = '';
+
+        $('.mcq-list').empty().removeClass('badge badge-success');
+        $('#overall_students').empty();
+        $('#qheader').hide();
+
+        if (courseId != 0 && bid != 0 && chapterId != 0) {
+
+            $.ajax({
+                url: "@Url.Action("GetStudentMcqBasedOnCourse", "IntroStudent")?courseId=" + courseId + '&chapterId=' + chapterId + '&batchId=' + bid,
+                method: "Get",
+                dataType: "json",
+                beforeSend: (() => { $(".loadingDiv").show(); answers = ''; mcq = ''; }),
+                success: ((data) => {
+
+                    if (data.NotificationStatus) {
+
+                    }
+
+                    if (data.AnswerSheet.length > 0) {
+                        $('.mcq-list').empty().removeClass('badge badge-success');
+                        $('#qheader').show();
+                        answers = data.AnswerSheet;
+                        $(data.AnswerSheet).map((i, v) => {
+
+                            
+                            var index = i;
+                            var choice_a_id = "choice-a" + i;
+                            var choice_b_id = "choice-b" + i;
+                            var choice_c_id = "choice-c" + i;
+                            var choice_d_id = "choice-d" + i;
+                            var mcq_choice = "mcq_choice" + i;
+                            var $id = "mcq" + i;
+
+                            var choice_a_url_path = v.Is_Url_Choice_A ? v.Choice_A_Url : '';
+                            var choice_b_url_path = v.Is_Url_Choice_B ? v.Choice_B_Url : '';
+                            var choice_c_url_path = v.Is_Url_Choice_C ? v.Choice_C_Url : '';
+                            var choice_d_url_path = v.Is_Url_Choice_D ? v.Choice_D_Url : '';
+
+                            var content = ' <li class="mb-2 mcq-qs-list">' +
+                               '    <input hidden id="studentQpId' + i + '" value="' + v.StudentQpId + '" />';
+                            if (v.IsQp === true) {
+                                content += '<div class="col-md-12"> <img src ="' + v.Qp_Doc_Name + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_qs_' + i + '" class="pre_qs" /><span class="ml-auto mr-24">(' + v.PerQuestionMark + ')</span>' + chkbox +'</div>';
+                            }
+                            else {
+                                content += '<span type="text" class="col-form-label-sm font-weight-bold mcq" style="color: #653FEE!important" id="' + $id + '">' + v.Question + '</span>&nbsp;&nbsp;<span class="ml-auto mr-24">(' + v.PerQuestionMark + ')</span>' + chkbox +'';
+                            }
+
+                            chkbox = '';
+
+                            content += '<ul class="alpha_letter mt-2">' +
+                              '           <li class="mt-2 d-flex icon-a-'+index+'">' +
+                              '             <div class="form-check">' +
+                              '               <input style="display:none" class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_a_id + '" value="a">';
+                            if (!v.Is_Url_Choice_A) {
+                                content += '<label class="form-check-label" for="' + choice_a_id + '">A) ' + v.Choice_A + '</label>';
+                            }
+                            else if (v.Is_Url_Choice_A) {
+                                content += '<div class="col-md-12">' +
+                                        '<img src ="' + choice_a_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_a" />' +
+                                        '</div>';
+                            }
+                            content += ' </div>' +
+                            '           </li>' +
+                            '           <li class="mt-2 d-flex icon-b-' + index + '">' +
+                            '             <div class="form-check">' +
+                            '               <input style="display:none" class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_b_id + '" value="b">';
+                            if (!v.Is_Url_Choice_B) {
+                                content += '<label class="form-check-label" for="' + choice_b_id + '">B) ' + v.Choice_B + '</label>';
+                            }
+                            else if (v.Is_Url_Choice_B) {
+                                content += '<div class="col-md-12">' +
+                                      '<img src ="' + choice_b_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_b" />' +
+                                  + '</div>';
+                            }
+                            content += '</div>' +
+                                '       </li>' +
+                                '           <li class="mt-2 d-flex icon-c-' + index + '">' +
+                                '             <div class="form-check">' +
+                                '               <input style="display:none" class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_c_id + '" value="c">';
+                            if (!v.Is_Url_Choice_C) {
+                                content += '<label class="form-check-label" for="' + choice_c_id + '">C) ' + v.Choice_C + '</label>';
+                            }
+                           else if (v.Is_Url_Choice_C) {
+                                content += '<div class="col-md-12">' +
+                                      '<img src ="' + choice_c_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_c" />' +
+                                      '</div>';
+                            }
+                            content += '             </div>' +
+                            '           </li>' +
+                            '           <li class="mt-2 d-flex icon-d-' + index + '">' +
+                            '             <div class="form-check">' +
+                            '               <input style="display:none" class="form-check-input option-input radio" type="radio" name="' + mcq_choice + '" id="' + choice_d_id + '" value="d">';
+                            if (!v.Is_Url_Choice_D) {
+                                content += '<label class="form-check-label" for="' + choice_d_id + '">D) ' + v.Choice_D + '</label>';
+                            }
+                            else if (v.Is_Url_Choice_D) {
+                                content += '<div class="col-md-12">' +
+                                      '<img src ="' + choice_d_url_path + '" style="max-width:30vw!important;max-height:50vh!important" id="pre_choice_' + i + '" class="pre_choice_d" />' +
+                                      '</div>';
+                            }
+                            content += '             </div>' +
+                            '           </li>' +
+                            '        </ul>' +
+                            ' </li>';
+                            $('.mcq-list').append(content);
+
+                            mcq += content;
+                            //$('.icon-' + v.Correct_Choice + '-' + index).append('&nbsp;&nbsp;<i class="fas fa-check-circle fa-2x mt-1 mr-1" style="color:green!important"></i>');
+
+                        });
+
+                        viewResult();
+                    }
+                    else {
+
+                        $('.mcq-list').empty().append("Question Sheet Not Available for this Course and IPR.").addClass('badge badge-success');
+                        $('#overall_students').empty();
+                        $('#qheader').hide();
+                        toastr.error('Question Sheet Not Available for this Course and IPR.');
+                    }
+                    $('#footer-btn').removeAttr('hidden');
+                }),
+                error: ((err) => {
+                    toastr.error('Something went wrong! Please refresh the page and try again.');
+                    console.warn(err);
+                })
+            });
+        }
+        else {
+            toastr.error('Please choose course, batch and then select IPR.');
+        }
+    }
+
+    function viewResult() {
+
+        let courseId = Number($('#courseList').val());
+        let chapterId = Number($('#chapterList').val());
+        let bid = Number($('#batchList').val());
+
+        if (courseId != 0 && bid != 0 && chapterId != 0) {            
+
+            $.ajax({
+                url: "@Url.Action("GetStudentMcqBasedOnCourse", "IntroStudent")?courseId=" + courseId + '&chapterId=' + chapterId + '&batchId=' + bid,
+                method: "Get",
+                dataType: "json",
+                beforeSend: (() => { $(".loadingDiv").show(); }),
+                success: ((data) => {
+                    if (data.AnswerSheet.length > 0) {
+
+                        $.ajax({
+                            url: "@Url.Action("GetOverAllStudentMarksList", "Intro")?courseId=" + courseId + '&chapterId=' + chapterId + '&batchId=' + bid,
+                            method: "Get",
+                            dataType: "json",
+                            beforeSend: (() => { $('#loader').removeClass('hidden') }),
+                            success: ((data1) => {
+
+                                
+
+                                $.ajax("@Url.Action("GetAllTestCompleteStudent", "Intro")?courseId=" + courseId + '&batchId=' + bid
+                                ).then(function (data0) {
+
+                                    if (data1.length > 0) {
+                                        $('#overall_students').empty();
+                                        $(data1).map((i, v) => {
+                                            var j = i;
+
+                                            var spanResult = "";
+
+                                            for (k = 1; k <= data.AnswerSheet.length; ++k) {
+
+                                                var id = 'q' + v.StudentNo + '_' + k;
+
+                                                spanResult = spanResult + '<span id=' + id + '  class="fa-stack"><span class="fa fa-solid fa-circle fa-stack-2x"></span><strong class="fa-stack-1x" style="color:black;">' + k + '</strong></span> ';
+                                            }
+
+                                            var studentFilter = data0.filter(x => x.StudentNo == v.StudentNo);
+
+                                            $('.thead-dark').show();
+
+                                            $('#overall_students').append('<tr>' +
+                                                '<td scope="row" class="col-sm-1">' +
+                                                '    ' + ++j +
+                                                ' </td>' +
+                                                '<td scope="row" class="col-sm-1"><img class="h-75px" onerror=\'this.src = "../Theme/images/noimage.png"\' src=' + v.Photo + '></td>' +
+                                                ' <td class="col-sm-1 font-weight-bold">' + v.StudentName +
+                                                '</td > ' +
+                                                ' <td class="col-sm-1 font-weight-bold">' + v.TotalCorrectMark + '</td>' +
+                                                ' <td class="col-sm-1 font-weight-bold">' + v.TotalMark + '</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                '<td colspan="5"><div class="row col-sm-12">' +
+                                                spanResult +
+                                                '</div></td></tr>');
+
+                                            $(studentFilter).map((i2, v2) => {
+
+                                                var questions = data.AnswerSheet.filter(x => x.StudentQpId == v2.StudentQpId);
+
+                                                var spanId = 'q' + v.StudentNo + '_' + v2.QuestionNo;
+
+                                                if (questions.length > 0) {
+                                                    if (questions[0].Correct_Choice == v2.Choice) {
+                                                        document.getElementById(spanId).style = "color:green";
+                                                    }
+                                                    else {
+                                                        document.getElementById(spanId).style = "color:red";
+                                                    }
+                                                }
+                                            });
+
+                                        });
+                                    }
+                                    else {
+                                        $('.thead-dark').hide();
+
+                                        $('#overall_students').empty().append('<tr>' +
+                                            '<td colspan="5" scope="row" class="col-sm-12"><b><u>No data found. One of the following reasons could be:</u></b></td></tr> ' +
+                                            '<td colspan="5" scope="row" class="col-sm-12">1) Students Intro details may be missing. @Html.ActionLink("Go to Intro page", "index", "intro",null, null) </td></tr>' +
+                                            '<td colspan="5" scope="row" class="col-sm-12">2) Current IPR (i.e Chapter) may not sent to Students Yet </td></tr>' +
+                                            '<td colspan="5" scope="row" class="col-sm-12">3) None of the students may not attend this IPR even after notification sent. Please check by clicking <b>"Refresh Result"</b> button to view the student answers </td></tr>');
+                                    }
+                                    $('#footer-btn').removeAttr('hidden');
+
+                                });
+                            }),
+                            error: ((err) => {
+                                toastr.error('Something went wrong! Please refresh the page and try again.');
+                                console.warn(err);
+                            }),
+                            complete: function () {
+                                $('#loader').addClass('hidden');
+                            }
+                        });
+                    }
+                }),
+                error: ((err) => {
+                    toastr.error('Something went wrong! Please refresh the page and try again.');
+                    console.warn(err);
+                })
+            });
+        }
+        else {
+            toastr.error('Please choose course, batch and IPR.');
+        }
+    }
+
+    
+</script>

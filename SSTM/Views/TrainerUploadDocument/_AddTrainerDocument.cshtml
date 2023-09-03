@@ -1,0 +1,51 @@
+﻿@model IEnumerable<SSTM.Models.TrainerUploadDocumentModel.TrainerUploadDocumentModel>
+
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 id="h4CourseDocsModal" class="modal-title">Upload Documents</h4>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="text-left">
+                <h6> <span style="color:blue">Note :</span> <span style="color:red">Please don't upload password based document (doc,ppt or xlxs files) Editor can't support</span></h6>
+            </div>
+
+            <div class="col-md-12 form-group">
+                <div class="col-12">
+                    <label> File Name :</label>
+                    <input type="text" class="form-control" id="DocFilename" style="width:30%" />
+                </div>
+                <div class="col-12 mt-3">
+                    <input type="file" id="Docfile"/>
+                    <br />
+                    <div id='outputImage'></div>
+                    <br />
+                    @*<progress id="fileProgress" style="display: none"></progress>*@
+                    <div class='progress' id="progressDivId">
+                        <div class='progress-bar' id='progressBar'></div>
+                        <div class='percent' id='percent'>0%</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+        <button type="button" id="btnSubmitDocs" class="btn btn-success">
+            Save
+        </button>
+    </div>
+</div>

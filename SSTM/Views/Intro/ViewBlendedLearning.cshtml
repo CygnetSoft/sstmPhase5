@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "Blended Learning";
+}
+
+@Html.AntiForgeryToken()
+<!doctype html>
+<html lang="en">
+<head>
+    <link href="@Url.Content("~/Content/intro-page/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2/css/select2.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/intopage_custom.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/fontawesome-free/css/all.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Theme/plugins/toastr/toastr.min.css")" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #eeecec !important
+        }
+
+        .select2-selection__rendered {
+            line-height: 32px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 40px !important;
+        }
+
+        hr.double_border_style {
+            border-top: 4px double black;
+        }
+
+            hr.double_border_style:after {
+                content: '';
+                display: inline-block;
+                position: relative;
+                top: -15px;
+                left: 40px;
+                padding: 0 10px;
+                background: #f0f0f0;
+                color: #8c8b8b;
+                font-size: 18px;
+            }
+
+        .is-invalid + .select2-container--default .select2-selection--single {
+            border: 1px solid #f44336;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 2rem center;
+            background-size: calc(3 em + 0.375 rem ) calc(3em + 0.375 rem );
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <img src="~/Theme/images/eversafe-logo-.png" width="150" height="50" />
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-3" id="qs__section_display">
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-outline card-success">
+                        <div class="card-body">
+                            <div class="form-row form-group">
+                                <div class="col-md-12">
+                                    <label class="col-form-label-sm">Choose Course</label>
+                                    <select class="form-control select2" data-width="100%" id="courseList" onchange="if (this.value !== 0) $(this).removeClass('is-invalid')"></select>
+                                    <div class="invalid-feedback col-form-label-sm">Course is Required.</div>
+                                </div>
+                            </div>
+                            <div class="row mt-2 py-5">
+                                <div class="col-md-12 text-center">
+                                    <button type="button" onclick="redirectli()" class="col-md-6 btn button-75 btn-block btn-sm">View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="@Url.Content("//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")"></script>
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js")"></script>
+<script src="@Url.Content("~/Theme/plugins/select2/js/select2.min.js")"></script>
+<script src="@Url.Content("//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Scripts/sstm_js_enc/_sstm_enc.js")"></script>
+<script src="@Url.Content("~/Theme/plugins/toastr/toastr.min.js")"></script>
+<script src="@Url.Content("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js")"></script>
+
+<script>
+
+    function redirectli() {
+        var CourseId = $('#courseList').val();
+        if (CourseId != 0) {
+            $.ajax({
+                url: "@Url.Action("RedirectLi", "Intro")?courseId=" + CourseId,
+                method: "Post",
+                dataType: "json",
+                beforeSend: function () {
+                    //$(".loadingDiv").show();
+                },
+                success: function (data) {
+
+                    window.location = data.url;
+                }
+            });
+        } else {
+            toastr.error('Please choose course');
+        }
+    }
+    $(document).ready(function () {
+        $.ajax({
+            url: "@Url.Action("GetAllCourse", "Intro",null)",
+            method: "Get",
+            dataType: "json",
+            beforeSend: (() => { $(".loadingDiv").show(); }),
+            success: ((data) => {
+                let k = JSON.parse(data.Result);
+                $('#courseList').empty().append($('<option/>').val(0).html('Select'))
+                $.map(k, function (v, i) {
+                    $('#courseList').append($('<option></option>').val(v.CourseId).html(v.CourseName));
+                });
+                $('#courseList,#chapterList').select2();
+            }),
+            error: ((err) => {
+                toastr.error('Something went wrong! Please refresh the page and try again.');
+                console.warn(err);
+            })
+        });
+    });
+</script>
+
+

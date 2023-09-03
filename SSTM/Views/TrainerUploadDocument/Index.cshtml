@@ -1,0 +1,153 @@
+﻿@model IEnumerable<SSTM.Models.TrainerUploadDocumentModel.TrainerUploadDataModel>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-12 row">
+                <div class="col-8">
+                    @if (ViewBag.docstatus == 0)
+                    {
+                        <h3 class="card-title">Upload Trainer Documents </h3>
+                    }
+                    else if (ViewBag.docstatus == 1)
+                    {
+                        <h3 class="card-title">Upload Video</h3>
+                    }
+                    else
+                    {
+                        <h3 class="card-title">Common Documents </h3>
+                    }
+                </div>
+                <div class="col-4">
+                    @*@if (currentSession.UserRole == "Trainer")
+                    {*@
+                    <button type="button" onclick="OpenAddCommonDocumentModal(0);" class="btn btn-primary btn-sm float-right">
+                        <i class="fa fa-plus-square"></i>&nbsp;Add New
+                    </button>
+                    @*}*@
+                </div>
+            </div>
+        </div>
+            <div class="col-md-12 form-group table-responsive mt-3">
+                <table id="tblDocuments" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Documents Name</th>
+                            <th style="width: 25%;">Files</th>
+                            @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director")
+                            {
+                                <th style="width: 25%;">Trainer Name</th>
+                            }
+                            <th style="width: 10%;text-align:center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <label>@item.DocumentName</label>
+                                </td>
+                                <td>
+                                    <label style="color:blue">@item.DocumentPath</label>
+                                </td>
+                                @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director")
+                                {
+                                    <td>
+                                        <label>@item.TrainerName</label>
+                                    </td>
+                                }
+                                <td>
+                                    <a href="@Url.Action("DownoadDocFile", "TrainerUploadDocument" , new { filename=item.DocumentPath,status=0})" class="btn btn-info btn-sm Download">
+                                        Download
+                                    </a>
+                                    <a href="javascript:void(0)" id="btndelete" class="btn btn-danger btn-sm delete" onclick="deletedoc(@item.Id)">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+       
+    </div>
+</section>
+
+<div class="modal fade" id="CommonDocumentModal" style="display: none" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" style="max-width:50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="h4CourseDocsModal" class="modal-title">Upload Documents</h4>
+
+                <input type="hidden" id="status" value="0" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="text-left">
+                        <h6> <span style="color:blue">Note :</span> <span style="color:red">Upload Document File Extention (doc,ppt or xlxs,PDF files)</span></h6>
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                        <div class="col-12">
+                            <label> File Name :</label>
+                            <input type="text" class="form-control" id="DocFilename" style="width:30%" />
+                            <div class="col-md-12 form-group mt-2 " style="display:none">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" value="false" id="ismainfolder" /> Is Main Folder
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <input type="file" id="Docfile" />
+                            <br />
+                            <progress id="fileProgress" style="display: none"></progress>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                <button type="button" id="btnSubmitDocs" class="btn btn-success">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" value="@ViewBag.MasterDoc" id="MasterDoc" />
+<input type="hidden" value="@ViewBag.MasterDocId" id="MasterDocId" />
+<script src="~/Scripts/trainerDocument/TrainerDocument.js"></script>
+
+
+
+@Scripts.Render("~/Theme/datatablesjs")
+<script>
+    var saveTrainerDocumentUrl = '@Url.Action("SaveDocument", "TrainerUploadDocument")';
+    var DeleteTrainerDocumentUrl = '@Url.Action("DeleteCourseDocument", "TrainerUploadDocument")';
+
+    $(document).ready(function () {
+        $("#tblDocuments").DataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+    })
+</script>
+

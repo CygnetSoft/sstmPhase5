@@ -1,0 +1,53 @@
+﻿<div class="modal-header">
+    <h4 id="h4SMEListModal" class="modal-title">Assign Course to SME</h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="form-group">
+        <label>Select SME</label>
+        @Html.DropDownList("ddlSMEList", new SelectList(TempData["SMEList"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+    </div>
+</div>
+
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+    <button type="button" id="btnAssignCourseToSME" class="btn btn-success">
+        Assign
+    </button>
+</div>
+
+<script>
+    var assignCourseToSMEUrl = '@Url.Action("AssignCourseToSME", "TrainerQPUpload")';
+
+    $('#btnAssignCourseToSME').on('click', function () {
+        
+        $('#btnAssignCourseToSME').prop('disabled', true);
+
+        var selectedSME = $('#ddlSMEList').val();
+       
+        if (selectedSME != 0) {
+            Ajaxhelper.post(assignCourseToSMEUrl, { Id: selectedqpid, SMEId: selectedSME }, onSuccessAssignCourse, null, null);
+
+            function onSuccessAssignCourse(data) {
+                if (data.result) {
+                    toastr.success('Selected QP is successfully assign to selected SME. Notification mail sent to selected SME.');
+
+                    $('#AssignCourseToSMEModal').modal('hide');
+
+                    location.reload();
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+        else
+            toastr.warning('Please first select SME to assign the course.');
+
+        $('#btnAssignCourseToSME').prop('disabled', false);
+    });
+</script>

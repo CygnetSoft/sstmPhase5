@@ -1,0 +1,252 @@
+﻿@model SSTM.Helpers.App.AppSession
+@{
+    ViewBag.Title = "Manage Courses";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+<style>
+    .foo {
+  float: left;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  border: 1px solid rgba(0, 0, 0, .2);
+}
+
+.blue {
+  background: #3949ab;
+}
+
+.lightgreay {
+  background: rgba(30, 11, 48, 0.88);
+}
+
+.red {
+  background: #ff1744;
+}
+.longnameellipsis{
+    display: inline-block;
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+</style>
+
+
+<section class="content" style="padding-top:10px;">
+    <div class="col-12">
+        <div class="row">
+            <div>  <div class="foo lightgreay"></div>Pending Processing</div>
+            <div>  <div class="foo red"></div>Course Expired</div>
+        </div>
+    </div>
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">
+                    @if (ViewBag.MasterCourseId == 0)
+                    {
+                        <label> New Courses Request</label>
+                    }
+                    else
+                    {
+                        <label> Sub Courses Request </label>
+                    }
+                </h3>
+            </div>
+            <div class="col-3 row" style="float: right;margin-left: 7px;">
+                @if (Model.UserRole == "Director" || Model.UserRole == "AEB")
+                {
+                    <div class="col-7">
+                        <button type="button" onclick="OpenAddOrUpdateCourseModal(0);" class="btn btn-primary btn-sm float-right">
+                            <i class="fa fa-plus-square"></i>&nbsp;Add New Course
+                        </button>
+                    </div>
+                }
+                @if (ViewBag.MasterCourseId != 0)
+                {
+                <div class="col-4">
+                    <a onclick="window.history.back();" id="backcourse" class="btn btn-default btn-sm float-right">
+                        <i class="fa fa-backward"></i>&nbsp;Back
+                    </a>
+                </div>
+                }
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblNewCourses" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Course Name</th>
+                                <th class="text-center">Course Type</th>
+                                <th class="text-center">Course Level</th>
+                                <th class="text-center">Created Date</th>
+                                <th class="text-center">Renewal Reminder</th>
+                                <th class="text-center">Remainig Days</th>
+                                <th class="text-center">Remark</th>
+                                <th class="text-center">Sub Course</th>
+                                <th class="text-center">Latter</th>
+                                <th class="text-center">Fix Developer</th>
+                                <th class="text-center">Renew Date</th>
+                                <th class="text-center">Tracking</th>
+                                <th class="text-center">Reference Document</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+</section>
+
+<input type="hidden" value="@ViewBag.MasterCourse" id="MasterCourse" />
+<input type="hidden" value="@ViewBag.MasterCourseId" id="MasterCourseId" />
+
+
+<div class="modal fade" id="AddOrEditNewCourseModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAddOrEditCourseModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="AddOrEditReminderCourseModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAddOrEditReminderCourseModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="LatterCourseModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div id="divLatterCourseModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="FixCourseDeveloperModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div id="divFixCourseDeveloperModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script src="~/Scripts/CourseReminder/index.js"></script>
+    <script>
+        var getNewCoursesListUrl = '@Url.Action("GetNewCoursesList", "CourseReminder")';
+        var getNewCourseByIdUrl = '@Url.Action("GetNewCourseById", "CourseReminder")';
+        var DeleteNewCourseUrl = '@Url.Action("DeleteNewCourse", "CourseReminder")';
+
+        var getFixCourseDeveloperModalUrl = '@Url.Action("GetFixCourse", "CourseReminder")';
+
+        var getReminderCourseByIdUrl = '@Url.Action("GetReminderCourseForm", "CourseReminder")';
+
+        var GetlatterCourseFormUrl = '@Url.Action("GetlatterCourseForm", "CourseReminder")';
+
+        var loadCourseDocumentUrl = '@Url.Action("LoadCommonDocument", "CourseDoc")';
+        var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+        var GotoCourseUrl = '@Url.Action("NewCourseIndex", "CourseReminder")';
+
+        var GotonewCourseUrl = '@Url.Action("Index", "CourseReminder")';
+
+        var developerListUrl = '@Url.Action("developerList", "CourseReminder")';//developer list
+        var saveNewCourseUrl = '@Url.Action("SaveNewCourse", "CourseReminder", new { area = "" })';
+        var CoursetolevelUrl = '@Url.Action("Li_new_courseList", "CourseReminder", new { area = "" })';
+
+        var FixDeveloperNewCourseUrl = '@Url.Action("FixDeveloperNewCourse", "CourseReminder", new { area = "" })';
+
+        var userRole = '@Model.UserRole';
+        var MasterCourse = $("#MasterCourse").val();
+        var MasterCourseId = $("#MasterCourseId").val();
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+           
+        });
+     
+        function ViewCourseDoc(fileName) {
+            var docId = 0;
+
+            Ajaxhelper.post(loadCourseDocumentUrl, { path: "NewCourseReminder", filename: fileName }, onSuccessLoadDocument, null, null);
+
+            function onSuccessLoadDocument(data) {
+                if (data.result)
+                    window.location = courseDocViewerUrl + data.fs;
+                else
+                    toastr.error(data.message);
+            }
+        }
+        function DeleteNewCourseDoc(id) {
+            Ajaxhelper.post(DeleteNewCourseUrl, { "id": id }, onSuccessdeleteNewCourse, null, null);
+
+            function onSuccessdeleteNewCourse(data) {
+                if (data.result) {
+                    toastr.success(data.message);
+                    GetNewCoursesList()
+                }
+                else
+                    toastr.error(data.message);
+            }
+        }
+
+       
+        function course_select(id) {
+            if (id != 0) {
+                Ajaxhelper.post(CoursetolevelUrl, { id: id }, onSuccessGetLisystemData, errorGetLisystemData, null);
+
+                function onSuccessGetLisystemData(result) {
+                    if (result.data != undefined) {
+                        try {
+                            $("#drpcourselevel").html("");
+                            $("#drpcourselevel").append("<option value=" + result.data.courselevel + ">" + result.data.courselevel + "</option>");
+                            $("#drpcourselevel").attr("disabled", "disabled")
+
+
+                            $("#drprcoursetype").html("");
+                            $("#drprcoursetype").append("<option value=" + result.data.type1 + ">" + result.data.type1 + "</option>");
+                            $("#drprcoursetype").attr("disabled", "disabled")
+
+                            $("#txtcourseduration").val(result.data.CourseDuration);
+                            $("#txtcourseduration").attr("disabled", "disabled");
+
+                            $("#li_ref_doc").attr("href", result.data.Column1);
+                            $('#drpcourselevel').trigger("chosen:updated");
+                        } catch (e) {
+
+                        }
+                    }
+                }
+                function errorGetLisystemData() {
+                    alert("Error");
+                }
+            }
+        }
+
+       
+
+       
+    </script>
+    <script type="text/javascript" src="~/Scripts/CourseReminder/sketch.min.js"></script>
+
+    <!-- include summernote css/js -->
+    <link href="~/Scripts/summernote/summernote.min.css" rel="stylesheet" />
+    <script src="~/Scripts/summernote/summernote.min.js"></script>
+}
+
+

@@ -1,0 +1,516 @@
+﻿@model SSTM.Helpers.App.AppSession
+
+@{
+    ViewBag.Title = "Manage Courses";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+<style>
+   
+        .btnSkipAll {
+            box-shadow: 0 0 0 1px #5bc0de inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #46b8da, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+            background-color: #5bc0de;
+        }
+
+        .btnTraking {
+            box-shadow: 0 0 0 1px #f0ad4e inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #eea236, 0 8px 0 1px rgba(0,0,0,0.4), 0 8px 8px 1px rgba(0,0,0,0.5);
+            background-color: #f0ad4e;
+        }
+
+        .btn3d {
+            transition: all .08s linear;
+            position: relative;
+            outline: medium none;
+            -moz-outline-style: none;
+            border: 0px;
+            color: black !important;
+            font-weight: bold;
+        }
+
+            .btn3d:focus {
+                outline: medium none;
+                -moz-outline-style: none;
+            }
+
+        .radioSelectContainer > select {
+            display: none !important;
+        }
+        /* http://jsfiddle.net/496c9/ */
+        .radioSelectContainer > select {
+            /*display: none;*/
+        }
+
+        .radioSelectContainer > label {
+            /*display: inline-block;
+            margin: 0.3em 0.3em 0 0;
+            background-color:#EFEFEF;
+            border-radius:4px;
+            border:1px solid #D0D0D0;*/
+            margin: .1rem;
+            color: inherit;
+            word-wrap: break-word;
+            white-space: normal;
+            cursor: pointer;
+            border: 0;
+            border-radius: .125rem;
+            -webkit-box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+            box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+            -webkit-transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,-webkit-box-shadow 0.15s ease-in-out;
+            transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,-webkit-box-shadow 0.15s ease-in-out;
+            transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+            transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out,-webkit-box-shadow 0.15s ease-in-out;
+                padding: 0rem .1rem !important;
+            font-size: 0.8rem !important;
+            margin-left: 6px;
+    }
+
+            .radioSelectContainer > label > span {
+                padding: 0em;
+                text-align: center;
+                display: block;
+            }
+
+            .radioSelectContainer > label > input {
+                position: absolute;
+                top: -20px;
+            }
+
+                .radioSelectContainer > label > input:checked + span {
+                    color: black;
+                    border: 2px solid #00c851 !important;
+                    box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+                }
+
+        .radioSelectContainer > label {
+            border: 2px solid #4285f4 !important;
+            box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+        }
+
+        .btnAssingDownloadUsers {
+            font-weight: bold;
+            color: #00c851 !important;
+            background-color: transparent !important;
+            border-color: #00c851 !important;
+        }
+
+        .btn-warning {
+            background-color: #fb3 !important;
+            border-color: #fb3 !important;
+            color: black !important;
+        }
+</style>
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">@ViewBag.Coursename Courses </h3>
+            </div>
+            <div class="col-3 row" style="float: right;margin-left: 7px;">
+                @if (Model.UserRole == "Developer" || Model.UserRole == "Director")
+                {
+                    <div class="col-12 mb-2">
+                        <button type="button" onclick="OpenAddOrUpdateReminderCourseModal();" class="btn btn-success btn-sm float-right">
+                            <i class="fa fa-bell"></i>&nbsp;Set Renewal Reminder
+                        </button>
+                    </div>
+                }
+                @if (ViewBag.MasterCourseId != 0)
+                {
+                    if (Model.UserRole == "SME" || Model.UserRole == "HR" || Model.UserRole == "Trainer" || Model.UserRole == "Print Incharge" || Model.UserRole == "Staff")
+                    {
+                        <div class="col-12">
+                            <a onclick="backButtonClick()" id="backcourse" class="btn btn-default btn-sm float-right backButtonClick">
+                                <i class="fa fa-backward"></i>&nbsp;Back
+                            </a>
+                        </div>
+                    }
+                }
+                @if (Model.UserRole == "Administration" || Model.UserRole == "Director" || Model.UserRole == "Manager" || Model.UserRole == "Developer")
+                {
+                    if (ViewBag.MasterCourseId != 0)
+                    {
+                        <div class="col-4">
+                            <a onclick="backButtonClick()" id="backcourse" class="btn btn-default btn-sm float-right">
+                                <i class="fa fa-backward"></i>&nbsp;Back
+                            </a>
+                        </div>
+                        <div class="col-7">
+                            <button type="button" onclick="OpenAddOrUpdateCourseModal(0);" class="btn btn-primary btn-sm float-right">
+                                <i class="fa fa-plus-square"></i>&nbsp;Add New
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-12">
+                            <button type="button" onclick="OpenAddOrUpdateCourseModal(0);" class="btn btn-primary btn-sm float-right">
+                                <i class="fa fa-plus-square"></i>&nbsp;Add New
+                            </button>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div style="display:none">
+                    @if (Model.UserRole != "HR" && Model.UserRole != "Trainer" && Model.UserRole != "Print Incharge")
+                    {
+                        <div id="divFilterByDocStatus" class="col-md-12 form-group">
+                            <div class="row pull-right">
+
+                                <div class="col-md-12" style="float:right">
+                                    <div class="col-md-12">
+                                        <label>Filter by Course Status:</label>
+                                    </div>
+                                    @Html.DropDownList("ddlCourseStatus", new SelectList(TempData["CourseStatusList"] as SelectList, "Value", "Text"), new { @class = "form-control radioSelect" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.UserRole == "Administration" || Model.UserRole == "Director" || Model.UserRole == "Manager")
+                    {
+                        <div class="col-md-12 form-group">
+                            <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                                <input class="custom-control-input" type="radio" id="rdbAllCourses" value="2" name="rdbCourseStatusFilter">
+                                <label for="rdbAllCourses" class="custom-control-label">All</label>
+                            </div>
+
+                            <div class="custom-control custom-radio" style="display:inline; margin-right:15px;">
+                                <input class="custom-control-input" type="radio" id="rdbAllActiveCourses" value="1" name="rdbCourseStatusFilter" checked>
+                                <label for="rdbAllActiveCourses" class="custom-control-label">Active</label>
+                            </div>
+
+                            <div class="custom-control custom-radio" style="display:inline;">
+                                <input class="custom-control-input" type="radio" id="rdbAllInactiveCourses" value="0" name="rdbCourseStatusFilter">
+                                <label for="rdbAllInactiveCourses" class="custom-control-label">Inactive</label>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <div class="col-md-12 table-responsive">
+                    <table id="tblCourses" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Developer</th>
+                                <th>SME</th>
+                                <th>Reminder</th>
+                                <th class="text-center" style="width:8%">Active</th>
+                                <th class="text-center" style="width:14%">Sub Course</th>
+                                <th class="text-center" style="width:8%">Documents</th>
+                                <th class="text-center" style="width:8%">Remarks</th>
+                                <th class="text-center" style="width:8%">SME Assign</th>
+                                <th class="text-center" style="width:8%">Approve</th>
+                                <th class="text-center" style="width:8%">Release</th>
+                                <th class="text-center" style="width:8%">Sharing</th>
+                                <th class="text-center" style="width:10%">Actions</th>
+                                <th class="text-center" style="width:10%">SKIP</th>
+                                <th class="text-center" style="width:8%">Status</th>
+                                <th class="text-center" style="width:8%">Downloader Users</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<input type="hidden" value="@ViewBag.MasterCourse" id="MasterCourse" />
+<input type="hidden" value="@ViewBag.MasterCourseId" id="MasterCourseId" />
+
+
+<div class="modal fade" id="AddOrEditCourseModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAddOrEditCourseModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AddOrEditCourseDocsModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" style="max-width:90%;">
+        <div id="divAddOrEditCourseDocsModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ViewCourseDocRemarksModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" style="max-width:90%;">
+        <div id="divViewCourseDocRemarksModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AssignCourseToSMEModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAssignCourseToSMEModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CourseDownloadModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divCourseDownloadModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CourseDocsSharingModal" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div id="divCourseDocsSharingModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="ZohoOffice" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="max-width:100%;max-height:100%;margin-right: 10px;">
+        <div id="divZohoOffice" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="RenewalReminderModel" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div id="divRenewalReminder" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+<input type="hidden" id="CourseType" class="current_CourseType"/>
+
+@section scripts{
+
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+
+        var MasterCourse = $("#MasterCourse").val();
+        var MasterCourseId = $("#MasterCourseId").val();
+
+        var getCoursesListUrl = '@Url.Action("GetCoursesList", "Course")';
+        var getCourseByIdUrl = '@Url.Action("GetCourseById", "Course")';
+
+        var deleteCourseUrl = '@Url.Action("DeleteCourse", "Course")';
+
+        var openCourseDocumentsListUrl = '@Url.Action("OpenCourseDocumentsList", "CourseDoc")';
+        var openCourseDocsRemarksListUrl = '@Url.Action("OpenCourseDocsRemarksList", "CourseDoc")';
+
+        var openSMEListUrl = '@Url.Action("OpenSMEList", "Course")';
+        var OpenDownloadUserListUrl = '@Url.Action("OpenDownloadUserList", "Course")';
+        var SelectedSMEListUrl = '@Url.Action("AssignSME", "Course")';
+
+        var approveCourseUrl = '@Url.Action("ApproveCourse","Course")';
+        var releaseCourseUrl = '@Url.Action("ReleaseCourse","Course")';
+
+        var SMESKIPCourseUrl = '@Url.Action("SMESKIPCourse", "Course")';//md
+
+        var GotoCourseUrl = '@Url.Action("index","Course")';
+
+        var openCourseDocsSharingUrl = '@Url.Action("OpenCourseDocsSharing", "CourseDoc")';
+
+        var getAllReminderCoursedUrl = '@Url.Action("GetReminderCourseForm", "Course")';
+
+        var userRole = '@Model.UserRole';
+        if (userRole == "Staff") {
+            var CourseType = "staff";
+            $(".current_CourseType").val(CourseType);
+        }
+        else {
+            var CourseType = "other";
+            $(".current_CourseType").val(CourseType);
+        }
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            if (performance.navigation.type == 2) {
+                var Subcount = parseInt(localStorage.getItem("SubfolderCount")) - 1;
+                if (Subcount > 0)
+                    localStorage.setItem("SubfolderCount", Subcount);
+
+            }
+            if (localStorage.getItem("SubfolderCount") == 3) {
+                // localStorage.setItem("SubfolderCount", localStorage.getItem("SubfolderCount") - 1);
+                $("#backcourse").attr('href', localStorage.getItem("url2"));
+                //$("#ddlCourseStatus").val(localStorage.getItem("coursestatus2"));
+               // $("#ddlCourseStatus").trigger('change');
+
+            }
+            if (localStorage.getItem("SubfolderCount") == 2) {
+                // localStorage.setItem("SubfolderCount", localStorage.getItem("SubfolderCount") - 1);
+
+                $("#backcourse").attr('href', localStorage.getItem("url1"));
+               // $("#ddlCourseStatus").val(localStorage.getItem("coursestatus1"));
+              //  $("#ddlCourseStatus").trigger('change');
+            }
+            if (localStorage.getItem("SubfolderCount") == 1) {
+                // localStorage.setItem("SubfolderCount", localStorage.getItem("SubfolderCount") - 1);
+                $("#backcourse").attr('href', localStorage.getItem("url0"));
+               // $("#ddlCourseStatus").val(localStorage.getItem("coursestatus0"));
+               // $("#ddlCourseStatus").trigger('change');
+                //window.location.href = localStorage.getItem("url0");
+
+            }
+            if (localStorage.getItem("SubfolderCount") == 0) {
+                // localStorage.setItem("SubfolderCount", localStorage.getItem("SubfolderCount") - 1);
+                $("#backcourse").attr('href', localStorage.getItem("url0"));
+               // $("#ddlCourseStatus").val(localStorage.getItem("coursestatus"));
+              //  $("#ddlCourseStatus").trigger('change');
+                //window.location.href = localStorage.getItem("url0");
+
+            }
+            $("#ddlCourseStatus").val(0);
+        });
+
+
+    </script>
+    <script>
+
+        //$(function () {
+         
+        //    if (localStorage.getItem("trackname") == null || localStorage.getItem("track") == null) {
+        //        localStorage.setItem("trackname", "");
+        //        localStorage.setItem("track", "");
+        //    }
+        //    var select;
+        //    $('.radioSelect').each(function (selectIndex, selectElement) {
+
+        //        select = $(selectElement);
+        //        var container = $("<div class='radioSelectContainer' />");
+        //        select.parent().append(container);
+        //        container.append(select);
+
+        //        select.find('option').each(function (optionIndex, optionElement) {
+        //            var radioGroup = select.attr('id') + "Group";
+        //            var label = $("<label />");
+        //            container.append(label);
+
+
+
+        //            if (userRole === 'Director' || userRole === 'Manager') {
+
+        //                if ($(this).html() == "Submitted" && localStorage.getItem("trackname") == "") {
+
+        //                    if (localStorage.getItem("trackname") == "") {
+        //                        $("<input type='radio' name='" + radioGroup + "' style='display:none' checked/>")
+        //                       .attr("value", $(this).val())
+        //                       //.click((function () { select.val($(this).val()); })) //radio updates select - see optional below
+        //                       .appendTo(label);
+        //                    }
+
+        //                }
+        //                else if (localStorage.getItem("trackname") == $(this).html()) {
+        //                    $("<input type='radio' name='" + radioGroup + "' style='display:none' checked/>")
+        //                       .attr("value", localStorage.getItem("track"))
+        //                       //.click((function () { select.val($(this).val()); })) //radio updates select - see optional below
+        //                       .appendTo(label);
+
+        //                }
+        //                else {
+        //                    $("<input type='radio' name='" + radioGroup + "' style='display:none'/>")
+        //                       .attr("value", $(this).val())
+        //                       //.click((function () { select.val($(this).val()); })) //radio updates select - see optional below
+        //                       .appendTo(label);
+        //                }
+
+
+        //            }
+        //            else if (userRole === 'SME') {
+
+        //                if ($(this).html() == "Under Review") {
+        //                    $("<input type='radio' name='" + radioGroup + "' style='display:none' checked/>")
+        //                        .attr("value", $(this).val())
+        //                        //.click((function () { select.val($(this).val()); })) //radio updates select - see optional below
+        //                        .appendTo(label);
+        //                }
+        //                else {
+        //                    $("<input type='radio' name='" + radioGroup + "' style='display:none' />")
+        //                       .attr("value", $(this).val())
+        //                       //.click((function () { select.val($(this).val()); })) //radio updates select - see optional below
+        //                       .appendTo(label);
+        //                }
+        //            }
+
+        //            else {
+        //                if ($(this).html() == "Submitted") {
+        //                    $("<input type='radio' name='" + radioGroup + "' style='display:none' checked/>")
+        //                        .attr("value", $(this).val())
+        //                        //.click((function () { select.val($(this).val()); })) //radio updates select - see optional below
+        //                        .appendTo(label);
+        //                }
+        //                else {
+        //                    $("<input type='radio' name='" + radioGroup + "' style='display:none'/> ")
+        //                        .attr("value", $(this).val())
+        //                        //.click((function () { select.val($(this).val()); })) //radio updates select - see optional below
+        //                        .appendTo(label);
+        //                }
+
+        //            }
+
+        //            if ($(this).html() == "Pending") {
+        //                $("<span class='drp-link font-weight-bold'> Draft (By Developer) </span>").appendTo(label);
+        //            }
+        //            else if ($(this).html() == "Submitted") {
+        //                $("<span class='drp-link font-weight-bold'> Submitted (By Developer) </span>").appendTo(label);
+        //            }
+        //            else if ($(this).html() == "Under Improvement") {
+        //                $("<span class='drp-link font-weight-bold'> Improvement (By Developer) </span>").appendTo(label);
+        //            }
+        //            else if ($(this).html() == "Under Review") {
+        //                $("<span class='drp-link font-weight-bold'> SME Comments </span>").appendTo(label);
+        //            }
+        //            else {
+        //                $("<span class='drp-link font-weight-bold'>" + $(this).html() + "</span>").appendTo(label);
+        //            }
+        //        });
+
+        //        //http://stackoverflow.com/questions/4957207/how-to-check-uncheck-radio-button-on-click
+        //        //optional - this logic handles unchecking when clicking on an already checked radio
+        //        container.find(":radio + span").mousedown(
+        //          function (e) {
+        //              var $span = $(this);
+        //              var $radio = $($span.prev());
+        //              if ($radio.is(':checked')) {
+        //                  var uncheck = function () {
+        //                      setTimeout(function () { $radio.prop('checked', false); }, 0);
+        //                  };
+        //                  var unbind = function () {
+        //                      $span.unbind('mouseup', up);
+        //                  };
+        //                  var up = function () {
+        //                      uncheck();
+        //                      unbind();
+        //                  };
+        //                  $span.bind('mouseup', up);
+        //                  $span.one('mouseout', unbind);
+        //              } else {
+
+        //                  select.val($radio.val());
+        //                  $(".radioSelect").trigger('change');
+        //              }
+        //          }
+        //        );
+
+        //        select.change((function () { //select updates radio
+        //            $("input[name='" + select.attr('id') + "Group" + "'][value='" + this.value + "']").prop("checked", true);
+        //        }));
+        //    });
+        //});
+    </script>
+
+    <script src="~/Scripts/MainCourse/Index.js"></script>
+
+    <script src="~/Scripts/course/index.js"></script>
+    <script src="~/Scripts/course/CourseReminder.js"></script>
+}

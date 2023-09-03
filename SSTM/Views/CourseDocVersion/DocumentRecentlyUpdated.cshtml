@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Document Recently Updated List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Theme/datatables")
+<style>
+    .select2-container .select2-selection--single {
+        height: 40px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 6px !important;
+        right: 9px !important;
+        width: 26px !important;
+    }
+</style>
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Document Recently Updated List</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label>Filter </label>
+                    <select id="ddlDaysFilter" class="form-control select2">
+                        <option value="0">Today</option>
+                        <option value="-7">Last Week</option>
+                        <option value="-15">Last 15 Days</option>
+                        <option value="-30">Last 30 Days</option>
+                        <option value="-50">Last 50 Days</option>
+                    </select>
+                </div>
+                <div class="col-md-12 table-responsive">
+                    <table id="tblRecentCourseDocList" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Document</th>
+                                <th>Created By Whom</th>
+                                <th>File</th>
+                                @*<th class="text-center">Active</th>*@
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        var getRecentDocsListUrl = '@Url.Action("GetRecentDocumentList", "CourseDocVersion")';
+        var loadCourseDocumentUrl = '@Url.Action("LoadCourseDocument", "CourseDoc")';
+        var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+    </script>
+    <script src="~/Scripts/courseDocVersion/RecentUpdatdDocument.js"></script>
+    
+}
+
+

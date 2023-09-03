@@ -1,0 +1,215 @@
+﻿@model SSTM.Core.Centralized_Course.Centralized_Master
+<style>
+        .select2-container--default .select2-selection--single {
+            height: 53% !important;
+        }
+        .select2-dropdown {
+        width: 750px !important;
+    }
+        .select2-container--default .select2-dropdown .select2-search__field, .select2-container--default .select2-search--inline .select2-search__field {
+        border: 1px solid #ced4da;
+        width: 730px !important;
+    }
+        .select2-container--default .select2-results > .select2-results__options {
+        width: 730px !important;
+    }
+        span >.select2-container--default
+        {
+            width: 100% !important;
+        }
+        .select2-container--default .select2-results__option[aria-selected=true] {
+        background-color: #ddd;
+        width: 700px !important;
+    }
+        .select2-container {
+  width: 100% !important; 
+}
+    </style>
+<div class="modal-header">
+    <h4 id="h4CourseDocsSharingModal" class="modal-title">Add Centralized Course</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <input type="hidden" id="courseid" value="0" />
+        <div class="col-6">
+            <div class="col-md-12">
+                <label>Central Document Name</label>
+            </div>
+            <input type="text" id="CentralDocumentName" class="form-control" placeholder="Enter Document Name" />
+        </div>
+        <div class="col-6">
+            <div class="col-md-12">
+                <label>Choose Type :</label>
+            </div>
+            <select id="ddlchoosetype" class="form-control">
+                <option value="">-- select Type --</option>
+                <option value="Worker">Worker</option>
+                <option value="Supervisor">Supervisor </option>
+                <option value="Manage">Manager  </option>
+                <option value="Professional">Professional   </option>
+            </select>
+        </div>
+        <div class="col-6">
+            <div class="col-md-12">
+                <label>Choose docs :</label>
+            </div>
+            <div class="col-md-12">
+                @Html.DropDownList("ddlCoursetype", new SelectList(TempData["type"] as SelectList, "Value", "Text"), new { @class = "form-control select2", multiple = "true", placeholder = "Select Course Type" })
+                <input type="checkbox" id="checkbox">Select All
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="col-md-12">
+                <label>Choose Language:</label>
+            </div>
+            <select id="ddllanguage" class="form-control">
+                <option value="">-- select Language --</option>
+                <option value="english">English</option>
+                @*<option value="tamil">Tamil</option>
+                    <option value="mandarin">Mandarin </option>*@
+            </select>
+        </div>
+        <div class="col-12">
+            <div class="col-md-12">
+                <label>Li Course :</label>
+            </div>
+            <div class="col-12">
+                @Html.DropDownList("AirLineCourseId", new SelectList(TempData["AirlineCourse"] as SelectList, "Value", "Text"), new { @class = "airlinecourse col-12" })
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer" style="display:block;">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <div class="float-right">
+        <a id="submitppt" href="javascript:void(0)" class="btn btn-primary mt-3"><i class=" fa fa-save"></i> Submit</a>
+    </div>
+</div>
+
+<ul id="remininig_documentlist" style="display:none"></ul>
+
+@*@section scripts{*@
+<script>
+
+    var Master_centeral_doc_saveURL = '@Url.Action("Master_centeral_doc_save", "CentralizedCourse")';
+
+    $(document).ready(function () {
+        $('#ddlCoursetype').select2();
+        $('.select2').select2();
+        
+
+        $("#checkbox").click(function () {
+            if ($("#checkbox").is(':checked')) {
+                $("#ddlCoursetype > option").prop("selected", "selected");
+                $("#ddlCoursetype").trigger("change");
+            } else {
+                $("#ddlCoursetype > option").removeAttr("selected");
+                $("#ddlCoursetype").trigger("change");
+            }
+        });
+        var document_type = '@Model.document_type';
+
+        const document_type_array = document_type.split(',');
+
+        $("#CentralDocumentName").val('@Model.CentralDocumentName');
+        $("#ddlchoosetype").val('@Model.choose_type');
+        $("#courseid").val('@Model.id');
+        $("#ddlCoursetype").val(document_type_array).trigger('change');
+        $("#ddllanguage").val('@Model.language');
+        if ('@Model.id' != 0) {
+            $("#ddlchoosetype").attr("disabled", 'disabled');
+            $("#ddllanguage").attr("disabled", 'disabled');
+        }
+        else {
+            $("#ddlchoosetype").removeAttr("disabled", 'disabled');
+            $("#ddllanguage").removeAttr("disabled", 'disabled');
+        }
+
+        $('.airlinecourse').select2();
+    });
+
+    $("#submitppt").click(function () {
+        coursedoc = $("#ddlCoursetype").val();
+        coursetype = $("#ddlchoosetype").val();
+        courselang = $("#ddllanguage").val();
+        CentralDocumentName = $("#CentralDocumentName").val();
+
+        if ($("#CentralDocumentName").val() == "") {
+            toastr.error("Central Document Name required.");
+            $("#CentralDocumentName").focus();
+            return;
+        }
+        if ($("#ddllanguage").val() == "") {
+            toastr.error("Central Document Language required.");
+            $("#ddllanguage").focus();
+            return;
+        }
+        if ($("#ddlchoosetype").val() == "") {
+            toastr.error("Central Document Document Type required.");
+            $("#ddlchoosetype").focus();
+            return;
+        }
+        if ($("#ddlCoursetype").val() == "") {
+            toastr.error("Choose document selection required.");
+            $("#ddlCoursetype").focus();
+            return;
+        }
+        if ($("#AirLineCourseId").val() == "0") {
+            toastr.error("Choose LI Course required.");
+            $("#AirLineCourseId").focus();
+            return;
+        }
+
+        Ajaxhelper.post(Master_centeral_doc_saveURL,
+            { data: JSON.stringify(master_dataArray()) },
+            onSuccessMaster_centeral_doc_save, null, null);
+
+        function onSuccessMaster_centeral_doc_save(data) {
+            if (data.result) {
+                if ($("#courseid").val() == 0)
+                    toastr.success("Central Course successfully Created");
+                else
+                    toastr.success("Central Course successfully Updated");
+
+                GetCoursesList();
+                $("#CentralNewCourseModal").modal('hide');
+            }
+            else
+                toastr.error(data.message);
+        }
+
+
+        //   alert(coursedoc);
+        var stringArray = coursedoc;
+        $("#remininig_documentlist").empty();
+        var lilist = "";
+
+        for (i = 0; i < coursedoc.length; i++) {
+            var counter = i + 1;
+            // alert(coursedoc[i]);
+
+            lilist += "<li style='margin: 10px;'> <button class='btn btn-primary btn-sm' onClick='generate(" + counter + ")' type='submit' value=" + coursedoc[i] + ">" + coursedoc[i] + "</button>"
+
+            lilist += "</li>";
+        }
+        $("#remininig_documentlist").append(lilist);
+
+    });
+    function master_dataArray() {
+
+        var data = {};
+        data.document_type = $("#ddlCoursetype").val().toString();
+        data.choose_type = $("#ddlchoosetype").val();
+        data.language = $("#ddllanguage").val();
+        data.id = $("#courseid").val();
+        data.CentralDocumentName = $("#CentralDocumentName").val();
+        data.AirLineCourseId = $("#AirLineCourseId").val();
+        return data;
+    }
+</script>
+@*}*@

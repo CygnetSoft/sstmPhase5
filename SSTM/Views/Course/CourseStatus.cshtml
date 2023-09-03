@@ -1,0 +1,155 @@
+﻿@model  SSTM.Models.CourseTrackers.CourseTrackingDataModel
+@{
+    ViewBag.Title ="Course Tracker";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+    
+}
+<link href="~/Theme/dist/MultiSteps/style.css" rel="stylesheet" />
+<style>
+    .step-circle::before {
+        left: -8px !important;
+         width: calc(5.2rem + 2rem - 0.5rem) !important;
+    }
+
+    .step-circle {
+        width: 3.5rem !important;
+        height: 3.5rem !important;
+        border: 10px solid !important;
+    }
+
+    .step-text {
+        font-size: 12px !important;
+        margin-left: 12px;
+    }
+   
+    .step-content {
+    box-sizing: content-box;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 4rem;
+    min-width: 10rem !important;
+    max-width: 19rem !important;
+    padding-top: 0.5rem !important;
+    padding-right: 0rem !important;
+}
+    .btn3d {
+    transition:all .08s linear;
+    position:relative;
+    outline:medium none;
+    -moz-outline-style:none;
+    border:0px;
+    color:black !important;
+    font-weight:bold;
+   
+}
+.btn3d:focus {
+    outline:medium none;
+    -moz-outline-style:none;
+}
+.steps {
+    margin: 0 !important;
+    list-style: none;
+    display: flex;
+}
+.hoverbuttoneffect {
+    text-align: center;
+    -moz-transition: all 1.1s !important;
+    box-shadow: 0px 2px 0px 3px #e76825 !important;
+    margin: 5px;
+}
+
+</style>
+<section class="content" style="padding-top:10px;">
+    @*step-success ,step-active, step-error *@
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title" id="header">@ViewBag.courseName Tracker</h3>
+            <h5 style="float: right;color:red">@ViewBag.oldDocnotrack</h5>
+        </div>
+        <div class="card-body steps">
+            @*border: 5px solid lightblue;*@
+            <div class="mb-3" style="margin-left: 0%;margin-top: 24px;width: 100%;">
+                <ul class="steps">
+                    <li class="@(@Model.submitedUser!=null && @Model.submitedUser!=" "? "step  step-success" : "step")" id="Submitted">
+                        <div class="step-content">
+                            <span class="step-circle"  data-toggle="tooltip" data-placement="top" title="By Developer: @Model.submitedUser  on :@Model.submitedDate ">1</span>
+                            <button id="submitedUser" class="step-text btn-sm btn-warning hoverbuttoneffect" style="color: black !important;width: 100%;height: 3rem;border-radius: 0px !important;border-right: 2px solid black !important;border-left: 1px solid black !important;">Submitted (By Developer)</button>
+
+                        </div>
+                    </li>
+                    @*onclick="CourseStatusMail('')"*@
+                    <li class="@( @Model.SMEAssignUser!=null && @Model.SMEAssignUser != " " && Model.submitedDate!=null? @Model.submitedDate.Value>= DateTime.Now.Date.AddDays(7)? @Model.SMEAssignUser!= " "?"step  step-success": "step  step-danger": "step  step-success" : @Model.submitedDate==null?"step ":@Model.submitedDate.Value >= DateTime.Now.Date.AddDays(7) && @Model.SMEAssignUser == " " ? "step  step-danger" : "step ")" id="SMEAssigned">
+                        <div class="step-content">
+                            <span class="step-circle"  data-toggle="tooltip" data-placement="top" title="SME Assigned.: @Model.SMEAssignUser  on :@Model.AssignDate ">2</span>
+                            <button id="SMEAssignUser"  class="step-text btn-sm btn-warning hoverbuttoneffect" style="color: black !important;width: 100%;height: 3rem;border-radius: 0px !important;border-right: 2px solid black !important;border-left: 1px solid black !important;">SME Assigned</button>
+                        </div>
+                    </li>
+                    @*onclick="CourseStatusMail('SMEReview')"*@
+                    <li class="@(@Model.SMEReviewUser!=null && @Model.SMEReviewUser != " " && Model.AssignDate!=null ?   @Model.AssignDate.Value>= DateTime.Now.Date.AddDays(7)? @Model.SMEReviewUser != " "?"step  step-success": "step  step-danger": "step  step-success"  : @Model.AssignDate==null?"step " :@Model.AssignDate.Value >= DateTime.Now.Date.AddDays(7) && @Model.SMEReviewUser == " " ? "step  step-danger" : "step ")" id="SMEReviewed" >
+                        <div class="step-content">
+                            <span class="step-circle" data-toggle="tooltip" data-placement="top" title="SME Review By: @Model.SMEReviewUser on :@Model.SMEReviewDate ">3</span>
+                            <button id="SMEReviewUser"  class="step-text btn-sm btn-warning hoverbuttoneffect" style="color: black !important;width: 100%;height: 3rem;border-radius: 0px !important;border-right: 2px solid black !important;border-left: 1px solid black !important;">SME Reviewed</button>
+
+                        </div>
+                    </li>
+                    @*onclick="CourseStatusMail('Improvement')"*@
+                    <li class="@(@Model.ImproveUser!=null && @Model.ImproveUser != " " && @Model.SMEReviewDate!=null   ? @Model.SMEReviewDate.Value>= DateTime.Now.Date.AddDays(7)? @Model.ImproveUser != " "?"step  step-success": "step  step-danger": "step  step-success"  : @Model.SMEReviewDate==null ? "step ":@Model.SMEReviewDate.Value >= DateTime.Now.Date.AddDays(7) && @Model.ImproveUser == " " ? "step  step-danger" : "step ")" >
+                        <div class="step-content" id="Improvement">
+                            <span class="step-circle" data-toggle="tooltip" data-placement="top" title="Improvement assig By: @Model.ImproveUser  on :@Model.ImproveDate">4</span>
+                            <button id="ImproveUser"   class="step-text btn-sm btn-warning hoverbuttoneffect" style="color: black !important;width: 100%;height: 3rem;border-radius: 0px !important;border-right: 2px solid black !important;border-left: 1px solid black !important;">Under Improvement (By Developer)</button>
+
+                        </div>
+                    </li>
+                    @*onclick="CourseStatusMail('SMEAccept')"*@
+                    <li class="@(@Model.SMEAcceptUser!=null && @Model.SMEAcceptUser != " " &&  @Model.ImproveDate!=null? @Model.ImproveDate.Value>= DateTime.Now.Date.AddDays(7)? @Model.SMEAcceptUser != " "?"step  step-success": "step  step-danger": "step  step-success"  :@Model.ImproveDate==null?"step ": @Model.ImproveDate.Value >= DateTime.Now.Date.AddDays(7) && @Model.SMEAcceptUser == " " ? "step  step-danger" : "step ")" >
+                        <div class="step-content" id="SMEAccepted">
+                            <span class="step-circle" data-toggle="tooltip" data-placement="top" title="Accept By: @Model.SMEAcceptUser  on :@Model.SMEAcceptDate">5</span>
+                            <button id="SMEAccept"  class="step-text btn-sm btn-warning hoverbuttoneffect" style="color: black !important;width: 100%;height: 3rem;border-radius: 0px !important;border-right: 2px solid black !important;border-left: 1px solid black !important;">SME Accepted</button>
+                        </div>
+                    </li>
+                    @*onclick="CourseStatusMail('Release')"*@
+                    <li class="@(@Model.ReleseUser!=null && @Model.ReleseUser != " " && @Model.SMEAcceptDate!=null ? @Model.SMEAcceptDate.Value>= DateTime.Now.Date.AddDays(7)? @Model.ReleseUser != " "?"step  step-success": "step  step-danger": "step  step-success"  :@Model.SMEAcceptDate==null?"step ": @Model.SMEAcceptDate.Value >= DateTime.Now.Date.AddDays(7) && @Model.ReleseUser == " " ? "step  step-danger" : "step ")" >
+                        <div class="step-content" id="Released">
+                            <span class="step-circle" data-toggle="tooltip" data-placement="top" title="Accept By: @Model.ReleseUser Release on :@Model.ReleaseDate">6</span>
+                            <button id="ReleaseCourse"  class="step-text btn-sm btn-warning hoverbuttoneffect" style="color: black !important;width: 100%;height: 3rem;border-radius: 0px !important;border-right: 2px solid black !important;border-left: 1px solid black !important;">Released</button>
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <label>Note : </label><small style="color:red">Any Stage course not process 7 serven day circle show red color</small>
+        <label>Old Course Note : </label><small style="color:red">Old Course Track not found</small>
+    </div>
+</section>
+<input type="hidden" value="@ViewBag.MasterCourse" id="MasterCourse" />
+<input type="hidden" value="@ViewBag.MasterCourseId" id="MasterCourseId" />
+<input type="hidden" value="@ViewBag.courseName" id="Coursename" />
+<script src="~/Scripts/course/CourseStatus.js"></script>
+@section scripts{
+<script>
+    var Courseid=@Model.Courseid;
+    var userRole = '@currentSession.UserRole';
+
+    var SMESAssginMailCourseUrl = '@Url.Action("CourseMail", "Course")';
+    $(document).ready(function () {
+        var userRole = "@currentSession.UserRole.ToString()";
+        
+        // $("#Pending").attr('title', 'test');
+        if (userRole == "Administration" || userRole == "Director") {
+            $("#submitedUser,#SMEAssignUser,#SMEReviewUser,#ImproveUser,#SMEAccept,#ReleaseCourse").removeAttr('disabled', 'disabled')
+            $(".step-success").attr('disabled', 'disabled');
+        }
+        else {
+            $("#submitedUser,#SMEAssignUser,#SMEReviewUser,#ImproveUser,#SMEAccept,#ReleaseCourse").attr('disabled', 'disabled')
+        }
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+
+</script>
+}

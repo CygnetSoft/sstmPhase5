@@ -1,0 +1,110 @@
+﻿@model IEnumerable<SSTM.Models.CourseDocRemarks.CourseDocRemarksGridModel>
+
+<div class="modal-header">
+    <h4 id="h4CourseDocsRemarksModal" class="modal-title">Course Documents</h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form-group table-responsive">
+            <table id="tblCourseDocRemarks" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Documents</th>
+                        <th class="text-center">Status</th>
+                        <th>Remarks</th>
+                        <th>Suggestion</th>
+                        <th>Reference Doc</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr id="@item.Id" course="@item.CourseId">
+                                <td>
+                                    <strong>@item.DocName</strong>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.isDeleted)
+                                    {
+                                        <label class="badge badge-secondary">Skipped</label>
+                                    }
+                                    else if (item.isReassigned)
+                                    {
+                                        <label class="badge badge-warning">Reassign</label>
+                                    }
+                                    else if (item.isApproved)
+                                    {
+                                        <label class="badge badge-success">Approved</label>
+                                    }
+                                    else if (item.isCompleted)
+                                    {
+                                        <label class="badge badge-info">Complete</label>
+                                    }
+                                    else
+                                    {
+                                        <label class="badge badge-danger">Incomplete</label>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.Raw(item.Remarks)
+                                </td>
+                                <td>
+                                    @Html.Raw(item.Suggestion)
+                                </td>
+                                <td>
+                                    @if (item.ReferenceFile != "N/A")
+                                    {
+                                        <a href="javascript:void(0);" onclick="ViewCourseDoc(this);">
+                                            <strong>@item.ReferenceFile</strong>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <strong>@item.ReferenceFile</strong>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center no-data">No data found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>
+
+<script>
+    var loadCourseDocumentUrl = '@Url.Action("LoadCourseDocument", "CourseDoc")';
+    var viewCourseDocumentRemarksUrl = '@Url.Action("ViewCourseDocumentRemarks", "CourseDocRemarks")';
+   
+
+    function ViewCourseDoc(this1) {
+        var courseId = $(this1).closest('tr').attr('course');
+        var docId = $(this1).closest('tr').attr('id');
+
+        Ajaxhelper.post(loadCourseDocumentUrl, { courseId: courseId, docId: docId, docType: 'Reference' }, onSuccessLoadDocument, null, null);
+
+        function onSuccessLoadDocument(data) {
+            if (data.result)
+                window.location = viewCourseDocumentRemarksUrl + data.fs;
+            else
+                toastr.error(data.message);
+        }
+    }
+</script>

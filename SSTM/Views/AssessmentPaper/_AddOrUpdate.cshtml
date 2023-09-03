@@ -1,0 +1,180 @@
+﻿@model SSTM.Models.Assessment_Paper.AssessmentPaperModel
+@{
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 53% !important;
+    }
+    .error
+    {
+        color:red;
+    }
+</style>
+
+<div class="modal-header">
+    @if (Model.id > 0)
+    {
+        <h4 class="modal-title">Update assessment paper</h4>
+    }
+    else
+    {
+        <h4 class="modal-title">New assessment paper</h4>
+    }
+    <h4 class="modal-title"> </h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <input type="hidden" id="ass_id" value="0" />
+    <form id="frmaddAssessment">
+        <div class="row">
+            <div class="col-md-12 form-group">
+                <div class="col-md-12">
+                    <label>Course Name<span class="error">*</span> : </label>
+                    <select id="AirLineCourseId" class="dropdown form-control airlinecourse" name="AirLineCourseId" style="width: 100%;" required>
+                        <option value=""> -- Select Course Name --</option>
+                    </select>
+                </div>
+                @*<div class="col-md-12">
+                        @Html.DropDownList("AirLineCourseId", new SelectList(TempData["AirlineCourse"] as SelectList, "Value", "Text"), new { @class = "airlinecourse" })
+                    </div>*@
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Batch Number<span class="error">*</span> :</label>
+                <select id="drpBatchid" class="dropdown form-control" name="drpBatchid" style="width: 100%;" required>
+                    <option value=""> -- Select Batch Number --</option>
+                </select>
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Trainer <span class="error">*</span> :</label>
+
+                <select id="drptrainer" class="dropdown form-control select2 drptrainer" name="drptrainer" style="width: 100%;" required>
+                    <option value=""> -- Select Trainer Number --</option>
+                </select>
+            </div>
+            <div class="col-md-12 form-group">
+                <label>Quantity<span class="error">*</span> :</label>
+                <input type="text" class="form-control" id="txtquantity" required readonly />
+            </div>
+            @*<div class="col-md-12 form-group">
+                    <label>Upload Assessment Paper  </label>
+                    <input type="file" id="AssessmentFile" class="form-control" required />
+                </div>*@
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer justify-content-between">
+    <a class="btn btn-default" data-dismiss="modal">Close</a>
+    <a id="btnSaveCourse" class="btn btn-success" onclick="SaveAssessment()">Save</a>
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")
+<script>
+    var saveAssessmentUrl = '@Url.Action("SaveAssessmentDocument", "AssessmentPaper", new { area = "" })';
+    var getdrpGetBatchidUrl = '@Url.Action("batchid", "AssessmentPaper", new { area = "" })';
+
+    var getdrpGetTrainerUrl = '@Url.Action("trainerlist", "AssessmentPaper", new { area = "" })';
+    var getdrpGetCourseUrl = '@Url.Action("Courselist", "AssessmentPaper", new { area = "" })';
+    var getdrpGetStudentExamFileUrl = '@Url.Action("StudentExamFile", "AssessmentPaper", new { area = "" })';
+    var getdrpGetStudentExamFileJsonUrl = '@Url.Action("StudentExamFileJson", "AssessmentPaper", new { area = "" })';
+
+
+    $(function () {
+        getCourseList();
+
+        $('.select2').select2();
+        $('.airlinecourse').select2();
+        $('.airlinecourse').val('@Model.courseid');
+        if ('@Model.id' > 0)
+            getbathcdata(@Model.courseid);
+        $('#AirLineCourseId').val($('.airlinecourse').val()).trigger('change');
+
+       getTrainerList();
+    });
+    var letestcourseId = 0;
+    $('#AirLineCourseId').on('change', function () {
+        letestcourseId = this.value;
+        Ajaxhelper.post(getdrpGetBatchidUrl, { courseid: this.value }, onSuccessGetBatchAssessment, null, null);
+    });
+    function getbathcdata(courseid)
+    {
+        Ajaxhelper.post(getdrpGetBatchidUrl, { courseid: courseid }, onSuccessGetBatchAssessment, null, null);
+    }
+    function onSuccessGetBatchAssessment(data) {
+        $.each(data, function (key, item) {
+            $("#drpBatchid").append($("<option data-Quantity=" + item.Quantity + "></option>").val(item.batchid).html(item.batchid));
+        });
+        if('@Model.batchid')
+        {
+            $("#drpBatchid").val(@Model.batchid);
+            $("#txtquantity").val(@Model.qty);
+        }
+    }
+
+    $('#drpBatchid').on("change", function () {
+        var dataid = $("#drpBatchid option:selected").attr('data-Quantity');
+        $("#txtquantity").val(dataid);
+    });
+
+    function getTrainerList()
+    {
+        Ajaxhelper.post(getdrpGetTrainerUrl, null, onSuccessGetTrainerAssessment, null, null);
+    }
+    function onSuccessGetTrainerAssessment(data) {
+       
+        $.each(data, function (key, item) {
+            $("#drptrainer").append($("<option data-fin=" + item.fin + "></option>").val(item.trainerid).html(item.TrainerName));
+        });
+    }
+
+    function getCourseList() {
+        Ajaxhelper.post(getdrpGetCourseUrl, null, onSuccessGetCourse, null, null);
+    }
+    function onSuccessGetCourse(data) {
+        $.each(data, function (key, item) {
+            $("#AirLineCourseId").append($("<option ></option>").val(item.CourseId).html(item.CourseName));
+        });
+    }
+    var files="";
+
+    $('#drptrainer').on("change", function () {
+        var Finnumber = $(".drptrainer option:selected").attr('data-fin');
+        var trainerid = this.value;
+      
+        if ($("#drpBatchid").val() == "" || $("#drpBatchid").val()==0)
+        {
+            toastr.error("select batch Required.");
+            $('#drptrainer').val("");
+            return;
+        }
+
+        if (letestcourseId == "" || letestcourseId == 0) {
+            toastr.error("select Course Required.");
+
+            $('#drptrainer').val("");
+            return;
+        }
+        Ajaxhelper.post(getdrpGetStudentExamFileJsonUrl,
+                { courseid: letestcourseId, batchid: $("#drpBatchid").val(), fin: Finnumber },
+                onSuccessGetExamFile, null, null);
+
+        if (files == "File Not Found")
+        {
+            toastr.error(files +". Select Trainer with file");
+            files = "";
+        }
+    });
+    function onSuccessGetExamFile(data) {
+        $.each(data, function (key, item) {
+            if (item.pdf == "File Not Found")
+                files = item.pdf;
+            else
+                files = item.Files;
+        });
+    }
+</script>

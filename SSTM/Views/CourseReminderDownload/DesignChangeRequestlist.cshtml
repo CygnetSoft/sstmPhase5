@@ -1,0 +1,88 @@
+﻿@model  List<SSTM.Models.CourseReminderDownload.DesignValidationModel>
+@{
+    ViewBag.Title = "Design Change Request List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-9">
+                <h3 class="card-title">Design Change Request List</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblaebcoure" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Powerpoint</th>
+                                <th>Learn Guide</th>
+                                <th>Fecilitator Guide</th>
+                                <th>Cross Reference</th>
+                                <th>Asssesor Guide</th>
+                                <th class="text-center" style="width:8%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.Title
+                                    </td>
+                                     <td>
+                                        @item.Powerpoint
+                                    </td>
+                                    <td>
+                                        @item.learnguide
+                                    </td>
+                                    <td>
+                                        @item.FecilitatorGuide
+                                    </td>
+                                    <td>
+                                        @item.crossreference
+                                    </td>
+                                    <td>
+                                        @item.Asssesorguide
+                                    </td>
+                                    
+                                    <td>
+                                        <a href='javascript:void(0)' onclick="Download(@item.id,'@item.Title')">Download</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section scripts{
+    @Scripts.Render("~/Theme/datatablesjs")
+    <script>
+        $(document).ready(function () {
+            $("#tblaebcoure").DataTable();
+        });
+        function Download(id,title)
+        {
+            var string="id=" + id + "&title=" + title;
+            window.location.href = '@Url.Action("DesignChangeRequestDownload", "CourseReminderDownload")?'+string;
+        }
+    </script>
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "Manage course documents versions";
+    ViewBag.Url = Request.Url;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+@Styles.Render("~/Theme/datatables")
+<style>
+    .select2-container .select2-selection--single {
+        height: 40px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 6px !important;
+        right: 9px !important;
+        width: 26px !important;
+    }
+    .modal-open .ui-datepicker{z-index: 20000!important}
+</style>
+<link href="http://code.jquery.com/ui/1.9.1/themes/flick/jquery-ui.css" rel="stylesheet">
+<!-- Main content -->
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Course Documents Versions</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                @*<div class="col-md-4 form-group">
+                    <label>Course</label>
+                    @Html.DropDownList("ddlCourses", new SelectList(TempData["CoursesList"] as SelectList, "Value", "Text"), new { @class = "form-control" })
+
+                </div>*@
+                <div class="col-3">
+                    <label>Course</label>
+                     @Html.DropDownList("ddlCourses", new SelectList(TempData["CoursesList"] as SelectList, "Value", "Text"), new { @class = "form-control ddlCourses" })
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 1</label>
+                    <select id="drpSubCourseId" class="dropdown form-control drpSubCourseId" name="drpSubCourseId" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 1 --</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 2</label>
+                    <select id="drpSubCourseId1" class="dropdown form-control drpSubCourseId1" name="drpSubCourseId1" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 2 --</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>Sub Course 3</label>
+                    <select id="drpSubCourseId2" class="dropdown form-control drpSubCourseId2" name="drpSubCourseId2" style="width: 100%;">
+                        <option value=""> -- Select Sub Course 3 --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 form-group">
+                    <label>Course Documents</label>
+                    <select id="ddlCourseDocs" class="form-control btn btn-secondary dropdown-toggle" ></select>
+                </div>
+
+                <div class="col-md-12 table-responsive">
+                    <table id="tblCourseDocVersions" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Document</th>
+                                <th>Ver&Rev</th>
+                                <th>Date</th>
+                                <th>Revision</th>
+                                <th>Revision Date</th>
+                                <th>Created By Whom</th>
+                                <th>Updated By Whom</th>
+                                <th>File</th>
+                                <th>Download</th>
+                                <th class="text-center">Active</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="AddEditVersionRevision" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" style="max-width:70%;">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Edit Version/Revision </h4>
+                <input type="hidden" id="currentDocid"  />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-6">
+                                Version :
+                                <input type="text" class="form-control" id="Version" maxlength="20" />
+                            </div>
+                            <div class="col-6">
+                                Version Date: 
+                                <div class="input-group input-append" id="datePicker">
+                                    <input type="text" class="form-control datepicker" id="VersionDate" name="date" readonly/>
+                                    <span class="input-group-addon add-on"><span class="fa  fa-calendar"></span></span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                Revision :
+                                <input type="text" id="Revision" class="form-control" maxlength="20" />
+                            </div>
+                            <div class="col-6">
+                                Revision Date:
+                                <div class="input-group input-append date" id="datePicker">
+                                    <input type="text" id="RevisionDate" class="form-control datepicker1" maxlength="20" readonly />
+                                    <span class="input-group-addon add-on"><span class="fa  fa-calendar"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" id="btneditversion" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="CourseType" class="current_CourseType" />
+@section scripts{
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    
+    @Scripts.Render("~/Theme/datatablesjs")
+
+    <script>
+        if (userRole == "Staff") {
+            var CourseType = "staff";
+            $(".current_CourseType").val(CourseType);
+        }
+        else {
+            var CourseType = "other";
+            $(".current_CourseType").val(CourseType);
+        }
+
+        var userRole = '@currentSession.UserRole';
+
+        var getCourseDocumentsUrl = '@Url.Action("GetCourseDocuments","CourseDocVersion")';
+        var getCourseDocVersionsUrl = '@Url.Action("GetCourseDocVersions", "CourseDocVersion")';
+
+        var loadCourseDocumentUrl = '@Url.Action("LoadCourseDocument", "CourseDoc")';
+        var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+
+        var updateDocVersionUrl = '@Url.Action("UpdateDocVersion", "CourseDocVersion")';
+        var loadEditverionUrl = '@Url.Action("Updateversion", "CourseDocVersion")';
+        var getdrpSubCoursListUrl = '@Url.Action("GetSubCouseList", "Course", new { area = "" })';
+    </script>
+
+    <script src="~/Scripts/courseDocVersion/index.js"></script>
+}

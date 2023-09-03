@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<section class="content">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12" style="overflow: hidden;">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-4"><h4><b>Total course - </b><span id="Totalcourse"></span> </h4></div>
+                            <div class="col-4"><h4><b>Pending courses - </b><span id="TotalPendingcourse"></span> </h4></div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="load" style="display:none"> Course Graph Loading.....</div>
+                    <div id="Course_chart" style="width: 900px; height: 600px;"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ShowNewCourseSatus" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog" style="background:white">
+            <div class="modal-header">
+                <h4 class="modal-title" id="NewCourseModelTitle"></h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <table id="tblNewCourseData" class="table table-bordered" >
+                        <thead class="bg-primary">
+                            <tr>
+                                <th>New Course Name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyNewCourseData">
+                            <tr><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</section>
+@*<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>*@
+<script src="~/Scripts/loader.js"></script>
+<script src="~/Scripts/Dashbord/dashboard.js"></script>
+@section scripts{
+
+
+    <script>
+        var DashboardUrl = '@Url.Action("Get_Course_Dashboard_data", "Dashboard")';
+        var NewCourseStatusUrl = '@Url.Action("Get_New_Course_data", "Dashboard")';
+        var CourseStatusUrl = '@Url.Action("Index", "Course")';
+    </script>
+}
+
+
+
+

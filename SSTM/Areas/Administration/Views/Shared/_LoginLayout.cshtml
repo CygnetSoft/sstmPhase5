@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>@ViewBag.Title | SSTM (Secured System for Training Materials)</title>
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    @Styles.Render("~/Theme/cssLogin")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body oncontextmenu="return false;" class="hold-transition login-page">
+    <noscript>
+        <h2 style="text-align:center;">This site requires JavaScript. I will only be visible if you have it disabled.</h2>
+
+        <meta http-equiv="refresh" content="1;../../index.html" />
+    </noscript>
+
+    <div class="dialog-background">
+        <div class="dialog-loading-wrapper text-center">
+            <div class="bounceball"></div>
+            <div class="text">LOADING</div>
+        </div>
+    </div>
+    <div style="margin-left: 1000px;margin-bottom:45%;position:absolute">
+        <img src="/Theme/images/eversafe-logo-New.png" alt="SSTM" style="opacity: .8;background: white;margin-left: 10px;position: fixed;" height="120">
+    </div>
+    <div class="login-box">
+        @RenderBody()
+    </div>
+    <!-- /.login-box -->
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrapTheme")
+
+    @RenderSection("scripts", required: false)
+
+    <script src="~/Theme/dist/js/common.js"></script>
+    <script src="~/Scripts/ajaxHelper.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Get your geolocation | SSTM (Secured System for Training Materials)</title>
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/Theme/plugins/fontawesome-free/css/all.min.css">
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Theme/dist/css/adminlte.min.css">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body oncontextmenu="return false;" onload="getLocation();" class="hold-transition lockscreen">
+    <noscript>
+        <h2 style="text-align:center;">This site requires JavaScript. I will only be visible if you have it disabled.</h2>
+
+        <meta http-equiv="refresh" content="1;/index.html" />
+    </noscript>
+
+    <div class="lockscreen-wrapper">
+        <div class="lockscreen-logo">
+            <b>Your Geolocation</b>
+        </div>
+
+        <!-- User name -->
+        <div class="lockscreen-name"></div>
+
+        <!-- /.lockscreen-item -->
+        <div class="help-block text-center">
+            <p><label>Latitude:&nbsp;</label><span id="spanLatitude"></span></p>
+            <p><label>Longitude:&nbsp;</label><span id="spanLongitude"></span></p>
+        </div>
+
+        <div class="lockscreen-footer text-center">
+            Copyright &copy; 2020 <b><a target="_blank" href="https://www.eversafe.com.sg/">Eversafe Academy</a></b><br>
+            All rights reserved
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+
+    <script src="~/Scripts/ajaxHelper.js"></script>
+    @*<script src="~/Theme/dist/js/defaultSettings.js"></script>*@
+
+    <script>
+        var confirmGeoLocationUrl = '@Url.Action("ConfirmGeoLocation","Home")';
+
+        function getLocation() {
+            if (navigator.geolocation)
+                navigator.geolocation.getCurrentPosition(showPosition);
+            else
+                $('.lockscreen-name').html("Geolocation is not supported by this browser.");
+        }
+
+        function showPosition(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            $('#spanLatitude').html(latitude);
+            $('#spanLongitude').html(longitude);
+        }
+    </script>
+</body>
+</html>

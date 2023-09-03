@@ -1,0 +1,281 @@
+﻿@model IEnumerable<SSTM.Models.TrainerQPUpload.TrainerQPUploadDataModel>
+@{
+    ViewBag.Title = "Trainer QP Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+@Styles.Render("~/Theme/datatables")
+
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-12 row">
+                <div class="col-8">
+                    <h3 class="card-title">
+                        Upload QP Document
+                        @if (ViewBag.MasterDoc == "False")
+                        {<span>-</span> @ViewBag.DocumentName}
+                    </h3>
+                </div>
+                <div class="col-4" style="display:none">
+                    <button type="button" onclick="OpenAddCommonDocumentModal(0);" class="btn btn-primary btn-sm float-right">
+                        <i class="fa fa-plus-square"></i>&nbsp;Add New
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="col-md-12 form-group table-responsive mt-3">
+                <table id="tblDocuments" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+
+                            <th>Sr.No</th>
+                            <th style="width: 20%;">Documents Name</th>
+                            <th style="width: 15%;">Files</th>
+
+                            <th style="width: 30%;">Comment</th>
+                            @if (currentSession.UserRole != "SME" && currentSession.UserRole != "Trainer")
+                            {
+                                <th style="width: 30%;">Assign Trainer</th>
+                            }
+
+                            <th style="width: 10%;">Status</th>
+                            @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director" || currentSession.UserRole == "SME")
+                            {
+                                <th style="width: 10%;">Trainer Name</th>
+                                <th style="width: 15%;">Add/Remove Comment</th>
+                            }
+                            <th style="width: 10%;text-align:center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int count = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(count = count + 1)</td>
+
+                                <td>
+                                    <input type="hidden" id="smeid" value="@item.SMEId">
+                                    <label id="filename">@item.DocumentName</label>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0)" title="view document" onclick="ViewCourseDoc('@item.DocumentPath');">@item.DocumentPath</a>
+                                </td>
+
+                                <td>
+                                    @item.Comment
+                                </td>
+
+                                @if (currentSession.UserRole != "SME" && currentSession.UserRole != "Trainer")
+                                {
+                                    <td>
+                                        <button type="button" title="Assign" class="btn btn-warning btn-sm btnAssignCourse"><i class="fa fa-user-cog" aria-hidden="true"></i></button>
+                                        @if(!string.IsNullOrEmpty(item.SMEId.ToString()))
+                                        {
+                                        <label class="badge badge-dark">Assign</label>
+                                        }
+                                    </td> 
+                                }
+
+                                <td>
+                                    @if (item.Status == 0)
+                                    {
+                                        <label class="badge badge-info">Pending</label>
+                                    }
+                                    else if (item.Status == 1)
+                                    {
+                                        <label class="badge badge-warning">Review</label>
+                                    }
+                                    else if (item.Status == 2)
+                                    {
+                                        <label class="badge badge-danger">Rework</label>
+                                    }
+                                    else if (item.Status == 3)
+                                    {
+                                        <label class="badge badge-success">Shared</label>
+                                    }
+                                </td>
+
+                                @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director" || currentSession.UserRole == "SME")
+                                {
+                                    <td>
+                                        @item.FirstName  @item.LastName
+                                    </td>
+                                    <td>
+                                        <button id="AuthorEdit" class="btn btn-primary">Comment Action</button>
+                                        <textarea rows="2" cols="30" id="txtRemark" class="form-control" style="display:none;width: 20em;">@item.Comment</textarea>
+                                        <input type="hidden" id="Id" value="@item.Id">
+                                        <button id="AuthorAproveStatuses" style="display:none" onclick="SetStatusForLeaveReq(@item.Id)" class="btn btn-success btn-sm" title="Save"><span class="fa fa-floppy-o"></span></button>
+                                        <button id="AuthorAproveStatusescancel" style="display:none" class="btn btn-danger btn-sm" title="Cancel"><span class="fa fa-close"></span></button>
+                                    </td>
+                                }
+                                <td>
+                                    <div class="btn-group" role="group">
+
+                                        <button class="btn btn-outline-primary dropdown-toggle dropdown-menu-right" id="btnGroupDrop1"
+                                                type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="ft-settings icon-left"></i>Actions
+                                        </button>
+
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton1">
+                                            @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director" || currentSession.UserRole == "SME")
+                                            {
+                                                <a href="@Url.Action("DownoadDocFile", "TrainerQPUpload", new { filename = item.DocumentPath })" class="dropdown-item Download">
+                                                    Download
+                                                </a>
+                                            }
+                                            @if (item.Comment != "" && currentSession.UserRole == "Trainer")
+                                            {
+                                                <a href="javascript:void(0)" class="dropdown-item" id="replacefile">
+                                                    <input type="hidden" id="replaceId" value="@item.Id">
+                                                    Replace QP
+                                                </a>
+                                            }
+                                            @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director")
+                                            {
+                                                <a href="javascript:void(0)" id="btndelete" class="dropdown-item delete" onclick="deletedoc(@item.Id)">
+                                                    Delete
+                                                </a>
+                                            }
+                                            @if (currentSession.UserRole == "Administration" || currentSession.UserRole == "Director")
+                                            {
+
+                                                if (item.Status == 3)
+                                                {
+                                                    if (currentSession.UserRole != "SME")
+                                                    {
+                                                        <a href="javascript:void(0)" id="btnshare" onclick="GotoQPStundetlist(@item.Id)" class="dropdown-item">
+                                                            Shared QP Add Student
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:void(0)" id="btnshare" class="dropdown-item">
+                                                            Shared
+                                                        </a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <a href="javascript:void(0)" id="btnshare" class="dropdown-item" onclick="sharedoc(@item.Id)">
+                                                        Share Pending
+                                                    </a>
+                                                }
+
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="DocumentModal" style="display: none" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" style="max-width:50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="h4CourseDocsModal" class="modal-title">Trainer QP Upload</h4>
+                <input type="hidden" id="status" value="2" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="QPid" value="0" />
+                <div class="row">
+                    <div class="text-left">
+                        <h6> <span style="color:blue">Note :</span> <span style="color:red"> Upload Document File Extention (doc,ppt or xlxs,PDF files)</span></h6>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <div class="col-12">
+                            <label> File Name :</label>
+                            <input type="text" class="form-control" id="DocFilename" style="width:30%" />
+                        </div>
+                        <div class="col-12 mt-3">
+                            <input type="file" id="Docfile" />
+                            <br />
+                            <progress id="fileProgress" style="display: none"></progress>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                <button type="button" id="btnSubmitDocs" class="btn btn-success">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AssignCourseToSMEModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="divAssignCourseToSMEModal" class="modal-content">
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/TrainerQPUpload/TrainerQP.js"></script>
+
+@Scripts.Render("~/Theme/datatablesjs")
+<script>
+    var save_DocumentUrl = '@Url.Action("SaveDocument", "TrainerQPUpload")';
+    var Remark_QP_DocumentUrl = '@Url.Action("QP_Document_Remark", "TrainerQPUpload")';
+    var DeletenewQPDocumentUrl = '@Url.Action("DeleteQPCourseDocument", "TrainerQPUpload")';
+
+    var loadCourseDocumentUrl = '@Url.Action("LoadCommonDocument", "CourseDoc")';
+    var courseDocViewerUrl = '@Url.Action("CourseDocViewer", "CourseDoc")';
+
+    var GotoDocUrl = '@Url.Action("CommonDocument", "TrainerUploadDocument")';
+
+    var openSMEListUrl = '@Url.Action("OpenSMEList", "TrainerQPUpload")';
+    var Shared_QP_DocumentUrl = '@Url.Action("Shared_QP_Document", "TrainerQPUpload")';
+    var GotoQPStdentUrl='@Url.Action("SharedStudentList", "TrainerQPUpload")';
+    var selectedqpid = 0;
+
+    $(document).ready(function () {
+        $("#tblDocuments").DataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+
+    });
+
+    function ViewCourseDoc(fileName) {
+
+        var courseId = "TrainerQP";
+        var docId = 0;
+
+        Ajaxhelper.post(loadCourseDocumentUrl, { path: "TrainerQP", filename: fileName }, onSuccessLoadDocument, null, null);
+
+        function onSuccessLoadDocument(data) {
+            if (data.result)
+                window.location = courseDocViewerUrl + data.fs;
+            else
+                toastr.error(data.message);
+        }
+    }
+
+    function GotoQPStundetlist(id)
+    {
+        window.location.href = GotoQPStdentUrl + "?id=" + id;
+    }
+</script>
+

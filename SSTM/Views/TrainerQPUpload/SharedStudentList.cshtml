@@ -1,0 +1,129 @@
+﻿
+@{
+    ViewBag.Title = "QP Shared Student List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSession = (SSTM.Helpers.App.AppSession)Session["AppSession"];
+}
+
+@Styles.Render("~/Theme/datatables")
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 53% !important;
+    }
+</style>
+<section class="content" style="padding-top:10px;">
+    <!-- Default box -->
+    <div class="card col-md-12">
+        <div class="card-header row">
+            <div class="col-12 row">
+                <div class="col-8">
+                    <h3 class="card-title">
+                        QP Shared Student List
+                    </h3>
+                </div>
+                <div class="col-4">
+                    <a href="@Url.Action("Index", "TrainerQPUpload", new { area = "" })" class="btn btn-primary btn-sm " style="float: right;">
+                        <<   QP LIst
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-header primary row">
+            <div class="col-12 row">
+                <input type="hidden" id="QPId" value="@ViewBag.QPId" />
+                <div class="col-3">
+                    Exam Date :
+                    <div class="input-group">
+                        <input type="text" id="txtDateFrom" class="form-control datepicker" />
+
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-default" onclick="OpenCalendar('#txtDateFrom');">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    Course List :
+                    @Html.DropDownList("LiCourse", new SelectList(TempData["Li_courselist"] as SelectList, "Value", "Text"), new { @class = "form-control select2" })
+
+                </div>
+                <div class="col-3" id="divLiBatch">
+                    Batch List :
+                    @*@Html.DropDownList("LiBatch", new SelectList(TempData["Li_Batchlist"] as SelectList, "Value", "Text"), new { @class = "form-control" })*@
+                    <select id="LiBatch" class="form-control">
+                        <option value="">Select batch name</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <a href="javascript:void(0)" class="btn btn-primary mt-4" onclick="SaveQP()"><i class="fa fa-plus"></i> Save</a>
+                </div>
+            </div>
+            <hr />
+        </div>
+        <div class="card-body">
+
+            <div class="col-md-12 form-group table-responsive mt-3">
+                <table id="tblQPStudent" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Course Name</th>
+                            <th style="width: 15%;">Batch</th>
+                            <th style="width: 10%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyqp"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<input type="hidden" id="currentdate" value="@ViewBag.currentdata" />
+@Scripts.Render("~/Theme/datatablesjs")
+
+<script src="~/Scripts/TrainerQPUpload/QPStudent.js"></script>
+<script>
+    var SaveQPUrl = '@Url.Action("SaveQP", "TrainerQPUpload")';
+    var QPAssignStudentListUrl = '@Url.Action("QPAssignStudentList", "TrainerQPUpload")';
+    var DeleteQPUrl = '@Url.Action("DeleteQP", "TrainerQPUpload")';
+    var get_li_BatchListUrl = '@Url.Action("get_li_BatchList", "TrainerQPUpload")';
+
+    var qpid = $("#QPId").val();
+
+    $(document).ready(function () {
+        GetAssignStudentToQP(qpid);
+
+        $('.datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            todayHighlight: true
+        });
+
+        $('.datepicker').datepicker('setDate', new Date());
+
+        function OpenCalendar(element) { $(element).datepicker('show'); }
+    });
+
+    $("#LiCourse").on('change', function () {
+        
+        Ajaxhelper.get(get_li_BatchListUrl,
+          {
+              todaydate: $('#txtDateFrom').val(),
+              CourseId: this.value
+          }, onSuccessget_li_BatchListUrl, null, null);
+    });
+    function onSuccessget_li_BatchListUrl(result) {
+     
+        $("#LiBatch").children().remove();
+        $("#LiBatch").append($("<option></option>").val("").html("-- Select batch name --"));
+        $.each(result, function (key, item) {
+
+            $("#LiBatch").append($("<option></option>").val(item.batchid).html(item.batchid));
+            //$('#drpSelectContractNo').attr("data-ZkDepartmentId", item.ZkDepartmentId);
+
+        });
+        //$("#divLiBatch").load(location.href + " #divLiBatch");
+        //document.getElementById("divLiBatch").innerHTML = document.getElementById("divLiBatch").innerHTML;
+    }
+</script>

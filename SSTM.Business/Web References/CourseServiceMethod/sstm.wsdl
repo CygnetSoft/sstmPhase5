@@ -1,0 +1,1689 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="AllCourse">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllCourseResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AllCourseResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AllCourseType">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllCourseTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AllCourseTypeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AllCourseLevel">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllCourseLevelResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AllCourseLevelResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AllTrainer">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllTrainerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AllTrainerResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesWithSection">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="date" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesWithSectionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TodayCoursesWithSectionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesWithSectionTainerid">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="date" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="trainerid" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesWithSectionTaineridResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TodayCoursesWithSectionTaineridResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesOnlyTrainer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="date" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesOnlyTrainerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TodayCoursesOnlyTrainerResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MemorandomPath">
+        <s:complexType />
+      </s:element>
+      <s:element name="MemorandomPathResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MemorandomPathResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MemorandomPathJSON">
+        <s:complexType />
+      </s:element>
+      <s:element name="MemorandomPathJSONResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="TodayCoursesOnlyTrainerJSON">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="date" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesOnlyTrainerJSONResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="TodayCoursesWithSectionJSON">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="date" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayCoursesWithSectionJSONResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllCourseJSON">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllCourseJSONResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllTrainerJSON">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllTrainerJSONResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllSTudentstodaystartclassINTROPAGE">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllSTudentstodaystartclassINTROPAGEResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllcourseandbatchidTodaystartclassINTROPAGE">
+        <s:complexType />
+      </s:element>
+      <s:element name="AllcourseandbatchidTodaystartclassINTROPAGEResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="TodayStudemtidForDEviceINTROPAGE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="studentid" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TodayStudemtidForDEviceINTROPAGEResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TodayStudemtidForDEviceINTROPAGEResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TrainerDetailsINTROPAGE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="courseid" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="batchid" type="s:float" />
+            <s:element minOccurs="0" maxOccurs="1" name="Todaydate" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TrainerDetailsINTROPAGEResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="StudentdatawithcourseandbatchINTROPAGE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="courseid" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="batchid" type="s:float" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="StudentdatawithcourseandbatchINTROPAGEResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="TrainerIndustryEXPINTROPAGE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="trainerid" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TrainerIndustryEXPINTROPAGEResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="CourseProposal">
+        <s:complexType />
+      </s:element>
+      <s:element name="CourseProposalResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CourseProposalResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AddNewcourseInLI">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Coursename" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Departmentid" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AddNewcourseInLIResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AddNewcourseInLIResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NeedAnalysis">
+        <s:complexType />
+      </s:element>
+      <s:element name="NeedAnalysisResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NeedAnalysisResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Game">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="studentid" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="GameName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Marks" type="s:float" />
+            <s:element minOccurs="0" maxOccurs="1" name="File" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GameResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+      <s:element name="int" type="s:int" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="AllCourseSoapIn">
+    <wsdl:part name="parameters" element="tns:AllCourse" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseSoapOut">
+    <wsdl:part name="parameters" element="tns:AllCourseResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:AllCourseType" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:AllCourseTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseLevelSoapIn">
+    <wsdl:part name="parameters" element="tns:AllCourseLevel" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseLevelSoapOut">
+    <wsdl:part name="parameters" element="tns:AllCourseLevelResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllTrainerSoapIn">
+    <wsdl:part name="parameters" element="tns:AllTrainer" />
+  </wsdl:message>
+  <wsdl:message name="AllTrainerSoapOut">
+    <wsdl:part name="parameters" element="tns:AllTrainerResponse" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionSoapIn">
+    <wsdl:part name="parameters" element="tns:TodayCoursesWithSection" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionSoapOut">
+    <wsdl:part name="parameters" element="tns:TodayCoursesWithSectionResponse" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionTaineridSoapIn">
+    <wsdl:part name="parameters" element="tns:TodayCoursesWithSectionTainerid" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionTaineridSoapOut">
+    <wsdl:part name="parameters" element="tns:TodayCoursesWithSectionTaineridResponse" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerSoapIn">
+    <wsdl:part name="parameters" element="tns:TodayCoursesOnlyTrainer" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerSoapOut">
+    <wsdl:part name="parameters" element="tns:TodayCoursesOnlyTrainerResponse" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathSoapIn">
+    <wsdl:part name="parameters" element="tns:MemorandomPath" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathSoapOut">
+    <wsdl:part name="parameters" element="tns:MemorandomPathResponse" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathJSONSoapIn">
+    <wsdl:part name="parameters" element="tns:MemorandomPathJSON" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathJSONSoapOut">
+    <wsdl:part name="parameters" element="tns:MemorandomPathJSONResponse" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerJSONSoapIn">
+    <wsdl:part name="parameters" element="tns:TodayCoursesOnlyTrainerJSON" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerJSONSoapOut">
+    <wsdl:part name="parameters" element="tns:TodayCoursesOnlyTrainerJSONResponse" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionJSONSoapIn">
+    <wsdl:part name="parameters" element="tns:TodayCoursesWithSectionJSON" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionJSONSoapOut">
+    <wsdl:part name="parameters" element="tns:TodayCoursesWithSectionJSONResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseJSONSoapIn">
+    <wsdl:part name="parameters" element="tns:AllCourseJSON" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseJSONSoapOut">
+    <wsdl:part name="parameters" element="tns:AllCourseJSONResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllTrainerJSONSoapIn">
+    <wsdl:part name="parameters" element="tns:AllTrainerJSON" />
+  </wsdl:message>
+  <wsdl:message name="AllTrainerJSONSoapOut">
+    <wsdl:part name="parameters" element="tns:AllTrainerJSONResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllSTudentstodaystartclassINTROPAGESoapIn">
+    <wsdl:part name="parameters" element="tns:AllSTudentstodaystartclassINTROPAGE" />
+  </wsdl:message>
+  <wsdl:message name="AllSTudentstodaystartclassINTROPAGESoapOut">
+    <wsdl:part name="parameters" element="tns:AllSTudentstodaystartclassINTROPAGEResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllcourseandbatchidTodaystartclassINTROPAGESoapIn">
+    <wsdl:part name="parameters" element="tns:AllcourseandbatchidTodaystartclassINTROPAGE" />
+  </wsdl:message>
+  <wsdl:message name="AllcourseandbatchidTodaystartclassINTROPAGESoapOut">
+    <wsdl:part name="parameters" element="tns:AllcourseandbatchidTodaystartclassINTROPAGEResponse" />
+  </wsdl:message>
+  <wsdl:message name="TodayStudemtidForDEviceINTROPAGESoapIn">
+    <wsdl:part name="parameters" element="tns:TodayStudemtidForDEviceINTROPAGE" />
+  </wsdl:message>
+  <wsdl:message name="TodayStudemtidForDEviceINTROPAGESoapOut">
+    <wsdl:part name="parameters" element="tns:TodayStudemtidForDEviceINTROPAGEResponse" />
+  </wsdl:message>
+  <wsdl:message name="TrainerDetailsINTROPAGESoapIn">
+    <wsdl:part name="parameters" element="tns:TrainerDetailsINTROPAGE" />
+  </wsdl:message>
+  <wsdl:message name="TrainerDetailsINTROPAGESoapOut">
+    <wsdl:part name="parameters" element="tns:TrainerDetailsINTROPAGEResponse" />
+  </wsdl:message>
+  <wsdl:message name="StudentdatawithcourseandbatchINTROPAGESoapIn">
+    <wsdl:part name="parameters" element="tns:StudentdatawithcourseandbatchINTROPAGE" />
+  </wsdl:message>
+  <wsdl:message name="StudentdatawithcourseandbatchINTROPAGESoapOut">
+    <wsdl:part name="parameters" element="tns:StudentdatawithcourseandbatchINTROPAGEResponse" />
+  </wsdl:message>
+  <wsdl:message name="TrainerIndustryEXPINTROPAGESoapIn">
+    <wsdl:part name="parameters" element="tns:TrainerIndustryEXPINTROPAGE" />
+  </wsdl:message>
+  <wsdl:message name="TrainerIndustryEXPINTROPAGESoapOut">
+    <wsdl:part name="parameters" element="tns:TrainerIndustryEXPINTROPAGEResponse" />
+  </wsdl:message>
+  <wsdl:message name="CourseProposalSoapIn">
+    <wsdl:part name="parameters" element="tns:CourseProposal" />
+  </wsdl:message>
+  <wsdl:message name="CourseProposalSoapOut">
+    <wsdl:part name="parameters" element="tns:CourseProposalResponse" />
+  </wsdl:message>
+  <wsdl:message name="AddNewcourseInLISoapIn">
+    <wsdl:part name="parameters" element="tns:AddNewcourseInLI" />
+  </wsdl:message>
+  <wsdl:message name="AddNewcourseInLISoapOut">
+    <wsdl:part name="parameters" element="tns:AddNewcourseInLIResponse" />
+  </wsdl:message>
+  <wsdl:message name="NeedAnalysisSoapIn">
+    <wsdl:part name="parameters" element="tns:NeedAnalysis" />
+  </wsdl:message>
+  <wsdl:message name="NeedAnalysisSoapOut">
+    <wsdl:part name="parameters" element="tns:NeedAnalysisResponse" />
+  </wsdl:message>
+  <wsdl:message name="GameSoapIn">
+    <wsdl:part name="parameters" element="tns:Game" />
+  </wsdl:message>
+  <wsdl:message name="GameSoapOut">
+    <wsdl:part name="parameters" element="tns:GameResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseHttpGetIn" />
+  <wsdl:message name="AllCourseHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseTypeHttpGetIn" />
+  <wsdl:message name="AllCourseTypeHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseLevelHttpGetIn" />
+  <wsdl:message name="AllCourseLevelHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AllTrainerHttpGetIn" />
+  <wsdl:message name="AllTrainerHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionHttpGetIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionTaineridHttpGetIn">
+    <wsdl:part name="date" type="s:string" />
+    <wsdl:part name="trainerid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionTaineridHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerHttpGetIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathHttpGetIn" />
+  <wsdl:message name="MemorandomPathHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathJSONHttpGetIn" />
+  <wsdl:message name="MemorandomPathJSONHttpGetOut" />
+  <wsdl:message name="TodayCoursesOnlyTrainerJSONHttpGetIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerJSONHttpGetOut" />
+  <wsdl:message name="TodayCoursesWithSectionJSONHttpGetIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionJSONHttpGetOut" />
+  <wsdl:message name="AllCourseJSONHttpGetIn" />
+  <wsdl:message name="AllCourseJSONHttpGetOut" />
+  <wsdl:message name="AllTrainerJSONHttpGetIn" />
+  <wsdl:message name="AllTrainerJSONHttpGetOut" />
+  <wsdl:message name="AllSTudentstodaystartclassINTROPAGEHttpGetIn" />
+  <wsdl:message name="AllSTudentstodaystartclassINTROPAGEHttpGetOut" />
+  <wsdl:message name="AllcourseandbatchidTodaystartclassINTROPAGEHttpGetIn" />
+  <wsdl:message name="AllcourseandbatchidTodaystartclassINTROPAGEHttpGetOut" />
+  <wsdl:message name="TodayStudemtidForDEviceINTROPAGEHttpGetIn">
+    <wsdl:part name="studentid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayStudemtidForDEviceINTROPAGEHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TrainerDetailsINTROPAGEHttpGetIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+    <wsdl:part name="Todaydate" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TrainerDetailsINTROPAGEHttpGetOut" />
+  <wsdl:message name="StudentdatawithcourseandbatchINTROPAGEHttpGetIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="StudentdatawithcourseandbatchINTROPAGEHttpGetOut" />
+  <wsdl:message name="TrainerIndustryEXPINTROPAGEHttpGetIn">
+    <wsdl:part name="trainerid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TrainerIndustryEXPINTROPAGEHttpGetOut" />
+  <wsdl:message name="CourseProposalHttpGetIn" />
+  <wsdl:message name="CourseProposalHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AddNewcourseInLIHttpGetIn">
+    <wsdl:part name="Coursename" type="s:string" />
+    <wsdl:part name="Departmentid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="AddNewcourseInLIHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="NeedAnalysisHttpGetIn" />
+  <wsdl:message name="NeedAnalysisHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GameHttpGetIn">
+    <wsdl:part name="studentid" type="s:string" />
+    <wsdl:part name="GameName" type="s:string" />
+    <wsdl:part name="Marks" type="s:string" />
+    <wsdl:part name="File" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GameHttpGetOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseHttpPostIn" />
+  <wsdl:message name="AllCourseHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseTypeHttpPostIn" />
+  <wsdl:message name="AllCourseTypeHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AllCourseLevelHttpPostIn" />
+  <wsdl:message name="AllCourseLevelHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AllTrainerHttpPostIn" />
+  <wsdl:message name="AllTrainerHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionHttpPostIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionTaineridHttpPostIn">
+    <wsdl:part name="date" type="s:string" />
+    <wsdl:part name="trainerid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionTaineridHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerHttpPostIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathHttpPostIn" />
+  <wsdl:message name="MemorandomPathHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="MemorandomPathJSONHttpPostIn" />
+  <wsdl:message name="MemorandomPathJSONHttpPostOut" />
+  <wsdl:message name="TodayCoursesOnlyTrainerJSONHttpPostIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesOnlyTrainerJSONHttpPostOut" />
+  <wsdl:message name="TodayCoursesWithSectionJSONHttpPostIn">
+    <wsdl:part name="date" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayCoursesWithSectionJSONHttpPostOut" />
+  <wsdl:message name="AllCourseJSONHttpPostIn" />
+  <wsdl:message name="AllCourseJSONHttpPostOut" />
+  <wsdl:message name="AllTrainerJSONHttpPostIn" />
+  <wsdl:message name="AllTrainerJSONHttpPostOut" />
+  <wsdl:message name="AllSTudentstodaystartclassINTROPAGEHttpPostIn" />
+  <wsdl:message name="AllSTudentstodaystartclassINTROPAGEHttpPostOut" />
+  <wsdl:message name="AllcourseandbatchidTodaystartclassINTROPAGEHttpPostIn" />
+  <wsdl:message name="AllcourseandbatchidTodaystartclassINTROPAGEHttpPostOut" />
+  <wsdl:message name="TodayStudemtidForDEviceINTROPAGEHttpPostIn">
+    <wsdl:part name="studentid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TodayStudemtidForDEviceINTROPAGEHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TrainerDetailsINTROPAGEHttpPostIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+    <wsdl:part name="Todaydate" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TrainerDetailsINTROPAGEHttpPostOut" />
+  <wsdl:message name="StudentdatawithcourseandbatchINTROPAGEHttpPostIn">
+    <wsdl:part name="courseid" type="s:string" />
+    <wsdl:part name="batchid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="StudentdatawithcourseandbatchINTROPAGEHttpPostOut" />
+  <wsdl:message name="TrainerIndustryEXPINTROPAGEHttpPostIn">
+    <wsdl:part name="trainerid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TrainerIndustryEXPINTROPAGEHttpPostOut" />
+  <wsdl:message name="CourseProposalHttpPostIn" />
+  <wsdl:message name="CourseProposalHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AddNewcourseInLIHttpPostIn">
+    <wsdl:part name="Coursename" type="s:string" />
+    <wsdl:part name="Departmentid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="AddNewcourseInLIHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="NeedAnalysisHttpPostIn" />
+  <wsdl:message name="NeedAnalysisHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GameHttpPostIn">
+    <wsdl:part name="studentid" type="s:string" />
+    <wsdl:part name="GameName" type="s:string" />
+    <wsdl:part name="Marks" type="s:string" />
+    <wsdl:part name="File" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GameHttpPostOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:portType name="SSTMSoap">
+    <wsdl:operation name="AllCourse">
+      <wsdl:input message="tns:AllCourseSoapIn" />
+      <wsdl:output message="tns:AllCourseSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseType">
+      <wsdl:input message="tns:AllCourseTypeSoapIn" />
+      <wsdl:output message="tns:AllCourseTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseLevel">
+      <wsdl:input message="tns:AllCourseLevelSoapIn" />
+      <wsdl:output message="tns:AllCourseLevelSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainer">
+      <wsdl:input message="tns:AllTrainerSoapIn" />
+      <wsdl:output message="tns:AllTrainerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSection">
+      <wsdl:input message="tns:TodayCoursesWithSectionSoapIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionTainerid">
+      <wsdl:input message="tns:TodayCoursesWithSectionTaineridSoapIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionTaineridSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainer">
+      <wsdl:input message="tns:TodayCoursesOnlyTrainerSoapIn" />
+      <wsdl:output message="tns:TodayCoursesOnlyTrainerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPath">
+      <wsdl:input message="tns:MemorandomPathSoapIn" />
+      <wsdl:output message="tns:MemorandomPathSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPathJSON">
+      <wsdl:input message="tns:MemorandomPathJSONSoapIn" />
+      <wsdl:output message="tns:MemorandomPathJSONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainerJSON">
+      <wsdl:input message="tns:TodayCoursesOnlyTrainerJSONSoapIn" />
+      <wsdl:output message="tns:TodayCoursesOnlyTrainerJSONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionJSON">
+      <wsdl:input message="tns:TodayCoursesWithSectionJSONSoapIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionJSONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseJSON">
+      <wsdl:input message="tns:AllCourseJSONSoapIn" />
+      <wsdl:output message="tns:AllCourseJSONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainerJSON">
+      <wsdl:input message="tns:AllTrainerJSONSoapIn" />
+      <wsdl:output message="tns:AllTrainerJSONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllSTudentstodaystartclassINTROPAGE">
+      <wsdl:input message="tns:AllSTudentstodaystartclassINTROPAGESoapIn" />
+      <wsdl:output message="tns:AllSTudentstodaystartclassINTROPAGESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllcourseandbatchidTodaystartclassINTROPAGE">
+      <wsdl:input message="tns:AllcourseandbatchidTodaystartclassINTROPAGESoapIn" />
+      <wsdl:output message="tns:AllcourseandbatchidTodaystartclassINTROPAGESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayStudemtidForDEviceINTROPAGE">
+      <wsdl:input message="tns:TodayStudemtidForDEviceINTROPAGESoapIn" />
+      <wsdl:output message="tns:TodayStudemtidForDEviceINTROPAGESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerDetailsINTROPAGE">
+      <wsdl:input message="tns:TrainerDetailsINTROPAGESoapIn" />
+      <wsdl:output message="tns:TrainerDetailsINTROPAGESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="StudentdatawithcourseandbatchINTROPAGE">
+      <wsdl:input message="tns:StudentdatawithcourseandbatchINTROPAGESoapIn" />
+      <wsdl:output message="tns:StudentdatawithcourseandbatchINTROPAGESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerIndustryEXPINTROPAGE">
+      <wsdl:input message="tns:TrainerIndustryEXPINTROPAGESoapIn" />
+      <wsdl:output message="tns:TrainerIndustryEXPINTROPAGESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CourseProposal">
+      <wsdl:input message="tns:CourseProposalSoapIn" />
+      <wsdl:output message="tns:CourseProposalSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddNewcourseInLI">
+      <wsdl:input message="tns:AddNewcourseInLISoapIn" />
+      <wsdl:output message="tns:AddNewcourseInLISoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NeedAnalysis">
+      <wsdl:input message="tns:NeedAnalysisSoapIn" />
+      <wsdl:output message="tns:NeedAnalysisSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Game">
+      <wsdl:input message="tns:GameSoapIn" />
+      <wsdl:output message="tns:GameSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="SSTMHttpGet">
+    <wsdl:operation name="AllCourse">
+      <wsdl:input message="tns:AllCourseHttpGetIn" />
+      <wsdl:output message="tns:AllCourseHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseType">
+      <wsdl:input message="tns:AllCourseTypeHttpGetIn" />
+      <wsdl:output message="tns:AllCourseTypeHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseLevel">
+      <wsdl:input message="tns:AllCourseLevelHttpGetIn" />
+      <wsdl:output message="tns:AllCourseLevelHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainer">
+      <wsdl:input message="tns:AllTrainerHttpGetIn" />
+      <wsdl:output message="tns:AllTrainerHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSection">
+      <wsdl:input message="tns:TodayCoursesWithSectionHttpGetIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionTainerid">
+      <wsdl:input message="tns:TodayCoursesWithSectionTaineridHttpGetIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionTaineridHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainer">
+      <wsdl:input message="tns:TodayCoursesOnlyTrainerHttpGetIn" />
+      <wsdl:output message="tns:TodayCoursesOnlyTrainerHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPath">
+      <wsdl:input message="tns:MemorandomPathHttpGetIn" />
+      <wsdl:output message="tns:MemorandomPathHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPathJSON">
+      <wsdl:input message="tns:MemorandomPathJSONHttpGetIn" />
+      <wsdl:output message="tns:MemorandomPathJSONHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainerJSON">
+      <wsdl:input message="tns:TodayCoursesOnlyTrainerJSONHttpGetIn" />
+      <wsdl:output message="tns:TodayCoursesOnlyTrainerJSONHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionJSON">
+      <wsdl:input message="tns:TodayCoursesWithSectionJSONHttpGetIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionJSONHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseJSON">
+      <wsdl:input message="tns:AllCourseJSONHttpGetIn" />
+      <wsdl:output message="tns:AllCourseJSONHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainerJSON">
+      <wsdl:input message="tns:AllTrainerJSONHttpGetIn" />
+      <wsdl:output message="tns:AllTrainerJSONHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllSTudentstodaystartclassINTROPAGE">
+      <wsdl:input message="tns:AllSTudentstodaystartclassINTROPAGEHttpGetIn" />
+      <wsdl:output message="tns:AllSTudentstodaystartclassINTROPAGEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllcourseandbatchidTodaystartclassINTROPAGE">
+      <wsdl:input message="tns:AllcourseandbatchidTodaystartclassINTROPAGEHttpGetIn" />
+      <wsdl:output message="tns:AllcourseandbatchidTodaystartclassINTROPAGEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayStudemtidForDEviceINTROPAGE">
+      <wsdl:input message="tns:TodayStudemtidForDEviceINTROPAGEHttpGetIn" />
+      <wsdl:output message="tns:TodayStudemtidForDEviceINTROPAGEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerDetailsINTROPAGE">
+      <wsdl:input message="tns:TrainerDetailsINTROPAGEHttpGetIn" />
+      <wsdl:output message="tns:TrainerDetailsINTROPAGEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="StudentdatawithcourseandbatchINTROPAGE">
+      <wsdl:input message="tns:StudentdatawithcourseandbatchINTROPAGEHttpGetIn" />
+      <wsdl:output message="tns:StudentdatawithcourseandbatchINTROPAGEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerIndustryEXPINTROPAGE">
+      <wsdl:input message="tns:TrainerIndustryEXPINTROPAGEHttpGetIn" />
+      <wsdl:output message="tns:TrainerIndustryEXPINTROPAGEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CourseProposal">
+      <wsdl:input message="tns:CourseProposalHttpGetIn" />
+      <wsdl:output message="tns:CourseProposalHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddNewcourseInLI">
+      <wsdl:input message="tns:AddNewcourseInLIHttpGetIn" />
+      <wsdl:output message="tns:AddNewcourseInLIHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NeedAnalysis">
+      <wsdl:input message="tns:NeedAnalysisHttpGetIn" />
+      <wsdl:output message="tns:NeedAnalysisHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Game">
+      <wsdl:input message="tns:GameHttpGetIn" />
+      <wsdl:output message="tns:GameHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="SSTMHttpPost">
+    <wsdl:operation name="AllCourse">
+      <wsdl:input message="tns:AllCourseHttpPostIn" />
+      <wsdl:output message="tns:AllCourseHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseType">
+      <wsdl:input message="tns:AllCourseTypeHttpPostIn" />
+      <wsdl:output message="tns:AllCourseTypeHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseLevel">
+      <wsdl:input message="tns:AllCourseLevelHttpPostIn" />
+      <wsdl:output message="tns:AllCourseLevelHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainer">
+      <wsdl:input message="tns:AllTrainerHttpPostIn" />
+      <wsdl:output message="tns:AllTrainerHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSection">
+      <wsdl:input message="tns:TodayCoursesWithSectionHttpPostIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionTainerid">
+      <wsdl:input message="tns:TodayCoursesWithSectionTaineridHttpPostIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionTaineridHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainer">
+      <wsdl:input message="tns:TodayCoursesOnlyTrainerHttpPostIn" />
+      <wsdl:output message="tns:TodayCoursesOnlyTrainerHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPath">
+      <wsdl:input message="tns:MemorandomPathHttpPostIn" />
+      <wsdl:output message="tns:MemorandomPathHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPathJSON">
+      <wsdl:input message="tns:MemorandomPathJSONHttpPostIn" />
+      <wsdl:output message="tns:MemorandomPathJSONHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainerJSON">
+      <wsdl:input message="tns:TodayCoursesOnlyTrainerJSONHttpPostIn" />
+      <wsdl:output message="tns:TodayCoursesOnlyTrainerJSONHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionJSON">
+      <wsdl:input message="tns:TodayCoursesWithSectionJSONHttpPostIn" />
+      <wsdl:output message="tns:TodayCoursesWithSectionJSONHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseJSON">
+      <wsdl:input message="tns:AllCourseJSONHttpPostIn" />
+      <wsdl:output message="tns:AllCourseJSONHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainerJSON">
+      <wsdl:input message="tns:AllTrainerJSONHttpPostIn" />
+      <wsdl:output message="tns:AllTrainerJSONHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllSTudentstodaystartclassINTROPAGE">
+      <wsdl:input message="tns:AllSTudentstodaystartclassINTROPAGEHttpPostIn" />
+      <wsdl:output message="tns:AllSTudentstodaystartclassINTROPAGEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllcourseandbatchidTodaystartclassINTROPAGE">
+      <wsdl:input message="tns:AllcourseandbatchidTodaystartclassINTROPAGEHttpPostIn" />
+      <wsdl:output message="tns:AllcourseandbatchidTodaystartclassINTROPAGEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TodayStudemtidForDEviceINTROPAGE">
+      <wsdl:input message="tns:TodayStudemtidForDEviceINTROPAGEHttpPostIn" />
+      <wsdl:output message="tns:TodayStudemtidForDEviceINTROPAGEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerDetailsINTROPAGE">
+      <wsdl:input message="tns:TrainerDetailsINTROPAGEHttpPostIn" />
+      <wsdl:output message="tns:TrainerDetailsINTROPAGEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="StudentdatawithcourseandbatchINTROPAGE">
+      <wsdl:input message="tns:StudentdatawithcourseandbatchINTROPAGEHttpPostIn" />
+      <wsdl:output message="tns:StudentdatawithcourseandbatchINTROPAGEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerIndustryEXPINTROPAGE">
+      <wsdl:input message="tns:TrainerIndustryEXPINTROPAGEHttpPostIn" />
+      <wsdl:output message="tns:TrainerIndustryEXPINTROPAGEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CourseProposal">
+      <wsdl:input message="tns:CourseProposalHttpPostIn" />
+      <wsdl:output message="tns:CourseProposalHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddNewcourseInLI">
+      <wsdl:input message="tns:AddNewcourseInLIHttpPostIn" />
+      <wsdl:output message="tns:AddNewcourseInLIHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NeedAnalysis">
+      <wsdl:input message="tns:NeedAnalysisHttpPostIn" />
+      <wsdl:output message="tns:NeedAnalysisHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Game">
+      <wsdl:input message="tns:GameHttpPostIn" />
+      <wsdl:output message="tns:GameHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SSTMSoap" type="tns:SSTMSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="AllCourse">
+      <soap:operation soapAction="http://tempuri.org/AllCourse" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseType">
+      <soap:operation soapAction="http://tempuri.org/AllCourseType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseLevel">
+      <soap:operation soapAction="http://tempuri.org/AllCourseLevel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainer">
+      <soap:operation soapAction="http://tempuri.org/AllTrainer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSection">
+      <soap:operation soapAction="http://tempuri.org/TodayCoursesWithSection" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionTainerid">
+      <soap:operation soapAction="http://tempuri.org/TodayCoursesWithSectionTainerid" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainer">
+      <soap:operation soapAction="http://tempuri.org/TodayCoursesOnlyTrainer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPath">
+      <soap:operation soapAction="http://tempuri.org/MemorandomPath" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPathJSON">
+      <soap:operation soapAction="http://tempuri.org/MemorandomPathJSON" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainerJSON">
+      <soap:operation soapAction="http://tempuri.org/TodayCoursesOnlyTrainerJSON" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionJSON">
+      <soap:operation soapAction="http://tempuri.org/TodayCoursesWithSectionJSON" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseJSON">
+      <soap:operation soapAction="http://tempuri.org/AllCourseJSON" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainerJSON">
+      <soap:operation soapAction="http://tempuri.org/AllTrainerJSON" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllSTudentstodaystartclassINTROPAGE">
+      <soap:operation soapAction="http://tempuri.org/AllSTudentstodaystartclassINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllcourseandbatchidTodaystartclassINTROPAGE">
+      <soap:operation soapAction="http://tempuri.org/AllcourseandbatchidTodaystartclassINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayStudemtidForDEviceINTROPAGE">
+      <soap:operation soapAction="http://tempuri.org/TodayStudemtidForDEviceINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TrainerDetailsINTROPAGE">
+      <soap:operation soapAction="http://tempuri.org/TrainerDetailsINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StudentdatawithcourseandbatchINTROPAGE">
+      <soap:operation soapAction="http://tempuri.org/StudentdatawithcourseandbatchINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TrainerIndustryEXPINTROPAGE">
+      <soap:operation soapAction="http://tempuri.org/TrainerIndustryEXPINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CourseProposal">
+      <soap:operation soapAction="http://tempuri.org/CourseProposal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewcourseInLI">
+      <soap:operation soapAction="http://tempuri.org/AddNewcourseInLI" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NeedAnalysis">
+      <soap:operation soapAction="http://tempuri.org/NeedAnalysis" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Game">
+      <soap:operation soapAction="http://tempuri.org/Game" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SSTMSoap12" type="tns:SSTMSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="AllCourse">
+      <soap12:operation soapAction="http://tempuri.org/AllCourse" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseType">
+      <soap12:operation soapAction="http://tempuri.org/AllCourseType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseLevel">
+      <soap12:operation soapAction="http://tempuri.org/AllCourseLevel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainer">
+      <soap12:operation soapAction="http://tempuri.org/AllTrainer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSection">
+      <soap12:operation soapAction="http://tempuri.org/TodayCoursesWithSection" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionTainerid">
+      <soap12:operation soapAction="http://tempuri.org/TodayCoursesWithSectionTainerid" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainer">
+      <soap12:operation soapAction="http://tempuri.org/TodayCoursesOnlyTrainer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPath">
+      <soap12:operation soapAction="http://tempuri.org/MemorandomPath" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPathJSON">
+      <soap12:operation soapAction="http://tempuri.org/MemorandomPathJSON" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainerJSON">
+      <soap12:operation soapAction="http://tempuri.org/TodayCoursesOnlyTrainerJSON" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionJSON">
+      <soap12:operation soapAction="http://tempuri.org/TodayCoursesWithSectionJSON" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseJSON">
+      <soap12:operation soapAction="http://tempuri.org/AllCourseJSON" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainerJSON">
+      <soap12:operation soapAction="http://tempuri.org/AllTrainerJSON" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllSTudentstodaystartclassINTROPAGE">
+      <soap12:operation soapAction="http://tempuri.org/AllSTudentstodaystartclassINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllcourseandbatchidTodaystartclassINTROPAGE">
+      <soap12:operation soapAction="http://tempuri.org/AllcourseandbatchidTodaystartclassINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayStudemtidForDEviceINTROPAGE">
+      <soap12:operation soapAction="http://tempuri.org/TodayStudemtidForDEviceINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TrainerDetailsINTROPAGE">
+      <soap12:operation soapAction="http://tempuri.org/TrainerDetailsINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StudentdatawithcourseandbatchINTROPAGE">
+      <soap12:operation soapAction="http://tempuri.org/StudentdatawithcourseandbatchINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TrainerIndustryEXPINTROPAGE">
+      <soap12:operation soapAction="http://tempuri.org/TrainerIndustryEXPINTROPAGE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CourseProposal">
+      <soap12:operation soapAction="http://tempuri.org/CourseProposal" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewcourseInLI">
+      <soap12:operation soapAction="http://tempuri.org/AddNewcourseInLI" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NeedAnalysis">
+      <soap12:operation soapAction="http://tempuri.org/NeedAnalysis" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Game">
+      <soap12:operation soapAction="http://tempuri.org/Game" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SSTMHttpGet" type="tns:SSTMHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="AllCourse">
+      <http:operation location="/AllCourse" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseType">
+      <http:operation location="/AllCourseType" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseLevel">
+      <http:operation location="/AllCourseLevel" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainer">
+      <http:operation location="/AllTrainer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSection">
+      <http:operation location="/TodayCoursesWithSection" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionTainerid">
+      <http:operation location="/TodayCoursesWithSectionTainerid" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainer">
+      <http:operation location="/TodayCoursesOnlyTrainer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPath">
+      <http:operation location="/MemorandomPath" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPathJSON">
+      <http:operation location="/MemorandomPathJSON" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainerJSON">
+      <http:operation location="/TodayCoursesOnlyTrainerJSON" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionJSON">
+      <http:operation location="/TodayCoursesWithSectionJSON" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseJSON">
+      <http:operation location="/AllCourseJSON" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainerJSON">
+      <http:operation location="/AllTrainerJSON" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllSTudentstodaystartclassINTROPAGE">
+      <http:operation location="/AllSTudentstodaystartclassINTROPAGE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllcourseandbatchidTodaystartclassINTROPAGE">
+      <http:operation location="/AllcourseandbatchidTodaystartclassINTROPAGE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TodayStudemtidForDEviceINTROPAGE">
+      <http:operation location="/TodayStudemtidForDEviceINTROPAGE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TrainerDetailsINTROPAGE">
+      <http:operation location="/TrainerDetailsINTROPAGE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="StudentdatawithcourseandbatchINTROPAGE">
+      <http:operation location="/StudentdatawithcourseandbatchINTROPAGE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerIndustryEXPINTROPAGE">
+      <http:operation location="/TrainerIndustryEXPINTROPAGE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="CourseProposal">
+      <http:operation location="/CourseProposal" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewcourseInLI">
+      <http:operation location="/AddNewcourseInLI" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NeedAnalysis">
+      <http:operation location="/NeedAnalysis" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Game">
+      <http:operation location="/Game" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SSTMHttpPost" type="tns:SSTMHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="AllCourse">
+      <http:operation location="/AllCourse" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseType">
+      <http:operation location="/AllCourseType" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseLevel">
+      <http:operation location="/AllCourseLevel" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainer">
+      <http:operation location="/AllTrainer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSection">
+      <http:operation location="/TodayCoursesWithSection" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionTainerid">
+      <http:operation location="/TodayCoursesWithSectionTainerid" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainer">
+      <http:operation location="/TodayCoursesOnlyTrainer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPath">
+      <http:operation location="/MemorandomPath" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MemorandomPathJSON">
+      <http:operation location="/MemorandomPathJSON" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesOnlyTrainerJSON">
+      <http:operation location="/TodayCoursesOnlyTrainerJSON" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TodayCoursesWithSectionJSON">
+      <http:operation location="/TodayCoursesWithSectionJSON" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllCourseJSON">
+      <http:operation location="/AllCourseJSON" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllTrainerJSON">
+      <http:operation location="/AllTrainerJSON" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllSTudentstodaystartclassINTROPAGE">
+      <http:operation location="/AllSTudentstodaystartclassINTROPAGE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="AllcourseandbatchidTodaystartclassINTROPAGE">
+      <http:operation location="/AllcourseandbatchidTodaystartclassINTROPAGE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TodayStudemtidForDEviceINTROPAGE">
+      <http:operation location="/TodayStudemtidForDEviceINTROPAGE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TrainerDetailsINTROPAGE">
+      <http:operation location="/TrainerDetailsINTROPAGE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="StudentdatawithcourseandbatchINTROPAGE">
+      <http:operation location="/StudentdatawithcourseandbatchINTROPAGE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="TrainerIndustryEXPINTROPAGE">
+      <http:operation location="/TrainerIndustryEXPINTROPAGE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="CourseProposal">
+      <http:operation location="/CourseProposal" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewcourseInLI">
+      <http:operation location="/AddNewcourseInLI" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NeedAnalysis">
+      <http:operation location="/NeedAnalysis" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Game">
+      <http:operation location="/Game" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SSTM">
+    <wsdl:port name="SSTMSoap" binding="tns:SSTMSoap">
+      <soap:address location="https://li.eversafe.com.sg/services/sstm.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SSTMSoap12" binding="tns:SSTMSoap12">
+      <soap12:address location="https://li.eversafe.com.sg/services/sstm.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SSTMHttpGet" binding="tns:SSTMHttpGet">
+      <http:address location="https://li.eversafe.com.sg/services/sstm.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SSTMHttpPost" binding="tns:SSTMHttpPost">
+      <http:address location="https://li.eversafe.com.sg/services/sstm.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,11 @@
+canvas, .canvas-container {
+    margin-bottom: 25px;
+}
+
+.canvas-container {
+    margin-left: 20px;
+    margin-right: auto;
+}
+.canvas-container {
+    width:500px !important;
+}
